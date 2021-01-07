@@ -535,7 +535,7 @@ namespace SpecialEffectsViewer
 				else if (rb_SingleCharacter.Checked)
 				{
 					var iIdiot1 = new NWN2CreatureInstance();
-					iIdiot1.AppearanceType.Row = 6;
+					iIdiot1.AppearanceType.Row = 4; // half-elf source/target
 					iIdiot1.AppearanceSEF = effect;
 
 					NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot1, _panel.NDWindow.Scene, 0);
