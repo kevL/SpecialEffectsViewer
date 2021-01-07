@@ -65,6 +65,9 @@ namespace SpecialEffectsViewer
 		MenuItem _itStayOnTop;
 
 		int _isListStale;
+
+		string _filtr = String.Empty;
+		bool _bypassActivateSearchControl;
 		#endregion Fields
 
 
@@ -320,11 +323,14 @@ namespace SpecialEffectsViewer
 				var entries = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF_EXT));
 				foreach (IResourceEntry entry in entries)
 				{
-					lb_Fx.Items.Add(entry);
+					if (_filtr == String.Empty || entry.ResRef.Value.ToLower().Contains(_filtr))
+						lb_Fx.Items.Add(entry);
 				}
 				lb_Fx.EndUpdate();
 			}
-			ActiveControl = tb_Search;
+
+			if (!_bypassActivateSearchControl)
+				ActiveControl = tb_Search;
 		}
 
 		/// <summary>
@@ -349,12 +355,15 @@ namespace SpecialEffectsViewer
 						&& !label.Contains(CAMPAIGNS)
 						&& !label.Contains(OVERRIDE)) // fake it
 					{
-						lb_Fx.Items.Add(entry);
+						if (_filtr == String.Empty || entry.ResRef.Value.ToLower().Contains(_filtr))
+							lb_Fx.Items.Add(entry);
 					}
 				}
 				lb_Fx.EndUpdate();
 			}
-			ActiveControl = tb_Search;
+
+			if (!_bypassActivateSearchControl)
+				ActiveControl = tb_Search;
 		}
 
 		/// <summary>
@@ -375,11 +384,14 @@ namespace SpecialEffectsViewer
 				foreach (IResourceEntry entry in entries)
 				{
 					if (entry.Repository.Name.ToLower().Contains(MODULES)) // fake it
-						lb_Fx.Items.Add(entry);
+						if (_filtr == String.Empty || entry.ResRef.Value.ToLower().Contains(_filtr))
+							lb_Fx.Items.Add(entry);
 				}
 				lb_Fx.EndUpdate();
 			}
-			ActiveControl = tb_Search;
+
+			if (!_bypassActivateSearchControl)
+				ActiveControl = tb_Search;
 		}
 
 		/// <summary>
@@ -400,11 +412,14 @@ namespace SpecialEffectsViewer
 				foreach (IResourceEntry entry in entries)
 				{
 					if (entry.Repository.Name.ToLower().Contains(CAMPAIGNS)) // fake it
-						lb_Fx.Items.Add(entry);
+						if (_filtr == String.Empty || entry.ResRef.Value.ToLower().Contains(_filtr))
+							lb_Fx.Items.Add(entry);
 				}
 				lb_Fx.EndUpdate();
 			}
-			ActiveControl = tb_Search;
+
+			if (!_bypassActivateSearchControl)
+				ActiveControl = tb_Search;
 		}
 
 		/// <summary>
@@ -425,11 +440,14 @@ namespace SpecialEffectsViewer
 				foreach (IResourceEntry entry in entries)
 				{
 					if (entry.Repository.Name.ToLower().Contains(OVERRIDE)) // fake it
-						lb_Fx.Items.Add(entry);
+						if (_filtr == String.Empty || entry.ResRef.Value.ToLower().Contains(_filtr))
+							lb_Fx.Items.Add(entry);
 				}
 				lb_Fx.EndUpdate();
 			}
-			ActiveControl = tb_Search;
+
+			if (!_bypassActivateSearchControl)
+				ActiveControl = tb_Search;
 		}
 
 		/// <summary>
@@ -646,7 +664,7 @@ namespace SpecialEffectsViewer
 		void bu_Search_click(object sender, EventArgs e)
 		{
 			int count = lb_Fx.Items.Count;
-			if (count > 1)
+			if (count != 0)
 			{
 				string text = tb_Search.Text;
 				if (!String.IsNullOrEmpty(text))
@@ -681,7 +699,7 @@ namespace SpecialEffectsViewer
 					}
 					else //if (bu == bu_SearchU)
 					{
-						if (lb_Fx.SelectedIndex == 0)
+						if (lb_Fx.SelectedIndex < 1)
 						{
 							id = count - 1;
 						}
@@ -705,6 +723,63 @@ namespace SpecialEffectsViewer
 
 					lb_Fx.SelectedIndex = id;
 				}
+			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void cb_Filter_click(object sender, EventArgs e)
+		{
+			_bypassActivateSearchControl = true;
+
+			if (cb_Filter.Checked)
+				_filtr = tb_Search.Text.ToLower();
+			else
+				_filtr = String.Empty;
+
+			if (_itFxList_all.Checked)
+			{
+				_itFxList_all.Checked = false;
+				listclick_All(null, EventArgs.Empty);
+			}
+			else if (_itFxList_stock.Checked)
+			{
+				_itFxList_stock.Checked = false;
+				listclick_Stock(null, EventArgs.Empty);
+			}
+			else if (_itFxList_module.Checked)
+			{
+				_itFxList_module.Checked = false;
+				listclick_Module(null, EventArgs.Empty);
+			}
+			else if (_itFxList_campaign.Checked)
+			{
+				_itFxList_campaign.Checked = false;
+				listclick_Campaign(null, EventArgs.Empty);
+			}
+			else if (_itFxList_override.Checked)
+			{
+				_itFxList_override.Checked = false;
+				listclick_Override(null, EventArgs.Empty);
+			}
+
+			_bypassActivateSearchControl = false;
+		}
+
+		/// <summary>
+		/// [Enter] toggles the search-filter.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void cb_Filter_keydown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyData == Keys.Enter)
+			{
+				cb_Filter.Checked = !cb_Filter.Checked;
+				cb_Filter_click(null, EventArgs.Empty);
 			}
 		}
 		#endregion eventhandlers (controls)

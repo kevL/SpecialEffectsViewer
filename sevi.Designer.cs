@@ -12,7 +12,7 @@ namespace SpecialEffectsViewer
 		TextBox tb_Search;
 		Button bu_SearchD;
 		Button bu_SearchU;
-		Button bu_Filter;
+		CheckBox cb_Filter;
 		ListBox lb_Fx;
 		Panel pa_bot;
 		GroupBox gb_Scene;
@@ -35,9 +35,9 @@ namespace SpecialEffectsViewer
 			this.lb_Fx = new System.Windows.Forms.ListBox();
 			this.pa_Search = new System.Windows.Forms.Panel();
 			this.tb_Search = new System.Windows.Forms.TextBox();
-			this.bu_Filter = new System.Windows.Forms.Button();
 			this.bu_SearchD = new System.Windows.Forms.Button();
 			this.bu_SearchU = new System.Windows.Forms.Button();
+			this.cb_Filter = new System.Windows.Forms.CheckBox();
 			this.pa_bot = new System.Windows.Forms.Panel();
 			this.gb_Scene = new System.Windows.Forms.GroupBox();
 			this.rb_DoubleCharacter = new System.Windows.Forms.RadioButton();
@@ -93,9 +93,9 @@ namespace SpecialEffectsViewer
 			// pa_Search
 			// 
 			this.pa_Search.Controls.Add(this.tb_Search);
-			this.pa_Search.Controls.Add(this.bu_Filter);
 			this.pa_Search.Controls.Add(this.bu_SearchD);
 			this.pa_Search.Controls.Add(this.bu_SearchU);
+			this.pa_Search.Controls.Add(this.cb_Filter);
 			this.pa_Search.Dock = System.Windows.Forms.DockStyle.Top;
 			this.pa_Search.Location = new System.Drawing.Point(0, 0);
 			this.pa_Search.Margin = new System.Windows.Forms.Padding(0);
@@ -109,26 +109,15 @@ namespace SpecialEffectsViewer
 			this.tb_Search.Location = new System.Drawing.Point(0, 0);
 			this.tb_Search.Margin = new System.Windows.Forms.Padding(0);
 			this.tb_Search.Name = "tb_Search";
-			this.tb_Search.Size = new System.Drawing.Size(95, 20);
+			this.tb_Search.Size = new System.Drawing.Size(97, 20);
 			this.tb_Search.TabIndex = 0;
 			this.tb_Search.WordWrap = false;
 			this.tb_Search.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Search_keydown);
 			// 
-			// bu_Filter
-			// 
-			this.bu_Filter.Dock = System.Windows.Forms.DockStyle.Right;
-			this.bu_Filter.Location = new System.Drawing.Point(95, 0);
-			this.bu_Filter.Margin = new System.Windows.Forms.Padding(0);
-			this.bu_Filter.Name = "bu_Filter";
-			this.bu_Filter.Size = new System.Drawing.Size(47, 20);
-			this.bu_Filter.TabIndex = 3;
-			this.bu_Filter.Text = "filtr";
-			this.bu_Filter.UseVisualStyleBackColor = true;
-			// 
 			// bu_SearchD
 			// 
 			this.bu_SearchD.Dock = System.Windows.Forms.DockStyle.Right;
-			this.bu_SearchD.Location = new System.Drawing.Point(142, 0);
+			this.bu_SearchD.Location = new System.Drawing.Point(97, 0);
 			this.bu_SearchD.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_SearchD.Name = "bu_SearchD";
 			this.bu_SearchD.Size = new System.Drawing.Size(23, 20);
@@ -140,7 +129,7 @@ namespace SpecialEffectsViewer
 			// bu_SearchU
 			// 
 			this.bu_SearchU.Dock = System.Windows.Forms.DockStyle.Right;
-			this.bu_SearchU.Location = new System.Drawing.Point(165, 0);
+			this.bu_SearchU.Location = new System.Drawing.Point(120, 0);
 			this.bu_SearchU.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_SearchU.Name = "bu_SearchU";
 			this.bu_SearchU.Size = new System.Drawing.Size(23, 20);
@@ -148,6 +137,21 @@ namespace SpecialEffectsViewer
 			this.bu_SearchU.Text = "u";
 			this.bu_SearchU.UseVisualStyleBackColor = true;
 			this.bu_SearchU.Click += new System.EventHandler(this.bu_Search_click);
+			// 
+			// cb_Filter
+			// 
+			this.cb_Filter.Appearance = System.Windows.Forms.Appearance.Button;
+			this.cb_Filter.Dock = System.Windows.Forms.DockStyle.Right;
+			this.cb_Filter.Location = new System.Drawing.Point(143, 0);
+			this.cb_Filter.Margin = new System.Windows.Forms.Padding(0);
+			this.cb_Filter.Name = "cb_Filter";
+			this.cb_Filter.Size = new System.Drawing.Size(45, 20);
+			this.cb_Filter.TabIndex = 3;
+			this.cb_Filter.Text = "filtr";
+			this.cb_Filter.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.cb_Filter.UseVisualStyleBackColor = true;
+			this.cb_Filter.Click += new System.EventHandler(this.cb_Filter_click);
+			this.cb_Filter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.cb_Filter_keydown);
 			// 
 			// pa_bot
 			// 
