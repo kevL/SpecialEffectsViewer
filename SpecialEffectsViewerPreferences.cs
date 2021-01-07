@@ -48,6 +48,15 @@ namespace SpecialEffectsViewer
 
 		public int Scene
 		{ get; set; }
+
+		public float FocusPhi
+		{ get; set; }
+
+		public float FocusTheta
+		{ get; set; }
+
+		public float Distance
+		{ get; set; }
 		#endregion Properties
 
 
@@ -69,6 +78,10 @@ namespace SpecialEffectsViewer
 			StayOnTop = true;
 
 			Scene = 1;
+
+			FocusPhi   = 0f;
+			FocusTheta = -(float)Math.PI / 2f;
+			Distance   = 10f;
 		}
 		#endregion cTor
 	}

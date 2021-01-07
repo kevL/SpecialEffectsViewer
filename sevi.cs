@@ -189,9 +189,16 @@ namespace SpecialEffectsViewer
 		{
 			if (_panel.Scene.DayNightCycleStages[(int)DayNightStageType.Default] != null)
 			{
-				_panel.Scene.DayNightCycleStages[(int)DayNightStageType.Default].SunMoonDirection = new Vector3(-0.33F,-0.67F,-0.67F);
+				_panel.Scene.DayNightCycleStages[(int)DayNightStageType.Default].SunMoonDirection = new Vector3(0.00F,-0.67F,-0.67F);
 				_panel.Scene.DayNightCycleStages[(int)DayNightStageType.Default].ShadowIntensity  = 0f;
 			}
+
+			_panel.NDWindow.Scene.ShowGroundPlane  = false;
+			_panel.NDWindow.Scene.ShowSky          = false;
+			_panel.NDWindow.Scene.BackdropColor    = NWN2ToolsetPreferences.Instance.Graphics.DefaultBackdropColor;
+			_panel.NDWindow.Scene.GroundPlaneColor = NWN2ToolsetPreferences.Instance.Graphics.DefaultGroundPlaneColor;
+
+			NWN2NetDisplayManager.Instance.UpdateTerrainSize(_panel.NDWindow.Scene, new Size(4,4)); // note: 4x4 is min area (200x200)
 
 			_panel.OpenWindow();
 
@@ -199,8 +206,10 @@ namespace SpecialEffectsViewer
 			_panel.CameraMovementReceiver = receiver;
 
 			var state = (receiver.CameraState as ModelViewerInputCameraReceiverState);
-			state.FocusPoint = new Vector3(0f,0f,1f);
-			state.FocusPhi = 0f;
+			state.FocusPoint = new Vector3(100f,100f,1f); // +x=left -x=right +y=closer -y=farther
+			state.FocusPhi   = SpecialEffectsViewerPreferences.that.FocusPhi;
+			state.FocusTheta = SpecialEffectsViewerPreferences.that.FocusTheta;
+			state.Distance   = SpecialEffectsViewerPreferences.that.Distance;
 			state.PitchMin = 0f;
 			state.MouseWheelSpeed = 0.8f;
 
@@ -231,6 +240,12 @@ namespace SpecialEffectsViewer
 			SpecialEffectsViewerPreferences.that.h = ClientSize.Height;
 
 			SpecialEffectsViewerPreferences.that.SplitterDistance = sc.SplitterDistance;
+
+			var receiver = (_panel.CameraMovementReceiver as ModelViewerInputCameraReceiver);
+			var state = (receiver.CameraState as ModelViewerInputCameraReceiverState);
+			SpecialEffectsViewerPreferences.that.FocusPhi   = state.FocusPhi;
+			SpecialEffectsViewerPreferences.that.FocusTheta = state.FocusTheta;
+			SpecialEffectsViewerPreferences.that.Distance   = state.Distance;
 		}
 
 		/// <summary>
@@ -554,7 +569,10 @@ namespace SpecialEffectsViewer
 					(iinstance as NWN2PlacedEffectTemplate).Active = true;
 					(iinstance as NWN2PlacedEffectTemplate).Effect = effect;
 
-					NWN2NetDisplayManager.Instance.CreateNDOForInstance(iinstance, _panel.NDWindow.Scene, 0);
+					NetDisplayObject oPlacedEffect = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iinstance, _panel.NDWindow.Scene, 0);
+
+					oPlacedEffect.Position = new Vector3(100f,100f,0f);
+					NWN2NetDisplayManager.Instance.MoveObjects(new NetDisplayObjectCollection(oPlacedEffect), ChangeType.Absolute, false, oPlacedEffect.Position);
 				}
 				else if (rb_SingleCharacter.Checked)
 				{
@@ -562,7 +580,10 @@ namespace SpecialEffectsViewer
 					iIdiot1.AppearanceType.Row = 4; // half-elf source/target
 					iIdiot1.AppearanceSEF = effect;
 
-					NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot1, _panel.NDWindow.Scene, 0);
+					NetDisplayObject oIdiot1 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot1, _panel.NDWindow.Scene, 0);
+
+					oIdiot1.Position = new Vector3(100f,100f,0f);
+					NWN2NetDisplayManager.Instance.MoveObjects(new NetDisplayObjectCollection(oIdiot1), ChangeType.Absolute, false, oIdiot1.Position);
 				}
 				else //if (rb_DoubleCharacter.Checked)
 				{
@@ -574,8 +595,8 @@ namespace SpecialEffectsViewer
 					NetDisplayObject oIdiot1 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot1, _panel.NDWindow.Scene, 0);
 					NetDisplayObject oIdiot2 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot2, _panel.NDWindow.Scene, 0);
 
-					oIdiot1.Position = new Vector3( 3f,0f,0f);
-					oIdiot2.Position = new Vector3(-3f,0f,0f);
+					oIdiot1.Position = new Vector3(103f,100f,0f);
+					oIdiot2.Position = new Vector3( 97f,100f,0f);
 					oIdiot1.Orientation = RHQuaternion.RotationZ(-(float)Math.PI / 2f);
 					oIdiot2.Orientation = RHQuaternion.RotationZ( (float)Math.PI / 2f);
 
@@ -623,9 +644,7 @@ namespace SpecialEffectsViewer
 		void bu_Copy_click(object sender, EventArgs e)
 		{
 			if (lb_Fx.SelectedIndex != -1)
-			{
 				Clipboard.SetDataObject(lb_Fx.SelectedItem.ToString());
-			}
 		}
 
 		/// <summary>
@@ -739,13 +758,15 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void cb_Filter_click(object sender, EventArgs e)
 		{
-			_bypassActivateSearchControl = true;
-
 			if (cb_Filter.Checked)
-				_filtr = tb_Search.Text.ToLower();
+			{
+				if (String.IsNullOrEmpty(_filtr = tb_Search.Text.ToLower()))
+					cb_Filter.Checked = false;
+			}
 			else
 				_filtr = String.Empty;
 
+			_bypassActivateSearchControl = true;
 			if (_itFxList_all.Checked)
 			{
 				_itFxList_all.Checked = false;
@@ -766,12 +787,11 @@ namespace SpecialEffectsViewer
 				_itFxList_campaign.Checked = false;
 				listclick_Campaign(null, EventArgs.Empty);
 			}
-			else if (_itFxList_override.Checked)
+			else //if (_itFxList_override.Checked)
 			{
 				_itFxList_override.Checked = false;
 				listclick_Override(null, EventArgs.Empty);
 			}
-
 			_bypassActivateSearchControl = false;
 		}
 
@@ -791,7 +811,7 @@ namespace SpecialEffectsViewer
 		#endregion eventhandlers (controls)
 
 
-		#region eventhandlers (splitter)
+/*		#region eventhandlers (splitter)
 		// https://stackoverflow.com/questions/6521731/refresh-the-panels-of-a-splitcontainer-as-the-splitter-moves#6522741
 
 		/// <summary>
@@ -840,7 +860,7 @@ namespace SpecialEffectsViewer
 					sc.IsSplitterFixed = false;
 			}
 		}
-		#endregion eventhandlers (splitter)
+		#endregion eventhandlers (splitter) */
 
 
 		#region Methods (static)
