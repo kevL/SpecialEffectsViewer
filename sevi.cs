@@ -351,12 +351,12 @@ namespace SpecialEffectsViewer
 				foreach (IResourceEntry entry in entries)
 				{
 					string label = entry.Repository.Name.ToLower();
-					if (   !label.Contains(MODULES)
+					if (   !label.Contains(MODULES) // fake it ->
 						&& !label.Contains(CAMPAIGNS)
-						&& !label.Contains(OVERRIDE)) // fake it
+						&& !label.Contains(OVERRIDE)
+						&& (_filtr == String.Empty || entry.ResRef.Value.ToLower().Contains(_filtr)))
 					{
-						if (_filtr == String.Empty || entry.ResRef.Value.ToLower().Contains(_filtr))
-							lb_Fx.Items.Add(entry);
+						lb_Fx.Items.Add(entry);
 					}
 				}
 				lb_Fx.EndUpdate();
@@ -383,9 +383,11 @@ namespace SpecialEffectsViewer
 				var entries = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF_EXT));
 				foreach (IResourceEntry entry in entries)
 				{
-					if (entry.Repository.Name.ToLower().Contains(MODULES)) // fake it
-						if (_filtr == String.Empty || entry.ResRef.Value.ToLower().Contains(_filtr))
-							lb_Fx.Items.Add(entry);
+					if (entry.Repository.Name.ToLower().Contains(MODULES) // fake it
+						&& (_filtr == String.Empty || entry.ResRef.Value.ToLower().Contains(_filtr)))
+					{
+						lb_Fx.Items.Add(entry);
+					}
 				}
 				lb_Fx.EndUpdate();
 			}
@@ -411,9 +413,11 @@ namespace SpecialEffectsViewer
 				var entries = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF_EXT));
 				foreach (IResourceEntry entry in entries)
 				{
-					if (entry.Repository.Name.ToLower().Contains(CAMPAIGNS)) // fake it
-						if (_filtr == String.Empty || entry.ResRef.Value.ToLower().Contains(_filtr))
-							lb_Fx.Items.Add(entry);
+					if (entry.Repository.Name.ToLower().Contains(CAMPAIGNS) // fake it
+						&& (_filtr == String.Empty || entry.ResRef.Value.ToLower().Contains(_filtr)))
+					{
+						lb_Fx.Items.Add(entry);
+					}
 				}
 				lb_Fx.EndUpdate();
 			}
@@ -439,9 +443,11 @@ namespace SpecialEffectsViewer
 				var entries = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF_EXT));
 				foreach (IResourceEntry entry in entries)
 				{
-					if (entry.Repository.Name.ToLower().Contains(OVERRIDE)) // fake it
-						if (_filtr == String.Empty || entry.ResRef.Value.ToLower().Contains(_filtr))
-							lb_Fx.Items.Add(entry);
+					if (entry.Repository.Name.ToLower().Contains(OVERRIDE) // fake it
+						&& (_filtr == String.Empty || entry.ResRef.Value.ToLower().Contains(_filtr)))
+					{
+						lb_Fx.Items.Add(entry);
+					}
 				}
 				lb_Fx.EndUpdate();
 			}
