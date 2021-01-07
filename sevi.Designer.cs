@@ -71,9 +71,6 @@ namespace SpecialEffectsViewer
 			this.sc.Size = new System.Drawing.Size(592, 374);
 			this.sc.SplitterDistance = 400;
 			this.sc.TabIndex = 0;
-			this.sc.MouseDown += new System.Windows.Forms.MouseEventHandler(this.sc_MouseDown);
-			this.sc.MouseMove += new System.Windows.Forms.MouseEventHandler(this.sc_MouseMove);
-			this.sc.MouseUp += new System.Windows.Forms.MouseEventHandler(this.sc_MouseUp);
 			// 
 			// lb_Fx
 			// 
@@ -84,7 +81,7 @@ namespace SpecialEffectsViewer
 			this.lb_Fx.Margin = new System.Windows.Forms.Padding(0);
 			this.lb_Fx.Name = "lb_Fx";
 			this.lb_Fx.ScrollAlwaysVisible = true;
-			this.lb_Fx.Size = new System.Drawing.Size(188, 270);
+			this.lb_Fx.Size = new System.Drawing.Size(188, 268);
 			this.lb_Fx.Sorted = true;
 			this.lb_Fx.TabIndex = 1;
 			this.lb_Fx.SelectedIndexChanged += new System.EventHandler(this.lb_Fx_selectedindexchanged);
@@ -160,10 +157,10 @@ namespace SpecialEffectsViewer
 			this.pa_bot.Controls.Add(this.bu_Copy);
 			this.pa_bot.Controls.Add(this.bu_Close);
 			this.pa_bot.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.pa_bot.Location = new System.Drawing.Point(0, 290);
+			this.pa_bot.Location = new System.Drawing.Point(0, 288);
 			this.pa_bot.Margin = new System.Windows.Forms.Padding(0);
 			this.pa_bot.Name = "pa_bot";
-			this.pa_bot.Size = new System.Drawing.Size(188, 84);
+			this.pa_bot.Size = new System.Drawing.Size(188, 86);
 			this.pa_bot.TabIndex = 2;
 			// 
 			// gb_Scene
@@ -218,7 +215,7 @@ namespace SpecialEffectsViewer
 			// bu_Clear
 			// 
 			this.bu_Clear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.bu_Clear.Location = new System.Drawing.Point(10, 60);
+			this.bu_Clear.Location = new System.Drawing.Point(16, 61);
 			this.bu_Clear.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_Clear.Name = "bu_Clear";
 			this.bu_Clear.Size = new System.Drawing.Size(57, 24);
@@ -230,7 +227,7 @@ namespace SpecialEffectsViewer
 			// bu_Copy
 			// 
 			this.bu_Copy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.bu_Copy.Location = new System.Drawing.Point(70, 60);
+			this.bu_Copy.Location = new System.Drawing.Point(73, 61);
 			this.bu_Copy.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_Copy.Name = "bu_Copy";
 			this.bu_Copy.Size = new System.Drawing.Size(57, 24);
@@ -242,7 +239,7 @@ namespace SpecialEffectsViewer
 			// bu_Close
 			// 
 			this.bu_Close.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.bu_Close.Location = new System.Drawing.Point(130, 60);
+			this.bu_Close.Location = new System.Drawing.Point(130, 61);
 			this.bu_Close.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_Close.Name = "bu_Close";
 			this.bu_Close.Size = new System.Drawing.Size(57, 24);
