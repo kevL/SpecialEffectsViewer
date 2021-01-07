@@ -27,6 +27,17 @@ namespace SpecialEffectsViewer
 	sealed partial class sevi
 		: Form
 	{
+		#region enums
+		enum Scene
+		{
+			none,				// 0
+			placedeffect,		// 1
+			singlecharacter,	// 2
+			doublecharacter		// 3
+		}
+		#endregion enums
+
+
 		#region Fields (static)
 		const string TITLE = "Special Effects Viewer";
 
@@ -150,6 +161,17 @@ namespace SpecialEffectsViewer
 			if (SpecialEffectsViewerPreferences.that.Maximized)
 				WindowState = FormWindowState.Maximized;
 
+			if ((Scene)SpecialEffectsViewerPreferences.that.Scene != Scene.placedeffect)
+			{
+				rb_PlacedEffect.Checked = false;
+
+				switch ((Scene)SpecialEffectsViewerPreferences.that.Scene)
+				{
+					default:                    rb_PlacedEffect   .Checked = true; break;
+					case Scene.singlecharacter: rb_SingleCharacter.Checked = true; break;
+					case Scene.doublecharacter: rb_DoubleCharacter.Checked = true; break;
+				}
+			}
 		}
 		#endregion cTor
 
@@ -462,12 +484,25 @@ namespace SpecialEffectsViewer
 
 		#region eventhandlers (controls)
 		/// <summary>
-		/// 
+		/// Sets the Scene-preference and reloads the scene itself.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		void rb_click(object sender, EventArgs e)
 		{
+			if (rb_PlacedEffect.Checked)
+			{
+				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.placedeffect;
+			}
+			else if (rb_SingleCharacter.Checked)
+			{
+				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.singlecharacter;
+			}
+			else //if (rb_DoubleCharacter.Checked)
+			{
+				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.doublecharacter;
+			}
+
 			lb_Fx_selectedindexchanged(null, EventArgs.Empty);
 		}
 
@@ -483,8 +518,6 @@ namespace SpecialEffectsViewer
 
 			if (lb_Fx.SelectedIndex != -1)
 			{
-				bool veritas = false;
-
 				var effect = lb_Fx.SelectedItem as IResourceEntry;
 
 				string path = effect.Repository.Name;
@@ -492,8 +525,6 @@ namespace SpecialEffectsViewer
 
 				if (rb_PlacedEffect.Checked)
 				{
-					veritas = true;
-
 					var blueprint = new NWN2PlacedEffectBlueprint();
 					var iinstance = NWN2GlobalBlueprintManager.CreateInstanceFromBlueprint(blueprint);
 					(iinstance as NWN2PlacedEffectTemplate).Active = true;
@@ -503,65 +534,41 @@ namespace SpecialEffectsViewer
 				}
 				else if (rb_SingleCharacter.Checked)
 				{
-					veritas = true;
-
 					var iIdiot1 = new NWN2CreatureInstance();
 					iIdiot1.AppearanceType.Row = 6;
 					iIdiot1.AppearanceSEF = effect;
 
 					NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot1, _panel.NDWindow.Scene, 0);
 				}
-				else if (rb_DoubleCharacter.Checked)
+				else //if (rb_DoubleCharacter.Checked)
 				{
 					var iIdiot1 = new NWN2CreatureInstance();
 					var iIdiot2 = new NWN2CreatureInstance();
-					iIdiot1.AppearanceType.Row = 6; // human source
+					iIdiot1.AppearanceType.Row = 5; // half-orc source
 					iIdiot2.AppearanceType.Row = 2; // gnome target
 
 					NetDisplayObject oIdiot1 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot1, _panel.NDWindow.Scene, 0);
 					NetDisplayObject oIdiot2 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot2, _panel.NDWindow.Scene, 0);
 
 					oIdiot1.Position = new Vector3( 3f,0f,0f);
-					oIdiot1.Orientation = RHQuaternion.RotationZ(-(float)Math.PI / 2f);
 					oIdiot2.Position = new Vector3(-3f,0f,0f);
+					oIdiot1.Orientation = RHQuaternion.RotationZ(-(float)Math.PI / 2f);
 					oIdiot2.Orientation = RHQuaternion.RotationZ( (float)Math.PI / 2f);
 
 					NWN2NetDisplayManager.Instance.MoveObjects(  new NetDisplayObjectCollection(oIdiot1), ChangeType.Absolute, false, oIdiot1.Position);
-					NWN2NetDisplayManager.Instance.RotateObjects(new NetDisplayObjectCollection(oIdiot1), ChangeType.Absolute,        oIdiot1.Orientation);
 					NWN2NetDisplayManager.Instance.MoveObjects(  new NetDisplayObjectCollection(oIdiot2), ChangeType.Absolute, false, oIdiot2.Position);
+					NWN2NetDisplayManager.Instance.RotateObjects(new NetDisplayObjectCollection(oIdiot1), ChangeType.Absolute,        oIdiot1.Orientation);
 					NWN2NetDisplayManager.Instance.RotateObjects(new NetDisplayObjectCollection(oIdiot2), ChangeType.Absolute,        oIdiot2.Orientation);
 
 
-					SEFGroup sefgroup = null;
-
-					string pfe = Path.Combine(path, effect.FullName);
-					if (File.Exists(pfe))
-					{
-						sefgroup = new SEFGroup();
-						sefgroup.XmlUnserialize(pfe);
-					}
-					else
-					{
-						var sef = effect as ZIPResourceEntry;
-						if (sef != null)
-						{
-							sefgroup = new SEFGroup();
-							sefgroup.XmlUnserialize(sef.GetStream(false));
-						}
-					}
-
-					if (sefgroup != null)
-					{
-						veritas = true;
-
-						sefgroup.FirstObject  = oIdiot1;
-						sefgroup.SecondObject = oIdiot2;
-						_panel.NDWindow.Scene.SpecialEffectsManager.Groups.Add(sefgroup);
-					}
+					var sefgroup = new SEFGroup();
+					sefgroup.XmlUnserialize(effect.GetStream(false));
+					sefgroup.FirstObject  = oIdiot1;
+					sefgroup.SecondObject = oIdiot2;
+					_panel.NDWindow.Scene.SpecialEffectsManager.Groups.Add(sefgroup);
 				}
 
-				if (veritas)
-					_panel.NDWindow.Scene.SpecialEffectsManager.BeginUpdating();
+				_panel.NDWindow.Scene.SpecialEffectsManager.BeginUpdating();
 			}
 			else
 				Text = TITLE;

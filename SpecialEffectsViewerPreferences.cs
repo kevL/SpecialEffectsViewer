@@ -45,6 +45,9 @@ namespace SpecialEffectsViewer
 
 		public bool StayOnTop
 		{ get; set; }
+
+		public int Scene
+		{ get; set; }
 		#endregion Properties
 
 
@@ -64,6 +67,8 @@ namespace SpecialEffectsViewer
 			SplitterDistance = 400;
 
 			StayOnTop = true;
+
+			Scene = 1;
 		}
 		#endregion cTor
 	}
