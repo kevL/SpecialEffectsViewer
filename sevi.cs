@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
 
 using Microsoft.DirectX;
@@ -54,7 +53,7 @@ namespace SpecialEffectsViewer
 
 
 		#region Fields
-		readonly ElectronPanel _panel = new ElectronPanel(); // i hate u
+		ElectronPanel _panel = new ElectronPanel(); // i hate u
 
 		MenuItem _itFxList_all;
 		MenuItem _itFxList_stock;
@@ -133,9 +132,7 @@ namespace SpecialEffectsViewer
 			_panel.BorderStyle = BorderStyle.FixedSingle;
 			_panel.MousePanel.KeyDown += Search_keydown;
 
-			sc.Panel1.Controls.Add(_panel);
-
-			_panel.BringToFront();
+			sc_left.Panel2.Controls.Add(_panel);
 		}
 
 		/// <summary>
@@ -175,6 +172,8 @@ namespace SpecialEffectsViewer
 					case Scene.doublecharacter: rb_DoubleCharacter.Checked = true; break;
 				}
 			}
+
+			cb_Ground.Checked = SpecialEffectsViewerPreferences.that.Ground;
 		}
 		#endregion cTor
 
@@ -193,24 +192,18 @@ namespace SpecialEffectsViewer
 				_panel.Scene.DayNightCycleStages[(int)DayNightStageType.Default].ShadowIntensity  = 0f;
 			}
 
-			_panel.NDWindow.Scene.ShowGroundPlane  = false;
-			_panel.NDWindow.Scene.ShowSky          = false;
-			_panel.NDWindow.Scene.BackdropColor    = NWN2ToolsetPreferences.Instance.Graphics.DefaultBackdropColor;
-			_panel.NDWindow.Scene.GroundPlaneColor = NWN2ToolsetPreferences.Instance.Graphics.DefaultGroundPlaneColor;
-
-			NWN2NetDisplayManager.Instance.UpdateTerrainSize(_panel.NDWindow.Scene, new Size(4,4)); // note: 4x4 is min area (200x200)
-
-			_panel.OpenWindow();
+			if (cb_Ground.Checked)
+				NWN2NetDisplayManager.Instance.UpdateTerrainSize(_panel.NDWindow.Scene, new Size(4,4)); // note: 4x4 is min area (200x200)
 
 			var receiver = new ModelViewerInputCameraReceiver(); // is null on Load
 			_panel.CameraMovementReceiver = receiver;
 
 			var state = (receiver.CameraState as ModelViewerInputCameraReceiverState);
-			state.FocusPoint = new Vector3(100f,100f,1f); // +x=left -x=right +y=closer -y=farther
-			state.FocusPhi   = SpecialEffectsViewerPreferences.that.FocusPhi;
-			state.FocusTheta = SpecialEffectsViewerPreferences.that.FocusTheta;
-			state.Distance   = SpecialEffectsViewerPreferences.that.Distance;
-			state.PitchMin = 0f;
+			state.FocusPoint      = new Vector3(100f,100f,1f); // +x=left -x=right +y=closer -y=farther
+			state.FocusPhi        = SpecialEffectsViewerPreferences.that.FocusPhi;
+			state.FocusTheta      = SpecialEffectsViewerPreferences.that.FocusTheta;
+			state.Distance        = SpecialEffectsViewerPreferences.that.Distance;
+			state.PitchMin        = 0.0f;
 			state.MouseWheelSpeed = 0.8f;
 
 			receiver.UpdateCamera();
@@ -522,6 +515,23 @@ namespace SpecialEffectsViewer
 
 
 		#region eventhandlers (controls)
+		/// <summary>
+		/// Reloads the ElectronPanel w/ or w/out ground as detered by the
+		/// checkstate.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void cb_Ground_click(object sender, EventArgs e)
+		{
+			SpecialEffectsViewerPreferences.that.Ground = cb_Ground.Checked;
+
+			_panel.Dispose();
+			_panel = new ElectronPanel();
+
+			ConfigureElectronPanel();
+			OnLoad(EventArgs.Empty);
+		}
+
 		/// <summary>
 		/// Sets the Scene-preference and reloads the scene itself.
 		/// </summary>

@@ -57,6 +57,9 @@ namespace SpecialEffectsViewer
 
 		public float Distance
 		{ get; set; }
+
+		public bool Ground
+		{ get; set; }
 		#endregion Properties
 
 
@@ -82,6 +85,8 @@ namespace SpecialEffectsViewer
 			FocusPhi   = 0f;
 			FocusTheta = -(float)Math.PI / 2f;
 			Distance   = 10f;
+
+			Ground = true;
 		}
 		#endregion cTor
 	}

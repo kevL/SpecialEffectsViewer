@@ -22,6 +22,8 @@ namespace SpecialEffectsViewer
 		Button bu_Clear;
 		Button bu_Copy;
 		Button bu_Close;
+		CheckBox cb_Ground;
+		SplitContainer sc_left;
 
 		/// <summary>
 		/// This method is required for Windows Forms designer support. Do not
@@ -32,6 +34,8 @@ namespace SpecialEffectsViewer
 		void InitializeComponent()
 		{
 			this.sc = new System.Windows.Forms.SplitContainer();
+			this.sc_left = new System.Windows.Forms.SplitContainer();
+			this.cb_Ground = new System.Windows.Forms.CheckBox();
 			this.lb_Fx = new System.Windows.Forms.ListBox();
 			this.pa_Search = new System.Windows.Forms.Panel();
 			this.tb_Search = new System.Windows.Forms.TextBox();
@@ -40,14 +44,17 @@ namespace SpecialEffectsViewer
 			this.cb_Filter = new System.Windows.Forms.CheckBox();
 			this.pa_bot = new System.Windows.Forms.Panel();
 			this.gb_Scene = new System.Windows.Forms.GroupBox();
-			this.rb_DoubleCharacter = new System.Windows.Forms.RadioButton();
 			this.rb_PlacedEffect = new System.Windows.Forms.RadioButton();
 			this.rb_SingleCharacter = new System.Windows.Forms.RadioButton();
+			this.rb_DoubleCharacter = new System.Windows.Forms.RadioButton();
 			this.bu_Clear = new System.Windows.Forms.Button();
 			this.bu_Copy = new System.Windows.Forms.Button();
 			this.bu_Close = new System.Windows.Forms.Button();
+			this.sc.Panel1.SuspendLayout();
 			this.sc.Panel2.SuspendLayout();
 			this.sc.SuspendLayout();
+			this.sc_left.Panel1.SuspendLayout();
+			this.sc_left.SuspendLayout();
 			this.pa_Search.SuspendLayout();
 			this.pa_bot.SuspendLayout();
 			this.gb_Scene.SuspendLayout();
@@ -60,6 +67,10 @@ namespace SpecialEffectsViewer
 			this.sc.Location = new System.Drawing.Point(0, 0);
 			this.sc.Margin = new System.Windows.Forms.Padding(0);
 			this.sc.Name = "sc";
+			// 
+			// sc.Panel1
+			// 
+			this.sc.Panel1.Controls.Add(this.sc_left);
 			this.sc.Panel1MinSize = 0;
 			// 
 			// sc.Panel2
@@ -71,6 +82,40 @@ namespace SpecialEffectsViewer
 			this.sc.Size = new System.Drawing.Size(592, 374);
 			this.sc.SplitterDistance = 400;
 			this.sc.TabIndex = 0;
+			// 
+			// sc_left
+			// 
+			this.sc_left.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.sc_left.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+			this.sc_left.IsSplitterFixed = true;
+			this.sc_left.Location = new System.Drawing.Point(0, 0);
+			this.sc_left.Margin = new System.Windows.Forms.Padding(0);
+			this.sc_left.Name = "sc_left";
+			// 
+			// sc_left.Panel1
+			// 
+			this.sc_left.Panel1.Controls.Add(this.cb_Ground);
+			this.sc_left.Panel1MinSize = 0;
+			// 
+			// sc_left.Panel2
+			// 
+			this.sc_left.Panel2.BackColor = System.Drawing.Color.Black;
+			this.sc_left.Panel2MinSize = 0;
+			this.sc_left.Size = new System.Drawing.Size(400, 374);
+			this.sc_left.SplitterDistance = 133;
+			this.sc_left.SplitterWidth = 1;
+			this.sc_left.TabIndex = 0;
+			// 
+			// cb_Ground
+			// 
+			this.cb_Ground.Location = new System.Drawing.Point(4, 3);
+			this.cb_Ground.Margin = new System.Windows.Forms.Padding(0);
+			this.cb_Ground.Name = "cb_Ground";
+			this.cb_Ground.Size = new System.Drawing.Size(95, 16);
+			this.cb_Ground.TabIndex = 0;
+			this.cb_Ground.Text = "show ground";
+			this.cb_Ground.UseVisualStyleBackColor = false;
+			this.cb_Ground.Click += new System.EventHandler(this.cb_Ground_click);
 			// 
 			// lb_Fx
 			// 
@@ -165,9 +210,9 @@ namespace SpecialEffectsViewer
 			// 
 			// gb_Scene
 			// 
-			this.gb_Scene.Controls.Add(this.rb_DoubleCharacter);
 			this.gb_Scene.Controls.Add(this.rb_PlacedEffect);
 			this.gb_Scene.Controls.Add(this.rb_SingleCharacter);
+			this.gb_Scene.Controls.Add(this.rb_DoubleCharacter);
 			this.gb_Scene.Dock = System.Windows.Forms.DockStyle.Top;
 			this.gb_Scene.Location = new System.Drawing.Point(0, 0);
 			this.gb_Scene.Margin = new System.Windows.Forms.Padding(0);
@@ -176,17 +221,6 @@ namespace SpecialEffectsViewer
 			this.gb_Scene.Size = new System.Drawing.Size(188, 60);
 			this.gb_Scene.TabIndex = 0;
 			this.gb_Scene.TabStop = false;
-			// 
-			// rb_DoubleCharacter
-			// 
-			this.rb_DoubleCharacter.Location = new System.Drawing.Point(6, 40);
-			this.rb_DoubleCharacter.Margin = new System.Windows.Forms.Padding(0);
-			this.rb_DoubleCharacter.Name = "rb_DoubleCharacter";
-			this.rb_DoubleCharacter.Size = new System.Drawing.Size(124, 16);
-			this.rb_DoubleCharacter.TabIndex = 2;
-			this.rb_DoubleCharacter.Text = "double character";
-			this.rb_DoubleCharacter.UseVisualStyleBackColor = true;
-			this.rb_DoubleCharacter.Click += new System.EventHandler(this.rb_click);
 			// 
 			// rb_PlacedEffect
 			// 
@@ -211,6 +245,17 @@ namespace SpecialEffectsViewer
 			this.rb_SingleCharacter.Text = "single character";
 			this.rb_SingleCharacter.UseVisualStyleBackColor = true;
 			this.rb_SingleCharacter.Click += new System.EventHandler(this.rb_click);
+			// 
+			// rb_DoubleCharacter
+			// 
+			this.rb_DoubleCharacter.Location = new System.Drawing.Point(6, 40);
+			this.rb_DoubleCharacter.Margin = new System.Windows.Forms.Padding(0);
+			this.rb_DoubleCharacter.Name = "rb_DoubleCharacter";
+			this.rb_DoubleCharacter.Size = new System.Drawing.Size(124, 16);
+			this.rb_DoubleCharacter.TabIndex = 2;
+			this.rb_DoubleCharacter.Text = "double character";
+			this.rb_DoubleCharacter.UseVisualStyleBackColor = true;
+			this.rb_DoubleCharacter.Click += new System.EventHandler(this.rb_click);
 			// 
 			// bu_Clear
 			// 
@@ -257,8 +302,11 @@ namespace SpecialEffectsViewer
 			this.Name = "sevi";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = " Special Effects Viewer";
+			this.sc.Panel1.ResumeLayout(false);
 			this.sc.Panel2.ResumeLayout(false);
 			this.sc.ResumeLayout(false);
+			this.sc_left.Panel1.ResumeLayout(false);
+			this.sc_left.ResumeLayout(false);
 			this.pa_Search.ResumeLayout(false);
 			this.pa_Search.PerformLayout();
 			this.pa_bot.ResumeLayout(false);
