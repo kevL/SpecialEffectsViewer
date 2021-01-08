@@ -188,7 +188,7 @@ namespace SpecialEffectsViewer
 		{
 			if (_panel.Scene.DayNightCycleStages[(int)DayNightStageType.Default] != null)
 			{
-				_panel.Scene.DayNightCycleStages[(int)DayNightStageType.Default].SunMoonDirection = new Vector3(0.00F,-0.67F,-0.67F);
+				_panel.Scene.DayNightCycleStages[(int)DayNightStageType.Default].SunMoonDirection = new Vector3(0.00f,-0.67f,-0.67f);
 				_panel.Scene.DayNightCycleStages[(int)DayNightStageType.Default].ShadowIntensity  = 0f;
 			}
 
@@ -234,11 +234,7 @@ namespace SpecialEffectsViewer
 
 			SpecialEffectsViewerPreferences.that.SplitterDistance = sc.SplitterDistance;
 
-			var receiver = (_panel.CameraMovementReceiver as ModelViewerInputCameraReceiver);
-			var state = (receiver.CameraState as ModelViewerInputCameraReceiverState);
-			SpecialEffectsViewerPreferences.that.FocusPhi   = state.FocusPhi;
-			SpecialEffectsViewerPreferences.that.FocusTheta = state.FocusTheta;
-			SpecialEffectsViewerPreferences.that.Distance   = state.Distance;
+			StoreCameraState();
 		}
 
 		/// <summary>
@@ -524,6 +520,7 @@ namespace SpecialEffectsViewer
 		void cb_Ground_click(object sender, EventArgs e)
 		{
 			SpecialEffectsViewerPreferences.that.Ground = cb_Ground.Checked;
+			StoreCameraState();
 
 			_panel.Dispose();
 			_panel = new ElectronPanel();
@@ -893,5 +890,21 @@ namespace SpecialEffectsViewer
 			return false;
 		}
 		#endregion Methods (static)
+
+
+		#region Methods
+		/// <summary>
+		/// Stores the current camera-state in Preferences.
+		/// @note Ensure that the ElectronPanel (etc) is valid before call.
+		/// </summary>
+		void StoreCameraState()
+		{
+			var receiver = (_panel.CameraMovementReceiver as ModelViewerInputCameraReceiver);
+			var state = (receiver.CameraState as ModelViewerInputCameraReceiverState);
+			SpecialEffectsViewerPreferences.that.FocusPhi   = state.FocusPhi;
+			SpecialEffectsViewerPreferences.that.FocusTheta = state.FocusTheta;
+			SpecialEffectsViewerPreferences.that.Distance   = state.Distance;
+		}
+		#endregion Methods
 	}
 }
