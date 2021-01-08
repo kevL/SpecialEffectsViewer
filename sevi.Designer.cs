@@ -102,7 +102,7 @@ namespace SpecialEffectsViewer
 			this.sc_left.Panel2.BackColor = System.Drawing.Color.Black;
 			this.sc_left.Panel2MinSize = 0;
 			this.sc_left.Size = new System.Drawing.Size(400, 374);
-			this.sc_left.SplitterDistance = 133;
+			this.sc_left.SplitterDistance = 100;
 			this.sc_left.SplitterWidth = 1;
 			this.sc_left.TabIndex = 0;
 			// 

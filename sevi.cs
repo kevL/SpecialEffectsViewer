@@ -23,6 +23,10 @@ using OEIShared.Utils;
 
 namespace SpecialEffectsViewer
 {
+	/// <summary>
+	/// The SpecialEffectsViewer window along with all of its mechanics. Aka the
+	/// UI.
+	/// </summary>
 	sealed partial class sevi
 		: Form
 	{
@@ -49,6 +53,8 @@ namespace SpecialEffectsViewer
 		const int STALE_non      = 0x0;
 		const int STALE_Module   = 0x1;
 		const int STALE_Campaign = 0x2;
+
+		static int WidthLeftPanel;
 		#endregion Fields (static)
 
 
@@ -61,6 +67,7 @@ namespace SpecialEffectsViewer
 		MenuItem _itFxList_campaign;
 		MenuItem _itFxList_override;
 
+		MenuItem _itLeft;
 		MenuItem _itStayOnTop;
 
 		int _isListStale;
@@ -79,6 +86,8 @@ namespace SpecialEffectsViewer
 			Owner = NWN2ToolsetMainForm.App;
 
 			InitializeComponent();
+
+			WidthLeftPanel = sc_left.SplitterDistance;
 
 			// set unicode text on the up/down Search btns.
 			bu_SearchD.Text = "\u25bc"; // down triangle
@@ -116,7 +125,11 @@ namespace SpecialEffectsViewer
 			_itFxList_campaign = Menu.MenuItems[0].MenuItems.Add("list &campaign only", listclick_Campaign);
 			_itFxList_override = Menu.MenuItems[0].MenuItems.Add("list &override only", listclick_Override);
 
-			_itStayOnTop = Menu.MenuItems[1].MenuItems.Add("stay on &top", optionsclick_StayOnTop);
+			_itLeft = Menu.MenuItems[1].MenuItems.Add("show &left panel", viewclick_Left);
+			_itLeft.Shortcut = Shortcut.F8;
+			_itLeft.Checked = true;
+
+			_itStayOnTop = Menu.MenuItems[1].MenuItems.Add("stay on &top", viewclick_StayOnTop);
 			_itStayOnTop.Shortcut = Shortcut.CtrlT;
 			_itStayOnTop.Checked = true;
 
@@ -154,6 +167,9 @@ namespace SpecialEffectsViewer
 			}
 
 			sc.SplitterDistance = SpecialEffectsViewerPreferences.that.SplitterDistance;
+
+			if (!SpecialEffectsViewerPreferences.that.ShowLeftPanel)
+				_itLeft.PerformClick();
 
 			if (!SpecialEffectsViewerPreferences.that.StayOnTop)
 				_itStayOnTop.PerformClick();
@@ -481,11 +497,27 @@ namespace SpecialEffectsViewer
 
 		#region eventhandlers (view)
 		/// <summary>
-		/// 
+		/// Toggles display of the leftsidepanel.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void optionsclick_StayOnTop(object sender, EventArgs e)
+		void viewclick_Left(object sender, EventArgs e)
+		{
+			if (SpecialEffectsViewerPreferences.that.ShowLeftPanel =
+				(_itLeft.Checked = !_itLeft.Checked))
+			{
+				sc_left.SplitterDistance = WidthLeftPanel;
+			}
+			else
+				sc_left.SplitterDistance = 0;
+		}
+
+		/// <summary>
+		/// Toggles toolset ownership of the plugin-window.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void viewclick_StayOnTop(object sender, EventArgs e)
 		{
 			if (SpecialEffectsViewerPreferences.that.StayOnTop =
 				(_itStayOnTop.Checked = !_itStayOnTop.Checked))

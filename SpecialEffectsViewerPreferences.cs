@@ -43,6 +43,9 @@ namespace SpecialEffectsViewer
 		public int SplitterDistance
 		{ get; set; }
 
+		public bool ShowLeftPanel
+		{ get; set; }
+
 		public bool StayOnTop
 		{ get; set; }
 
@@ -87,7 +90,8 @@ namespace SpecialEffectsViewer
 
 			SplitterDistance = 400;
 
-			StayOnTop = true;
+			ShowLeftPanel = true;
+			StayOnTop     = true;
 
 			Scene = 1;
 
