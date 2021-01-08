@@ -60,6 +60,15 @@ namespace SpecialEffectsViewer
 
 		public bool Ground
 		{ get; set; }
+
+		public float FocusPoint_x
+		{ get; set; }
+
+		public float FocusPoint_y
+		{ get; set; }
+
+		public float FocusPoint_z
+		{ get; set; }
 		#endregion Properties
 
 
@@ -82,9 +91,12 @@ namespace SpecialEffectsViewer
 
 			Scene = 1;
 
-			FocusPhi   = 0f;
-			FocusTheta = -(float)Math.PI / 2f;
-			Distance   = 10f;
+			FocusPhi     = 0f;
+			FocusTheta   = -(float)Math.PI / 2f;
+			Distance     = 10f;
+			FocusPoint_x = 100f;
+			FocusPoint_y = 100f;
+			FocusPoint_z = 1f;
 
 			Ground = true;
 		}

@@ -199,7 +199,9 @@ namespace SpecialEffectsViewer
 			_panel.CameraMovementReceiver = receiver;
 
 			var state = (receiver.CameraState as ModelViewerInputCameraReceiverState);
-			state.FocusPoint      = new Vector3(100f,100f,1f); // +x=left -x=right +y=closer -y=farther
+			state.FocusPoint      = new Vector3(SpecialEffectsViewerPreferences.that.FocusPoint_x, // +x=left -x=right +y=closer -y=farther
+												SpecialEffectsViewerPreferences.that.FocusPoint_y,
+												SpecialEffectsViewerPreferences.that.FocusPoint_z);
 			state.FocusPhi        = SpecialEffectsViewerPreferences.that.FocusPhi;
 			state.FocusTheta      = SpecialEffectsViewerPreferences.that.FocusTheta;
 			state.Distance        = SpecialEffectsViewerPreferences.that.Distance;
@@ -901,9 +903,12 @@ namespace SpecialEffectsViewer
 		{
 			var receiver = (_panel.CameraMovementReceiver as ModelViewerInputCameraReceiver);
 			var state = (receiver.CameraState as ModelViewerInputCameraReceiverState);
-			SpecialEffectsViewerPreferences.that.FocusPhi   = state.FocusPhi;
-			SpecialEffectsViewerPreferences.that.FocusTheta = state.FocusTheta;
-			SpecialEffectsViewerPreferences.that.Distance   = state.Distance;
+			SpecialEffectsViewerPreferences.that.FocusPhi     = state.FocusPhi;
+			SpecialEffectsViewerPreferences.that.FocusTheta   = state.FocusTheta;
+			SpecialEffectsViewerPreferences.that.Distance     = state.Distance;
+			SpecialEffectsViewerPreferences.that.FocusPoint_x = state.FocusPoint.X;
+			SpecialEffectsViewerPreferences.that.FocusPoint_y = state.FocusPoint.Y;
+			SpecialEffectsViewerPreferences.that.FocusPoint_z = state.FocusPoint.Z;
 		}
 		#endregion Methods
 	}
