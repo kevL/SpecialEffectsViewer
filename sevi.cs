@@ -820,58 +820,6 @@ namespace SpecialEffectsViewer
 		#endregion eventhandlers (controls)
 
 
-/*		#region eventhandlers (splitter)
-		// https://stackoverflow.com/questions/6521731/refresh-the-panels-of-a-splitcontainer-as-the-splitter-moves#6522741
-
-		/// <summary>
-		/// Assign this to the SplitContainer's MouseDown event. This disables
-		/// the normal move behavior.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void sc_MouseDown(object sender, MouseEventArgs e)
-		{
-			sc.IsSplitterFixed = true;
-			Cursor = Cursors.VSplit; // kL_add.
-		}
-
-		/// <summary>
-		/// Assign this to the SplitContainer's MouseUp event. This allows the
-		/// splitter to be moved normally again.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void sc_MouseUp(object sender, MouseEventArgs e)
-		{
-			sc.IsSplitterFixed = false;
-			Cursor = Cursors.Default; // kL_add.
-		}
-
-		/// <summary>
-		/// Assign this to the SplitContainer's MouseMove event. Check to make
-		/// sure the splitter won't be updated by the normal move behavior also.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void sc_MouseMove(object sender, MouseEventArgs e)
-		{
-			if (sc.IsSplitterFixed)
-			{
-				if (e.Button.Equals(MouseButtons.Left))
-				{
-					if (e.X > 0 && e.X < sc.Width)
-					{
-						sc.SplitterDistance = e.X;
-						sc.Panel2.Invalidate();
-					}
-				}
-				else
-					sc.IsSplitterFixed = false;
-			}
-		}
-		#endregion eventhandlers (splitter) */
-
-
 		#region Methods (static)
 		/// <summary>
 		/// Checks if the plugin's initial location is onscreen.
