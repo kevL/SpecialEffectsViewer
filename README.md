@@ -8,4 +8,4 @@ This plugin plays nwn2's SpecialEffectFiles. Features include
 (a) a placed effect object
 (b) a single creature
 (c) a source creature and a target creature
-- restored plugin and camera settings
+- restored window and camera settings when the plugin launches
