@@ -129,6 +129,8 @@ namespace SpecialEffectsViewer
 			_itLeft.Shortcut = Shortcut.F8;
 			_itLeft.Checked = true;
 
+			Menu.MenuItems[1].MenuItems.Add("-");
+
 			_itStayOnTop = Menu.MenuItems[1].MenuItems.Add("stay on &top", viewclick_StayOnTop);
 			_itStayOnTop.Shortcut = Shortcut.CtrlT;
 			_itStayOnTop.Checked = true;
