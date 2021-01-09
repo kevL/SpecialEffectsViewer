@@ -563,6 +563,8 @@ namespace SpecialEffectsViewer
 
 			ConfigureElectronPanel();
 			OnLoad(EventArgs.Empty);
+
+			lb_Fx_selectedindexchanged(null, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -604,6 +606,9 @@ namespace SpecialEffectsViewer
 
 				string path = effect.Repository.Name;
 				Text = TITLE + " - " + path;
+
+				var sefgroup = new SEFGroup();
+				sefgroup.XmlUnserialize(effect.GetStream(false));
 
 				if (rb_PlacedEffect.Checked)
 				{
@@ -648,18 +653,44 @@ namespace SpecialEffectsViewer
 					NWN2NetDisplayManager.Instance.RotateObjects(new NetDisplayObjectCollection(oIdiot1), ChangeType.Absolute,        oIdiot1.Orientation);
 					NWN2NetDisplayManager.Instance.RotateObjects(new NetDisplayObjectCollection(oIdiot2), ChangeType.Absolute,        oIdiot2.Orientation);
 
-
-					var sefgroup = new SEFGroup();
-					sefgroup.XmlUnserialize(effect.GetStream(false));
 					sefgroup.FirstObject  = oIdiot1;
 					sefgroup.SecondObject = oIdiot2;
 					_panel.NDWindow.Scene.SpecialEffectsManager.Groups.Add(sefgroup);
 				}
 
+				PrintSefData(sefgroup);
 				_panel.NDWindow.Scene.SpecialEffectsManager.BeginUpdating();
 			}
 			else
 				Text = TITLE;
+		}
+
+		void PrintSefData(SEFGroup sefgroup)
+		{
+			string text = String.Empty;
+			string L = Environment.NewLine;
+
+			ISEFEvent sefevent;
+			for (int i = 0; i != sefgroup.Events.Count; ++i)
+			{
+				if (text != String.Empty) text += L + L;
+				text += i + L;
+
+				sefevent = sefgroup.Events[i];
+
+				text += "[" + sefevent.Name + "]" + L;
+				text += BwResourceTypes.GetResourceTypeString(sefevent.ResourceType) + L;
+				text += sefevent.EffectType + L;
+				text += sefevent.Position.X + "," + sefevent.Position.Y + "," + sefevent.Position.Z + L;
+				text += "1st - "   + sefevent.FirstAttachment + L;
+				text += "1st - "   + sefevent.FirstAttachmentObject + L;
+				text += "2nd - "   + sefevent.SecondAttachment + L;
+				text += "2nd - "   + sefevent.SecondAttachmentObject + L;
+				text += "dur - "   + sefevent.HasMaximumDuration + L;
+				text += "dur - "   + sefevent.MaximumDuration + L;
+				text += "delay - " + sefevent.Delay;
+			}
+			tb_EventData.Text = text;
 		}
 
 		/// <summary>
