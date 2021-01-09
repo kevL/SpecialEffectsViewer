@@ -115,9 +115,10 @@ namespace SpecialEffectsViewer
 		{
 			Menu = new MainMenu();
 
-			Menu.MenuItems.Add("&List");
-			Menu.MenuItems.Add("&View");
-			Menu.MenuItems.Add("&Help");
+			Menu.MenuItems.Add("&List");	// 0
+			Menu.MenuItems.Add("&Events");	// 1
+			Menu.MenuItems.Add("&View");	// 2
+			Menu.MenuItems.Add("&Help");	// 3
 
 			_itFxList_all      = Menu.MenuItems[0].MenuItems.Add("list &all fx",        listclick_All);
 			_itFxList_stock    = Menu.MenuItems[0].MenuItems.Add("list &stock only",    listclick_Stock);
@@ -125,17 +126,17 @@ namespace SpecialEffectsViewer
 			_itFxList_campaign = Menu.MenuItems[0].MenuItems.Add("list &campaign only", listclick_Campaign);
 			_itFxList_override = Menu.MenuItems[0].MenuItems.Add("list &override only", listclick_Override);
 
-			_itLeft = Menu.MenuItems[1].MenuItems.Add("show &left panel", viewclick_Left);
+			_itLeft = Menu.MenuItems[2].MenuItems.Add("show &left panel", viewclick_Left);
 			_itLeft.Shortcut = Shortcut.F8;
 			_itLeft.Checked = true;
 
-			Menu.MenuItems[1].MenuItems.Add("-");
+			Menu.MenuItems[2].MenuItems.Add("-");
 
-			_itStayOnTop = Menu.MenuItems[1].MenuItems.Add("stay on &top", viewclick_StayOnTop);
+			_itStayOnTop = Menu.MenuItems[2].MenuItems.Add("stay on &top", viewclick_StayOnTop);
 			_itStayOnTop.Shortcut = Shortcut.CtrlT;
 			_itStayOnTop.Checked = true;
 
-			Menu.MenuItems[2].MenuItems.Add("&about", helpclick_About);
+			Menu.MenuItems[3].MenuItems.Add("&about", helpclick_About);
 		}
 
 		/// <summary>
@@ -665,11 +666,29 @@ namespace SpecialEffectsViewer
 				Text = TITLE;
 		}
 
+		/// <summary>
+		/// Prints the currently loaded Sef-events to the left panel. Adds an
+		/// item to the Events menu for each event.
+		/// </summary>
+		/// <param name="sefgroup"></param>
 		void PrintSefData(SEFGroup sefgroup)
 		{
 			string text = String.Empty;
 			string L = Environment.NewLine;
 
+			text += "[" + sefgroup.Name + "]" + L;
+			text += sefgroup.Position.X + "," + sefgroup.Position.Y + "," + sefgroup.Position.Z + L;
+			text += "1st - " + sefgroup.FirstObject + L;
+			text += "2nd - " + sefgroup.SecondObject + L;
+			text += "fog - " + sefgroup.FogMultiplier + L;
+			text += "dur - " + sefgroup.HasMaximumDuration + L;
+			text += "dur - " + sefgroup.MaximumDuration + L;
+			text += sefgroup.SpecialTargetPosition;
+
+			tb_SefData.Text = text;
+			sc_southwest.SplitterDistance = TextRenderer.MeasureText(text, Font).Height + 5;
+
+			text = String.Empty;
 			ISEFEvent sefevent;
 			for (int i = 0; i != sefgroup.Events.Count; ++i)
 			{
@@ -689,8 +708,105 @@ namespace SpecialEffectsViewer
 				text += "dur - "   + sefevent.HasMaximumDuration + L;
 				text += "dur - "   + sefevent.MaximumDuration + L;
 				text += "delay - " + sefevent.Delay;
+
+				// NOTE: switch() possible here ->
+
+				if (sefevent as SEFBeam != null)
+				{
+					// none.
+				}
+				else if (sefevent as SEFBillboard != null)
+				{
+					// none.
+				}
+//				else if (sefevent as SEFEvent != null)
+//				{
+//					// Can a SEFEvent be assigned to a SEFEvent.
+//					// SEFEvents *are* SEFEvents ...
+//				}
+				else if (sefevent as SEFGameModelEffect != null)
+				{
+					var modeleffect = (sefevent as SEFGameModelEffect);
+					text += L + "type - "    + modeleffect.GameModelEffectType;
+					text += L + "texture - " + modeleffect.TextureName;
+					text += L + "alpha - "   + modeleffect.Alpha;
+					// TODO: plus a few other vars
+				}
+				else if (sefevent as SEFLight != null)
+				{
+					var light = (sefevent as SEFLight);
+					text += L + "shadow - "  + light.CastsShadow;
+					text += L + "shadow - "  + light.ShadowIntensity;
+					text += L + "flicker - " + light.Flicker;
+					text += L + "flicker - " + light.FlickerType;
+					text += L + "lerp - "    + light.Lerp;
+					text += L + "lerp - "    + light.LerpPeriod;
+					// TODO: plus a lot of other vars
+				}
+				else if (sefevent as SEFLightning != null)
+				{
+					// none.
+				}
+				else if (sefevent as SEFLineParticleSystem != null)
+				{
+					// none.
+				}
+				else if (sefevent as SEFModel != null)
+				{
+					var model = (sefevent as SEFModel);
+					text += L + "skel - " + model.SkeletonFile;
+//					text += L + "tint - " + model.TintSet;
+					text += L + "ani - "  + model.AnimationToPlay;
+					text += L + "loop - " + model.Looping;
+					text += L + "sef - "  + model.SEFToPlayOnModel;
+				}
+				else if (sefevent as SEFParticleMesh != null)
+				{
+//					var mesh = (sefevent as SEFParticleMesh);
+//					text += L + " - " + mesh.ModelParts;
+				}
+				else if (sefevent as SEFParticleSystem != null)
+				{
+					// none.
+				}
+				else if (sefevent as SEFProjectedTexture != null)
+				{
+					var texture = (sefevent as SEFProjectedTexture);
+					text += L + "texture - " + texture.Texture;
+					// TODO: plus a lot of other vars
+				}
+				else if (sefevent as SEFSound != null)
+				{
+					var sound = (sefevent as SEFSound);
+					text += L + "loop - " + sound.SoundLoops;
+				}
+				else if (sefevent as SEFTrail != null)
+				{
+					var trail = (sefevent as SEFTrail);
+					text += L + "width - " + trail.TrailWidth;
+				}
+
+				var it = Menu.MenuItems[1].MenuItems.Add("event " + i, eventclick);
+				it.Checked = sefevent.Active;
+				it.Tag = i;
 			}
 			tb_EventData.Text = text;
+		}
+
+		void eventclick(object sender, EventArgs e)
+		{
+			var it = sender as MenuItem;
+			int id = (int)it.Tag;
+
+//			_panel.Scene.SpecialEffectsManager.EndUpdating();
+//			_panel.Scene.SpecialEffectsManager.BeginUpdating();
+//			if (it.Checked = !it.Checked)
+//			{
+//				Menu.MenuItems[1].MenuItems[(int)it.Tag];
+//			}
+//			else
+//			{
+//			}
 		}
 
 		/// <summary>
@@ -708,6 +824,8 @@ namespace SpecialEffectsViewer
 				objects.Add(@object);
 
 			NWN2NetDisplayManager.Instance.RemoveObjects(objects);
+
+			Menu.MenuItems[1].MenuItems.Clear();
 		}
 
 		/// <summary>
