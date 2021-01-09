@@ -8,6 +8,13 @@ namespace SpecialEffectsViewer
 	{
 		#region Designer
 		SplitContainer sc;
+		SplitContainer sc_left;
+		GroupBox gb_Scene;
+		RadioButton rb_PlacedEffect;
+		RadioButton rb_SingleCharacter;
+		RadioButton rb_DoubleCharacter;
+		CheckBox cb_Ground;
+		TextBox tb_EventData;
 		Panel pa_Search;
 		TextBox tb_Search;
 		Button bu_SearchD;
@@ -15,16 +22,9 @@ namespace SpecialEffectsViewer
 		CheckBox cb_Filter;
 		ListBox lb_Fx;
 		Panel pa_bot;
-		GroupBox gb_Scene;
-		RadioButton rb_PlacedEffect;
-		RadioButton rb_SingleCharacter;
-		RadioButton rb_DoubleCharacter;
 		Button bu_Clear;
 		Button bu_Copy;
 		Button bu_Close;
-		CheckBox cb_Ground;
-		SplitContainer sc_left;
-		TextBox tb_EventData;
 
 		/// <summary>
 		/// This method is required for Windows Forms designer support. Do not
@@ -105,7 +105,7 @@ namespace SpecialEffectsViewer
 			// 
 			this.sc_left.Panel2.BackColor = System.Drawing.Color.Black;
 			this.sc_left.Panel2MinSize = 0;
-			this.sc_left.Size = new System.Drawing.Size(400, 374);
+			this.sc_left.Size = new System.Drawing.Size(375, 374);
 			this.sc_left.SplitterDistance = 270;
 			this.sc_left.SplitterWidth = 1;
 			this.sc_left.TabIndex = 0;
@@ -122,7 +122,7 @@ namespace SpecialEffectsViewer
 			this.tb_EventData.ReadOnly = true;
 			this.tb_EventData.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 			this.tb_EventData.Size = new System.Drawing.Size(270, 298);
-			this.tb_EventData.TabIndex = 1;
+			this.tb_EventData.TabIndex = 2;
 			// 
 			// cb_Ground
 			// 
@@ -132,7 +132,7 @@ namespace SpecialEffectsViewer
 			this.cb_Ground.Name = "cb_Ground";
 			this.cb_Ground.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
 			this.cb_Ground.Size = new System.Drawing.Size(270, 16);
-			this.cb_Ground.TabIndex = 0;
+			this.cb_Ground.TabIndex = 1;
 			this.cb_Ground.Text = "Show ground";
 			this.cb_Ground.UseVisualStyleBackColor = false;
 			this.cb_Ground.Click += new System.EventHandler(this.cb_Ground_click);
@@ -148,7 +148,7 @@ namespace SpecialEffectsViewer
 			this.gb_Scene.Name = "gb_Scene";
 			this.gb_Scene.Padding = new System.Windows.Forms.Padding(0);
 			this.gb_Scene.Size = new System.Drawing.Size(270, 60);
-			this.gb_Scene.TabIndex = 2;
+			this.gb_Scene.TabIndex = 0;
 			this.gb_Scene.TabStop = false;
 			// 
 			// rb_PlacedEffect
@@ -195,7 +195,7 @@ namespace SpecialEffectsViewer
 			this.lb_Fx.Margin = new System.Windows.Forms.Padding(0);
 			this.lb_Fx.Name = "lb_Fx";
 			this.lb_Fx.ScrollAlwaysVisible = true;
-			this.lb_Fx.Size = new System.Drawing.Size(188, 328);
+			this.lb_Fx.Size = new System.Drawing.Size(213, 328);
 			this.lb_Fx.Sorted = true;
 			this.lb_Fx.TabIndex = 1;
 			this.lb_Fx.SelectedIndexChanged += new System.EventHandler(this.lb_Fx_selectedindexchanged);
@@ -211,7 +211,7 @@ namespace SpecialEffectsViewer
 			this.pa_Search.Location = new System.Drawing.Point(0, 0);
 			this.pa_Search.Margin = new System.Windows.Forms.Padding(0);
 			this.pa_Search.Name = "pa_Search";
-			this.pa_Search.Size = new System.Drawing.Size(188, 20);
+			this.pa_Search.Size = new System.Drawing.Size(213, 20);
 			this.pa_Search.TabIndex = 0;
 			// 
 			// tb_Search
@@ -220,7 +220,7 @@ namespace SpecialEffectsViewer
 			this.tb_Search.Location = new System.Drawing.Point(0, 0);
 			this.tb_Search.Margin = new System.Windows.Forms.Padding(0);
 			this.tb_Search.Name = "tb_Search";
-			this.tb_Search.Size = new System.Drawing.Size(97, 20);
+			this.tb_Search.Size = new System.Drawing.Size(122, 20);
 			this.tb_Search.TabIndex = 0;
 			this.tb_Search.WordWrap = false;
 			this.tb_Search.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Search_keydown);
@@ -228,7 +228,7 @@ namespace SpecialEffectsViewer
 			// bu_SearchD
 			// 
 			this.bu_SearchD.Dock = System.Windows.Forms.DockStyle.Right;
-			this.bu_SearchD.Location = new System.Drawing.Point(97, 0);
+			this.bu_SearchD.Location = new System.Drawing.Point(122, 0);
 			this.bu_SearchD.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_SearchD.Name = "bu_SearchD";
 			this.bu_SearchD.Size = new System.Drawing.Size(23, 20);
@@ -240,7 +240,7 @@ namespace SpecialEffectsViewer
 			// bu_SearchU
 			// 
 			this.bu_SearchU.Dock = System.Windows.Forms.DockStyle.Right;
-			this.bu_SearchU.Location = new System.Drawing.Point(120, 0);
+			this.bu_SearchU.Location = new System.Drawing.Point(145, 0);
 			this.bu_SearchU.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_SearchU.Name = "bu_SearchU";
 			this.bu_SearchU.Size = new System.Drawing.Size(23, 20);
@@ -253,7 +253,7 @@ namespace SpecialEffectsViewer
 			// 
 			this.cb_Filter.Appearance = System.Windows.Forms.Appearance.Button;
 			this.cb_Filter.Dock = System.Windows.Forms.DockStyle.Right;
-			this.cb_Filter.Location = new System.Drawing.Point(143, 0);
+			this.cb_Filter.Location = new System.Drawing.Point(168, 0);
 			this.cb_Filter.Margin = new System.Windows.Forms.Padding(0);
 			this.cb_Filter.Name = "cb_Filter";
 			this.cb_Filter.Size = new System.Drawing.Size(45, 20);
@@ -273,17 +273,17 @@ namespace SpecialEffectsViewer
 			this.pa_bot.Location = new System.Drawing.Point(0, 348);
 			this.pa_bot.Margin = new System.Windows.Forms.Padding(0);
 			this.pa_bot.Name = "pa_bot";
-			this.pa_bot.Size = new System.Drawing.Size(188, 26);
+			this.pa_bot.Size = new System.Drawing.Size(213, 26);
 			this.pa_bot.TabIndex = 2;
 			// 
 			// bu_Clear
 			// 
 			this.bu_Clear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.bu_Clear.Location = new System.Drawing.Point(16, 1);
+			this.bu_Clear.Location = new System.Drawing.Point(41, 1);
 			this.bu_Clear.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_Clear.Name = "bu_Clear";
 			this.bu_Clear.Size = new System.Drawing.Size(57, 24);
-			this.bu_Clear.TabIndex = 1;
+			this.bu_Clear.TabIndex = 0;
 			this.bu_Clear.Text = "clear";
 			this.bu_Clear.UseVisualStyleBackColor = true;
 			this.bu_Clear.Click += new System.EventHandler(this.bu_Clear_click);
@@ -291,11 +291,11 @@ namespace SpecialEffectsViewer
 			// bu_Copy
 			// 
 			this.bu_Copy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.bu_Copy.Location = new System.Drawing.Point(73, 1);
+			this.bu_Copy.Location = new System.Drawing.Point(98, 1);
 			this.bu_Copy.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_Copy.Name = "bu_Copy";
 			this.bu_Copy.Size = new System.Drawing.Size(57, 24);
-			this.bu_Copy.TabIndex = 2;
+			this.bu_Copy.TabIndex = 1;
 			this.bu_Copy.Text = "copy";
 			this.bu_Copy.UseVisualStyleBackColor = true;
 			this.bu_Copy.Click += new System.EventHandler(this.bu_Copy_click);
@@ -303,11 +303,11 @@ namespace SpecialEffectsViewer
 			// bu_Close
 			// 
 			this.bu_Close.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.bu_Close.Location = new System.Drawing.Point(130, 1);
+			this.bu_Close.Location = new System.Drawing.Point(155, 1);
 			this.bu_Close.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_Close.Name = "bu_Close";
 			this.bu_Close.Size = new System.Drawing.Size(57, 24);
-			this.bu_Close.TabIndex = 3;
+			this.bu_Close.TabIndex = 2;
 			this.bu_Close.Text = "close";
 			this.bu_Close.UseVisualStyleBackColor = true;
 			this.bu_Close.Click += new System.EventHandler(this.bu_Close_click);
