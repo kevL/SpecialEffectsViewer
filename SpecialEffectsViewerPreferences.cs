@@ -88,7 +88,7 @@ namespace SpecialEffectsViewer
 
 			Maximized = false;
 
-			SplitterDistance = 400;
+			SplitterDistance = 375;
 
 			ShowLeftPanel = true;
 			StayOnTop     = true;
