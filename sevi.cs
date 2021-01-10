@@ -61,7 +61,7 @@ namespace SpecialEffectsViewer
 
 
 		#region Fields
-		IResourceEntry _effect;
+		IResourceEntry _effect; SEFGroup _sefgroup, _altgroup;
 
 		ElectronPanel _panel = new ElectronPanel(); // i hate u
 
@@ -134,7 +134,7 @@ namespace SpecialEffectsViewer
 			_itFxList_override = Menu.MenuItems[0].MenuItems.Add("list &override only", listclick_Override);
 
 // Events ->
-			MenuItem it = Menu.MenuItems[1].MenuItems.Add("Replay", eventsclick_Replay);
+			MenuItem it = Menu.MenuItems[1].MenuItems.Add("Play", eventsclick_Play);
 			it.Shortcut = Shortcut.F5;
 
 // View ->
@@ -499,6 +499,8 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		void ClearFxList()
 		{
+			bu_Clear_click(null, EventArgs.Empty);
+
 			lb_Fx.SelectedIndex = -1;
 			lb_Fx.Items.Clear();
 
@@ -512,10 +514,12 @@ namespace SpecialEffectsViewer
 
 
 		#region eventhandlers (events)
-		void eventsclick_Replay(object sender, EventArgs e)
+		void eventsclick_Play(object sender, EventArgs e)
 		{
 			_panel.NDWindow.Scene.SpecialEffectsManager.EndUpdating();
-			_panel.NDWindow.Scene.SpecialEffectsManager.BeginUpdating();
+
+			if (lb_Fx.SelectedIndex != -1)
+				_panel.NDWindow.Scene.SpecialEffectsManager.BeginUpdating();
 		}
 		#endregion eventhandlers (events)
 
@@ -571,8 +575,8 @@ namespace SpecialEffectsViewer
 
 		#region eventhandlers (controls)
 		/// <summary>
-		/// This is NOT "selectedindexchanged" - it's an effin click on the list
-		/// OR changed.
+		/// This is NOT "selectedindexchanged" - it fires if the current
+		/// selection is (re)clicked also.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
@@ -581,12 +585,16 @@ namespace SpecialEffectsViewer
 			if (lb_Fx.SelectedIndex != -1)
 			{
 				_effect = lb_Fx.SelectedItem as IResourceEntry;
-				InstantiateEffect();
+				_sefgroup = new SEFGroup();
+				_sefgroup.XmlUnserialize(_effect.GetStream(false));
+
+				ApplyEffect();
+
 				Text = TITLE + " - " + _effect.Repository.Name;
 			}
 			else
 			{
-				_effect = null;
+				_effect = null; _sefgroup = null; _altgroup = null;
 				Text = TITLE;
 			}
 		}
@@ -611,7 +619,7 @@ namespace SpecialEffectsViewer
 				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.doublecharacter;
 			}
 
-			InstantiateEffect();
+			ApplyEffect();
 		}
 
 		/// <summary>
@@ -631,27 +639,25 @@ namespace SpecialEffectsViewer
 			ConfigureElectronPanel();
 			OnLoad(EventArgs.Empty);
 
-			if (rb_DoubleCharacter.Checked)
+			if (!rb_DoubleCharacter.Checked)
 			{
-				Events_click(null, EventArgs.Empty);
+				_altgroup = null;
+				ApplyEffect();
 			}
 			else
-				InstantiateEffect();
+				Events_click(null, EventArgs.Empty);
 		}
 
 		/// <summary>
 		/// Clears the scene and the Events menu then instantiates objects and
 		/// applies the current effect.
 		/// </summary>
-		void InstantiateEffect()
+		void ApplyEffect()
 		{
 			bu_Clear_click(null, EventArgs.Empty);
 
-			if (_effect != null)
+			if (lb_Fx.SelectedIndex != -1)
 			{
-				var sefgroup = new SEFGroup();
-				sefgroup.XmlUnserialize(_effect.GetStream(false));
-
 				if (rb_PlacedEffect.Checked)
 				{
 					var blueprint = new NWN2PlacedEffectBlueprint();
@@ -677,10 +683,10 @@ namespace SpecialEffectsViewer
 				}
 				else //if (rb_DoubleCharacter.Checked)
 				{
-					InstantiateSefgroup(sefgroup);
+					LoadSefgroup(_sefgroup);
 				}
 
-				PrintSefData(sefgroup);
+				PrintSefData(_sefgroup);
 				_panel.NDWindow.Scene.SpecialEffectsManager.BeginUpdating();
 			}
 		}
@@ -695,40 +701,48 @@ namespace SpecialEffectsViewer
 		{
 			if (lb_Fx.SelectedIndex != -1)
 			{
-				// set the items' check
-				var it = sender as MenuItem;
-				if (it == Menu.MenuItems[1].MenuItems[2]) // clear all events
+				if (sender != null) // if NOT cb_Ground_click()
 				{
-					for (int i = ItemsReserved; i != Menu.MenuItems[1].MenuItems.Count; ++i)
-						Menu.MenuItems[1].MenuItems[i].Checked = false;
+					// set the items' check
+					var it = sender as MenuItem;
+					if (it == Menu.MenuItems[1].MenuItems[2]) // clear all events
+					{
+						for (int i = ItemsReserved; i != Menu.MenuItems[1].MenuItems.Count; ++i)
+							Menu.MenuItems[1].MenuItems[i].Checked = false;
+					}
+					else if (it == Menu.MenuItems[1].MenuItems[3]) // play all events
+					{
+						for (int i = ItemsReserved; i != Menu.MenuItems[1].MenuItems.Count; ++i)
+							Menu.MenuItems[1].MenuItems[i].Checked = true;
+					}
+					else
+						it.Checked = !it.Checked;
+
+					// clear the netdisplay
+					_bypassEventsClear = true;
+					bu_Clear_click(null, EventArgs.Empty);
+					_bypassEventsClear = false;
+
+					_altgroup = null;
 				}
-				else if (it == Menu.MenuItems[1].MenuItems[3]) // play all events
+
+				if (_altgroup == null)
 				{
-					for (int i = ItemsReserved; i != Menu.MenuItems[1].MenuItems.Count; ++i)
-						Menu.MenuItems[1].MenuItems[i].Checked = true;
-				}
-				else
-					it.Checked = !it.Checked;
+					// alter the sefgroup
+					var effect_alt = CommonUtils.SerializationClone(_effect) as IResourceEntry;
 
-				// clear the netdisplay
-				_bypassEventsClear = true;
-				bu_Clear_click(null, EventArgs.Empty);
-				_bypassEventsClear = false;
+					_altgroup = new SEFGroup();
+					_altgroup.XmlUnserialize(effect_alt.GetStream(false));
 
-				// alter the sefgroup
-				var effect_alt = CommonUtils.SerializationClone(lb_Fx.SelectedItem) as IResourceEntry;
-
-				var altgroup = new SEFGroup();
-				altgroup.XmlUnserialize(effect_alt.GetStream(false));
-
-				for (int i = altgroup.Events.Count - 1; i != -1; --i)
-				{
-					if (!Menu.MenuItems[1].MenuItems[i + ItemsReserved].Checked)
-						altgroup.Events.RemoveAt(i);
+					for (int i = _altgroup.Events.Count - 1; i != -1; --i)
+					{
+						if (!Menu.MenuItems[1].MenuItems[i + ItemsReserved].Checked)
+							_altgroup.Events.RemoveAt(i);
+					}
 				}
 
 				// play it
-				InstantiateSefgroup(altgroup);
+				LoadSefgroup(_altgroup);
 				_panel.NDWindow.Scene.SpecialEffectsManager.BeginUpdating();
 			}
 		}
@@ -739,7 +753,7 @@ namespace SpecialEffectsViewer
 		/// single-character to apply 'AppearanceSEF'.
 		/// </summary>
 		/// <param name="sefgroup"></param>
-		void InstantiateSefgroup(SEFGroup sefgroup)
+		void LoadSefgroup(SEFGroup sefgroup)
 		{
 			var iIdiot1 = new NWN2CreatureInstance();
 			var iIdiot2 = new NWN2CreatureInstance();
@@ -773,21 +787,24 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void bu_Clear_click(object sender, EventArgs e)
 		{
-			_panel.NDWindow.Scene.SpecialEffectsManager.EndUpdating();
-			_panel.NDWindow.Scene.SpecialEffectsManager.Groups.Clear();
-
-			var objects = new NetDisplayObjectCollection();
-			foreach (NetDisplayObject @object in _panel.Scene.Objects)
-				objects.Add(@object);
-
-			NWN2NetDisplayManager.Instance.RemoveObjects(objects);
-
-			if (!_bypassEventsClear)
+			if (_panel.NDWindow != null) // netdisplaywindow is null on launch
 			{
-				Menu.MenuItems[1].MenuItems.Clear();
+				_panel.NDWindow.Scene.SpecialEffectsManager.EndUpdating();
+				_panel.NDWindow.Scene.SpecialEffectsManager.Groups.Clear();
 
-				MenuItem it = Menu.MenuItems[1].MenuItems.Add("Replay", eventsclick_Replay);
-				it.Shortcut = Shortcut.F5;
+				var objects = new NetDisplayObjectCollection();
+				foreach (NetDisplayObject @object in _panel.Scene.Objects)
+					objects.Add(@object);
+
+				NWN2NetDisplayManager.Instance.RemoveObjects(objects);
+
+				if (!_bypassEventsClear)
+				{
+					Menu.MenuItems[1].MenuItems.Clear();
+
+					MenuItem it = Menu.MenuItems[1].MenuItems.Add("Play", eventsclick_Play);
+					it.Shortcut = Shortcut.F5;
+				}
 			}
 		}
 
