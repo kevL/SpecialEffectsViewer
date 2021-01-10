@@ -1046,7 +1046,7 @@ namespace SpecialEffectsViewer
 
 				sefevent = sefgroup.Events[i];
 
-				text += "[" + sefevent.Name + "]" + L;
+				text += GetEventLabel(sefevent) + L;
 				text += BwResourceTypes.GetResourceTypeString(sefevent.ResourceType) + L;
 				text += sefevent.EffectType + L;
 				text += sefevent.Position.X + "," + sefevent.Position.Y + "," + sefevent.Position.Z + L;
@@ -1142,6 +1142,38 @@ namespace SpecialEffectsViewer
 				}
 			}
 			tb_EventData.Text = text;
+		}
+
+		/// <summary>
+		/// Concocts a label for a specified event.
+		/// </summary>
+		/// <param name="sefevent"></param>
+		/// <returns></returns>
+		string GetEventLabel(ISEFEvent sefevent)
+		{
+			string label;
+			if (sefevent.Name != null)
+				label = sefevent.Name;
+			else
+				label = String.Empty;
+
+			string file;
+			if (   sefevent.DefinitionFile              != null
+				&& sefevent.DefinitionFile.ResRef       != null
+				&& sefevent.DefinitionFile.ResRef.Value != null)
+			{
+				file = sefevent.DefinitionFile.ResRef.Value;
+			}
+			else
+				file = String.Empty;
+
+			string separator;
+			if (label != String.Empty && file != String.Empty)
+				separator = " - ";
+			else
+				separator = String.Empty;
+
+			return "[" + label + separator + file + "]";
 		}
 
 		/// <summary>
