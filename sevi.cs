@@ -134,7 +134,7 @@ namespace SpecialEffectsViewer
 			_itFxList_override = Menu.MenuItems[0].MenuItems.Add("list &override only", listclick_Override);
 
 // Events ->
-			MenuItem it = Menu.MenuItems[1].MenuItems.Add("Play", eventsclick_Play);
+			MenuItem it = Menu.MenuItems[1].MenuItems.Add("&Play", eventsclick_Play);
 			it.Shortcut = Shortcut.F5;
 
 // View ->
@@ -519,7 +519,23 @@ namespace SpecialEffectsViewer
 			_panel.NDWindow.Scene.SpecialEffectsManager.EndUpdating();
 
 			if (lb_Fx.SelectedIndex != -1)
-				_panel.NDWindow.Scene.SpecialEffectsManager.BeginUpdating();
+			{
+				if (rb_DoubleCharacter.Checked)
+				{
+					// clear the netdisplay
+					// - recreate the scene in case a solo-event was played previously.
+					// - the toolset code is not as cooperative as I'd like ...
+					_bypassEventsClear = true;
+					bu_Clear_click(null, EventArgs.Empty);
+					_bypassEventsClear = false;
+
+					_altgroup = null;
+
+					Events_click(null, EventArgs.Empty);
+				}
+				else
+					_panel.NDWindow.Scene.SpecialEffectsManager.BeginUpdating();
+			}
 		}
 		#endregion eventhandlers (events)
 
@@ -701,10 +717,14 @@ namespace SpecialEffectsViewer
 		{
 			if (lb_Fx.SelectedIndex != -1)
 			{
-				if (sender != null) // if NOT cb_Ground_click()
+				var it = sender as MenuItem;
+
+				bool isSolo = false;
+
+				if (sender != null) // if NOT cb_Ground_click() ie. is a real Events click ->
 				{
+					
 					// set the items' check
-					var it = sender as MenuItem;
 					if (it == Menu.MenuItems[1].MenuItems[2]) // clear all events
 					{
 						for (int i = ItemsReserved; i != Menu.MenuItems[1].MenuItems.Count; ++i)
@@ -715,10 +735,11 @@ namespace SpecialEffectsViewer
 						for (int i = ItemsReserved; i != Menu.MenuItems[1].MenuItems.Count; ++i)
 							Menu.MenuItems[1].MenuItems[i].Checked = true;
 					}
-					else
+					else if (!(isSolo = (ModifierKeys == Keys.Shift)))
 						it.Checked = !it.Checked;
 
 					// clear the netdisplay
+					// - don't bother with this for a Ground-toggle since the ElectronPanel will be recreated for that.
 					_bypassEventsClear = true;
 					bu_Clear_click(null, EventArgs.Empty);
 					_bypassEventsClear = false;
@@ -726,7 +747,7 @@ namespace SpecialEffectsViewer
 					_altgroup = null;
 				}
 
-				if (_altgroup == null)
+				if (_altgroup == null) // create or recreate '_altgroup' ->
 				{
 					// alter the sefgroup
 					var effect_alt = CommonUtils.SerializationClone(_effect) as IResourceEntry;
@@ -734,10 +755,21 @@ namespace SpecialEffectsViewer
 					_altgroup = new SEFGroup();
 					_altgroup.XmlUnserialize(effect_alt.GetStream(false));
 
-					for (int i = _altgroup.Events.Count - 1; i != -1; --i)
+					if (!isSolo)
 					{
-						if (!Menu.MenuItems[1].MenuItems[i + ItemsReserved].Checked)
-							_altgroup.Events.RemoveAt(i);
+						for (int i = _altgroup.Events.Count - 1; i != -1; --i)
+						{
+							if (!Menu.MenuItems[1].MenuItems[i + ItemsReserved].Checked)
+								_altgroup.Events.RemoveAt(i);
+						}
+					}
+					else
+					{
+						for (int i = _altgroup.Events.Count - 1; i != -1; --i)
+						{
+							if (i != (int)it.Tag)
+								_altgroup.Events.RemoveAt(i);
+						}
 					}
 				}
 
@@ -802,7 +834,7 @@ namespace SpecialEffectsViewer
 				{
 					Menu.MenuItems[1].MenuItems.Clear();
 
-					MenuItem it = Menu.MenuItems[1].MenuItems.Add("Play", eventsclick_Play);
+					MenuItem it = Menu.MenuItems[1].MenuItems.Add("&Play", eventsclick_Play);
 					it.Shortcut = Shortcut.F5;
 				}
 			}
@@ -1032,8 +1064,8 @@ namespace SpecialEffectsViewer
 			if (rb_DoubleCharacter.Checked)
 			{
 				Menu.MenuItems[1].MenuItems.Add("-");
-				Menu.MenuItems[1].MenuItems.Add("Clear all events", Events_click);
-				Menu.MenuItems[1].MenuItems.Add("Play all events",  Events_click);
+				Menu.MenuItems[1].MenuItems.Add("&Clear all events", Events_click);
+				Menu.MenuItems[1].MenuItems.Add("&Enable all events",  Events_click);
 				Menu.MenuItems[1].MenuItems.Add("-");
 			}
 
@@ -1138,6 +1170,7 @@ namespace SpecialEffectsViewer
 				if (rb_DoubleCharacter.Checked)
 				{
 					var it = Menu.MenuItems[1].MenuItems.Add("event " + i, Events_click);
+					it.Tag = i;
 					it.Checked = true;
 				}
 			}
