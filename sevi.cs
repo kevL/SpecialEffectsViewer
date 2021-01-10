@@ -74,6 +74,8 @@ namespace SpecialEffectsViewer
 
 		string _filtr = String.Empty;
 		bool _bypassActivateSearchControl;
+
+		bool _bypassEventsClear;
 		#endregion Fields
 
 
@@ -125,6 +127,8 @@ namespace SpecialEffectsViewer
 			_itFxList_module   = Menu.MenuItems[0].MenuItems.Add("list &module only",   listclick_Module);
 			_itFxList_campaign = Menu.MenuItems[0].MenuItems.Add("list &campaign only", listclick_Campaign);
 			_itFxList_override = Menu.MenuItems[0].MenuItems.Add("list &override only", listclick_Override);
+
+			Menu.MenuItems[1].Enabled = false;
 
 			_itLeft = Menu.MenuItems[2].MenuItems.Add("show &left panel", viewclick_Left);
 			_itLeft.Shortcut = Shortcut.F8;
@@ -186,9 +190,18 @@ namespace SpecialEffectsViewer
 
 				switch ((Scene)SpecialEffectsViewerPreferences.that.Scene)
 				{
-					default:                    rb_PlacedEffect   .Checked = true; break;
-					case Scene.singlecharacter: rb_SingleCharacter.Checked = true; break;
-					case Scene.doublecharacter: rb_DoubleCharacter.Checked = true; break;
+					default:
+						rb_PlacedEffect.Checked = true;
+						break;
+
+					case Scene.singlecharacter:
+						rb_SingleCharacter.Checked = true;
+						break;
+
+					case Scene.doublecharacter:
+						rb_DoubleCharacter.Checked =
+						Menu.MenuItems[1].Enabled  = true;
+						break;
 				}
 			}
 
@@ -578,14 +591,17 @@ namespace SpecialEffectsViewer
 			if (rb_PlacedEffect.Checked)
 			{
 				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.placedeffect;
+				Menu.MenuItems[1].Enabled = false;
 			}
 			else if (rb_SingleCharacter.Checked)
 			{
 				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.singlecharacter;
+				Menu.MenuItems[1].Enabled = false;
 			}
 			else //if (rb_DoubleCharacter.Checked)
 			{
 				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.doublecharacter;
+				Menu.MenuItems[1].Enabled = true;
 			}
 
 			lb_Fx_selectedindexchanged(null, EventArgs.Empty);
@@ -636,27 +652,7 @@ namespace SpecialEffectsViewer
 				}
 				else //if (rb_DoubleCharacter.Checked)
 				{
-					var iIdiot1 = new NWN2CreatureInstance();
-					var iIdiot2 = new NWN2CreatureInstance();
-					iIdiot1.AppearanceType.Row = 5; // half-orc source
-					iIdiot2.AppearanceType.Row = 2; // gnome target
-
-					NetDisplayObject oIdiot1 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot1, _panel.NDWindow.Scene, 0);
-					NetDisplayObject oIdiot2 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot2, _panel.NDWindow.Scene, 0);
-
-					oIdiot1.Position = new Vector3(103f,100f,0f);
-					oIdiot2.Position = new Vector3( 97f,100f,0f);
-					oIdiot1.Orientation = RHQuaternion.RotationZ(-(float)Math.PI / 2f);
-					oIdiot2.Orientation = RHQuaternion.RotationZ( (float)Math.PI / 2f);
-
-					NWN2NetDisplayManager.Instance.MoveObjects(  new NetDisplayObjectCollection(oIdiot1), ChangeType.Absolute, false, oIdiot1.Position);
-					NWN2NetDisplayManager.Instance.MoveObjects(  new NetDisplayObjectCollection(oIdiot2), ChangeType.Absolute, false, oIdiot2.Position);
-					NWN2NetDisplayManager.Instance.RotateObjects(new NetDisplayObjectCollection(oIdiot1), ChangeType.Absolute,        oIdiot1.Orientation);
-					NWN2NetDisplayManager.Instance.RotateObjects(new NetDisplayObjectCollection(oIdiot2), ChangeType.Absolute,        oIdiot2.Orientation);
-
-					sefgroup.FirstObject  = oIdiot1;
-					sefgroup.SecondObject = oIdiot2;
-					_panel.NDWindow.Scene.SpecialEffectsManager.Groups.Add(sefgroup);
+					InstantiateSefgroup(sefgroup);
 				}
 
 				PrintSefData(sefgroup);
@@ -667,146 +663,81 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
-		/// Prints the currently loaded Sef-events to the left panel. Adds an
-		/// item to the Events menu for each event.
+		/// Instantiates a SEFGroup. Only double-characters play a sefgroup. A
+		/// single-character could play a sefgroup I suppose, but prefer to use
+		/// single-character to apply 'AppearanceSEF'.
 		/// </summary>
 		/// <param name="sefgroup"></param>
-		void PrintSefData(SEFGroup sefgroup)
+		void InstantiateSefgroup(SEFGroup sefgroup)
 		{
-			string text = String.Empty;
-			string L = Environment.NewLine;
+			var iIdiot1 = new NWN2CreatureInstance();
+			var iIdiot2 = new NWN2CreatureInstance();
+			iIdiot1.AppearanceType.Row = 5; // half-orc source
+			iIdiot2.AppearanceType.Row = 2; // gnome target
 
-			text += "[" + sefgroup.Name + "]" + L;
-			text += sefgroup.Position.X + "," + sefgroup.Position.Y + "," + sefgroup.Position.Z + L;
-			text += "1st - " + sefgroup.FirstObject + L;
-			text += "2nd - " + sefgroup.SecondObject + L;
-			text += "fog - " + sefgroup.FogMultiplier + L;
-			text += "dur - " + sefgroup.HasMaximumDuration + L;
-			text += "dur - " + sefgroup.MaximumDuration + L;
-			text += sefgroup.SpecialTargetPosition;
+			NetDisplayObject oIdiot1 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot1, _panel.NDWindow.Scene, 0);
+			NetDisplayObject oIdiot2 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot2, _panel.NDWindow.Scene, 0);
 
-			tb_SefData.Text = text;
-			sc_southwest.SplitterDistance = TextRenderer.MeasureText(text, Font).Height + 5;
+			oIdiot1.Position = new Vector3(103f,100f,0f);
+			oIdiot2.Position = new Vector3( 97f,100f,0f);
+			oIdiot1.Orientation = RHQuaternion.RotationZ(-(float)Math.PI / 2f);
+			oIdiot2.Orientation = RHQuaternion.RotationZ( (float)Math.PI / 2f);
 
-			text = String.Empty;
-			ISEFEvent sefevent;
-			for (int i = 0; i != sefgroup.Events.Count; ++i)
-			{
-				if (text != String.Empty) text += L + L;
-				text += i + L;
+			var col1 = new NetDisplayObjectCollection(oIdiot1);
+			var col2 = new NetDisplayObjectCollection(oIdiot2);
+			NWN2NetDisplayManager.Instance.MoveObjects(  col1, ChangeType.Absolute, false, oIdiot1.Position);
+			NWN2NetDisplayManager.Instance.MoveObjects(  col2, ChangeType.Absolute, false, oIdiot2.Position);
+			NWN2NetDisplayManager.Instance.RotateObjects(col1, ChangeType.Absolute,        oIdiot1.Orientation);
+			NWN2NetDisplayManager.Instance.RotateObjects(col2, ChangeType.Absolute,        oIdiot2.Orientation);
 
-				sefevent = sefgroup.Events[i];
-
-				text += "[" + sefevent.Name + "]" + L;
-				text += BwResourceTypes.GetResourceTypeString(sefevent.ResourceType) + L;
-				text += sefevent.EffectType + L;
-				text += sefevent.Position.X + "," + sefevent.Position.Y + "," + sefevent.Position.Z + L;
-				text += "1st - "   + sefevent.FirstAttachment + L;
-				text += "1st - "   + sefevent.FirstAttachmentObject + L;
-				text += "2nd - "   + sefevent.SecondAttachment + L;
-				text += "2nd - "   + sefevent.SecondAttachmentObject + L;
-				text += "dur - "   + sefevent.HasMaximumDuration + L;
-				text += "dur - "   + sefevent.MaximumDuration + L;
-				text += "delay - " + sefevent.Delay;
-
-				// NOTE: switch() possible here ->
-
-				if (sefevent as SEFBeam != null)
-				{
-					// none.
-				}
-				else if (sefevent as SEFBillboard != null)
-				{
-					// none.
-				}
-//				else if (sefevent as SEFEvent != null)
-//				{
-//					// Can a SEFEvent be assigned to a SEFEvent.
-//					// SEFEvents *are* SEFEvents ...
-//				}
-				else if (sefevent as SEFGameModelEffect != null)
-				{
-					var modeleffect = (sefevent as SEFGameModelEffect);
-					text += L + "type - "    + modeleffect.GameModelEffectType;
-					text += L + "texture - " + modeleffect.TextureName;
-					text += L + "alpha - "   + modeleffect.Alpha;
-					// TODO: plus a few other vars
-				}
-				else if (sefevent as SEFLight != null)
-				{
-					var light = (sefevent as SEFLight);
-					text += L + "shadow - "  + light.CastsShadow;
-					text += L + "shadow - "  + light.ShadowIntensity;
-					text += L + "flicker - " + light.Flicker;
-					text += L + "flicker - " + light.FlickerType;
-					text += L + "lerp - "    + light.Lerp;
-					text += L + "lerp - "    + light.LerpPeriod;
-					// TODO: plus a lot of other vars
-				}
-				else if (sefevent as SEFLightning != null)
-				{
-					// none.
-				}
-				else if (sefevent as SEFLineParticleSystem != null)
-				{
-					// none.
-				}
-				else if (sefevent as SEFModel != null)
-				{
-					var model = (sefevent as SEFModel);
-					text += L + "skel - " + model.SkeletonFile;
-//					text += L + "tint - " + model.TintSet;
-					text += L + "ani - "  + model.AnimationToPlay;
-					text += L + "loop - " + model.Looping;
-					text += L + "sef - "  + model.SEFToPlayOnModel;
-				}
-				else if (sefevent as SEFParticleMesh != null)
-				{
-//					var mesh = (sefevent as SEFParticleMesh);
-//					text += L + " - " + mesh.ModelParts;
-				}
-				else if (sefevent as SEFParticleSystem != null)
-				{
-					// none.
-				}
-				else if (sefevent as SEFProjectedTexture != null)
-				{
-					var texture = (sefevent as SEFProjectedTexture);
-					text += L + "texture - " + texture.Texture;
-					// TODO: plus a lot of other vars
-				}
-				else if (sefevent as SEFSound != null)
-				{
-					var sound = (sefevent as SEFSound);
-					text += L + "loop - " + sound.SoundLoops;
-				}
-				else if (sefevent as SEFTrail != null)
-				{
-					var trail = (sefevent as SEFTrail);
-					text += L + "width - " + trail.TrailWidth;
-				}
-
-				var it = Menu.MenuItems[1].MenuItems.Add("event " + i, eventclick);
-				it.Checked = sefevent.Active;
-				it.Tag = i;
-			}
-			tb_EventData.Text = text;
+			sefgroup.FirstObject  = oIdiot1;
+			sefgroup.SecondObject = oIdiot2;
+			_panel.NDWindow.Scene.SpecialEffectsManager.Groups.Add(sefgroup);
 		}
 
-		void eventclick(object sender, EventArgs e)
+		/// <summary>
+		/// Alters the current effect in accord with the Events menu and then
+		/// plays it.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void Events_click(object sender, EventArgs e)
 		{
+			// set the items' check
 			var it = sender as MenuItem;
-			int id = (int)it.Tag;
+			if (it == Menu.MenuItems[1].MenuItems[Menu.MenuItems[1].MenuItems.Count - 2]) // clear all events
+			{
+				for (int i = 0; i != Menu.MenuItems[1].MenuItems.Count - 3; ++i)
+					Menu.MenuItems[1].MenuItems[i].Checked = false;
+			}
+			else if (it == Menu.MenuItems[1].MenuItems[Menu.MenuItems[1].MenuItems.Count - 1]) // play all events
+			{
+				for (int i = 0; i != Menu.MenuItems[1].MenuItems.Count - 3; ++i)
+					Menu.MenuItems[1].MenuItems[i].Checked = true;
+			}
+			else
+				it.Checked = !it.Checked;
 
-//			_panel.Scene.SpecialEffectsManager.EndUpdating();
-//			_panel.Scene.SpecialEffectsManager.BeginUpdating();
-//			if (it.Checked = !it.Checked)
-//			{
-//				Menu.MenuItems[1].MenuItems[(int)it.Tag];
-//			}
-//			else
-//			{
-//			}
+			// clear the netdisplay
+			_bypassEventsClear = true;
+			bu_Clear_click(null, EventArgs.Empty);
+			_bypassEventsClear = false;
+
+			// alter the sefgroup
+			var effect_alt = CommonUtils.SerializationClone(lb_Fx.SelectedItem) as IResourceEntry;
+
+			var altgroup = new SEFGroup();
+			altgroup.XmlUnserialize(effect_alt.GetStream(false));
+
+			for (int i = altgroup.Events.Count - 1; i != -1; --i)
+			{
+				if (!Menu.MenuItems[1].MenuItems[i].Checked)
+					altgroup.Events.RemoveAt(i);
+			}
+
+			// play it
+			InstantiateSefgroup(altgroup);
+			_panel.NDWindow.Scene.SpecialEffectsManager.BeginUpdating();
 		}
 
 		/// <summary>
@@ -825,7 +756,8 @@ namespace SpecialEffectsViewer
 
 			NWN2NetDisplayManager.Instance.RemoveObjects(objects);
 
-			Menu.MenuItems[1].MenuItems.Clear();
+			if (!_bypassEventsClear)
+				Menu.MenuItems[1].MenuItems.Clear();
 		}
 
 		/// <summary>
@@ -1026,6 +958,142 @@ namespace SpecialEffectsViewer
 
 
 		#region Methods
+		/// <summary>
+		/// Prints the currently loaded Sef-events to the left panel. Adds an
+		/// item to the Events menu for each event.
+		/// </summary>
+		/// <param name="sefgroup"></param>
+		void PrintSefData(SEFGroup sefgroup)
+		{
+			string text = String.Empty;
+			string L = Environment.NewLine;
+
+			text += "[" + sefgroup.Name + "]" + L;
+			text += sefgroup.Position.X + "," + sefgroup.Position.Y + "," + sefgroup.Position.Z + L;
+			text += "1st - " + sefgroup.FirstObject + L;
+			text += "2nd - " + sefgroup.SecondObject + L;
+			text += "fog - " + sefgroup.FogMultiplier + L;
+			text += "dur - " + sefgroup.HasMaximumDuration + L;
+			text += "dur - " + sefgroup.MaximumDuration + L;
+			text += sefgroup.SpecialTargetPosition;
+
+			tb_SefData.Text = text;
+			sc_southwest.SplitterDistance = TextRenderer.MeasureText(text, Font).Height + 5;
+
+			text = String.Empty;
+			ISEFEvent sefevent;
+			for (int i = 0; i != sefgroup.Events.Count; ++i)
+			{
+				if (text != String.Empty) text += L + L;
+				text += i + L;
+
+				sefevent = sefgroup.Events[i];
+
+				text += "[" + sefevent.Name + "]" + L;
+				text += BwResourceTypes.GetResourceTypeString(sefevent.ResourceType) + L;
+				text += sefevent.EffectType + L;
+				text += sefevent.Position.X + "," + sefevent.Position.Y + "," + sefevent.Position.Z + L;
+				text += "1st - "   + sefevent.FirstAttachmentObject + L;
+				text += "1st - "   + sefevent.FirstAttachment + L;
+				text += "2nd - "   + sefevent.SecondAttachmentObject + L;
+				text += "2nd - "   + sefevent.SecondAttachment + L;
+				text += "dur - "   + sefevent.HasMaximumDuration + L;
+				text += "dur - "   + sefevent.MaximumDuration + L;
+				text += "delay - " + sefevent.Delay;
+
+				// NOTE: switch() possible here ->
+
+				if (sefevent as SEFBeam != null)
+				{
+					// none.
+				}
+				else if (sefevent as SEFBillboard != null)
+				{
+					// none.
+				}
+//				else if (sefevent as SEFEvent != null)
+//				{
+//					// Can a SEFEvent be assigned to a SEFEvent.
+//					// SEFEvents *are* SEFEvents ...
+//				}
+				else if (sefevent as SEFGameModelEffect != null)
+				{
+					var modeleffect = (sefevent as SEFGameModelEffect);
+					text += L + "type - "    + modeleffect.GameModelEffectType;
+					text += L + "texture - " + modeleffect.TextureName;
+					text += L + "alpha - "   + modeleffect.Alpha;
+					// TODO: plus a few other vars
+				}
+				else if (sefevent as SEFLight != null)
+				{
+					var light = (sefevent as SEFLight);
+					text += L + "shadow - "  + light.CastsShadow;
+					text += L + "shadow - "  + light.ShadowIntensity;
+					text += L + "flicker - " + light.Flicker;
+					text += L + "flicker - " + light.FlickerType;
+					text += L + "lerp - "    + light.Lerp;
+					text += L + "lerp - "    + light.LerpPeriod;
+					// TODO: plus a lot of other vars
+				}
+				else if (sefevent as SEFLightning != null)
+				{
+					// none.
+				}
+				else if (sefevent as SEFLineParticleSystem != null)
+				{
+					// none.
+				}
+				else if (sefevent as SEFModel != null)
+				{
+					var model = (sefevent as SEFModel);
+					text += L + "skel - " + model.SkeletonFile;
+//					text += L + "tint - " + model.TintSet;
+					text += L + "ani - "  + model.AnimationToPlay;
+					text += L + "loop - " + model.Looping;
+					text += L + "sef - "  + model.SEFToPlayOnModel;
+				}
+				else if (sefevent as SEFParticleMesh != null)
+				{
+//					var mesh = (sefevent as SEFParticleMesh);
+//					text += L + " - " + mesh.ModelParts;
+				}
+				else if (sefevent as SEFParticleSystem != null)
+				{
+					// none.
+				}
+				else if (sefevent as SEFProjectedTexture != null)
+				{
+					var texture = (sefevent as SEFProjectedTexture);
+					text += L + "texture - " + texture.Texture;
+					// TODO: plus a lot of other vars
+				}
+				else if (sefevent as SEFSound != null)
+				{
+					var sound = (sefevent as SEFSound);
+					text += L + "loop - " + sound.SoundLoops;
+				}
+				else if (sefevent as SEFTrail != null)
+				{
+					var trail = (sefevent as SEFTrail);
+					text += L + "width - " + trail.TrailWidth;
+				}
+
+				if (rb_DoubleCharacter.Checked)
+				{
+					var it = Menu.MenuItems[1].MenuItems.Add("event " + i, Events_click);
+					it.Checked = true;
+				}
+			}
+			tb_EventData.Text = text;
+
+			if (rb_DoubleCharacter.Checked)
+			{
+				Menu.MenuItems[1].MenuItems.Add("-");
+				Menu.MenuItems[1].MenuItems.Add("Clear all events", Events_click);
+				Menu.MenuItems[1].MenuItems.Add("Play all events",  Events_click);
+			}
+		}
+
 		/// <summary>
 		/// Stores the current camera-state in Preferences.
 		/// @note Ensure that the ElectronPanel (etc) is valid before call.
