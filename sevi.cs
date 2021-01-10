@@ -55,10 +55,14 @@ namespace SpecialEffectsViewer
 		const int STALE_Campaign = 0x2;
 
 		static int WidthLeftPanel;
+
+		const int EventsItemsReserved = 5;
 		#endregion Fields (static)
 
 
 		#region Fields
+		IResourceEntry _effect;
+
 		ElectronPanel _panel = new ElectronPanel(); // i hate u
 
 		MenuItem _itFxList_all;
@@ -122,14 +126,18 @@ namespace SpecialEffectsViewer
 			Menu.MenuItems.Add("&View");	// 2
 			Menu.MenuItems.Add("&Help");	// 3
 
+// List ->
 			_itFxList_all      = Menu.MenuItems[0].MenuItems.Add("list &all fx",        listclick_All);
 			_itFxList_stock    = Menu.MenuItems[0].MenuItems.Add("list &stock only",    listclick_Stock);
 			_itFxList_module   = Menu.MenuItems[0].MenuItems.Add("list &module only",   listclick_Module);
 			_itFxList_campaign = Menu.MenuItems[0].MenuItems.Add("list &campaign only", listclick_Campaign);
 			_itFxList_override = Menu.MenuItems[0].MenuItems.Add("list &override only", listclick_Override);
 
-			Menu.MenuItems[1].Enabled = false;
+// Events ->
+			MenuItem it = Menu.MenuItems[1].MenuItems.Add("Replay", eventsclick_Replay);
+			it.Shortcut = Shortcut.F5;
 
+// View ->
 			_itLeft = Menu.MenuItems[2].MenuItems.Add("show &left panel", viewclick_Left);
 			_itLeft.Shortcut = Shortcut.F8;
 			_itLeft.Checked = true;
@@ -140,6 +148,7 @@ namespace SpecialEffectsViewer
 			_itStayOnTop.Shortcut = Shortcut.CtrlT;
 			_itStayOnTop.Checked = true;
 
+// Help ->
 			Menu.MenuItems[3].MenuItems.Add("&about", helpclick_About);
 		}
 
@@ -190,18 +199,9 @@ namespace SpecialEffectsViewer
 
 				switch ((Scene)SpecialEffectsViewerPreferences.that.Scene)
 				{
-					default:
-						rb_PlacedEffect.Checked = true;
-						break;
-
-					case Scene.singlecharacter:
-						rb_SingleCharacter.Checked = true;
-						break;
-
-					case Scene.doublecharacter:
-						rb_DoubleCharacter.Checked =
-						Menu.MenuItems[1].Enabled  = true;
-						break;
+					default:                    rb_PlacedEffect   .Checked = true; break;
+					case Scene.singlecharacter: rb_SingleCharacter.Checked = true; break;
+					case Scene.doublecharacter: rb_DoubleCharacter.Checked = true; break;
 				}
 			}
 
@@ -244,7 +244,7 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
-		/// Saves preferences and unsubscribes from toolset-events.
+		/// Stores preferences and unsubscribes from toolset-events.
 		/// </summary>
 		/// <param name="e"></param>
 		protected override void OnFormClosing(FormClosingEventArgs e)
@@ -511,6 +511,15 @@ namespace SpecialEffectsViewer
 		#endregion eventhandlers (list)
 
 
+		#region eventhandlers (events)
+		void eventsclick_Replay(object sender, EventArgs e)
+		{
+			_panel.NDWindow.Scene.SpecialEffectsManager.EndUpdating();
+			_panel.NDWindow.Scene.SpecialEffectsManager.BeginUpdating();
+		}
+		#endregion eventhandlers (events)
+
+
 		#region eventhandlers (view)
 		/// <summary>
 		/// Toggles display of the leftsidepanel.
@@ -562,6 +571,50 @@ namespace SpecialEffectsViewer
 
 		#region eventhandlers (controls)
 		/// <summary>
+		/// This is NOT "selectedindexchanged" - it's an effin click on the list
+		/// OR changed.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void lb_Fx_selectedindexchanged(object sender, EventArgs e)
+		{
+			if (lb_Fx.SelectedIndex != -1)
+			{
+				_effect = lb_Fx.SelectedItem as IResourceEntry;
+				InstantiateSelectedEffect();
+				Text = TITLE + " - " + _effect.Repository.Name;
+			}
+			else
+			{
+				_effect = null;
+				Text = TITLE;
+			}
+		}
+
+		/// <summary>
+		/// Sets the Scene-preference and reloads the scene itself.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void rb_click(object sender, EventArgs e)
+		{
+			if (rb_PlacedEffect.Checked)
+			{
+				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.placedeffect;
+			}
+			else if (rb_SingleCharacter.Checked)
+			{
+				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.singlecharacter;
+			}
+			else //if (rb_DoubleCharacter.Checked)
+			{
+				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.doublecharacter;
+			}
+
+			InstantiateSelectedEffect();
+		}
+
+		/// <summary>
 		/// Reloads the ElectronPanel w/ or w/out ground as detered by the
 		/// checkstate.
 		/// </summary>
@@ -578,61 +631,33 @@ namespace SpecialEffectsViewer
 			ConfigureElectronPanel();
 			OnLoad(EventArgs.Empty);
 
-			lb_Fx_selectedindexchanged(null, EventArgs.Empty);
+			if (rb_DoubleCharacter.Checked)
+			{
+				Events_click(null, EventArgs.Empty);
+			}
+			else
+				InstantiateSelectedEffect();
 		}
 
 		/// <summary>
-		/// Sets the Scene-preference and reloads the scene itself.
+		/// Clears the scene and the Events menu then instantiates objects and
+		/// applies the current effect.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void rb_click(object sender, EventArgs e)
-		{
-			if (rb_PlacedEffect.Checked)
-			{
-				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.placedeffect;
-				Menu.MenuItems[1].Enabled = false;
-			}
-			else if (rb_SingleCharacter.Checked)
-			{
-				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.singlecharacter;
-				Menu.MenuItems[1].Enabled = false;
-			}
-			else //if (rb_DoubleCharacter.Checked)
-			{
-				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.doublecharacter;
-				Menu.MenuItems[1].Enabled = true;
-			}
-
-			lb_Fx_selectedindexchanged(null, EventArgs.Empty);
-		}
-
-		/// <summary>
-		/// This is NOT "selectedindexchanged" - it's an effin click on the list
-		/// OR changed.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void lb_Fx_selectedindexchanged(object sender, EventArgs e)
+		void InstantiateSelectedEffect()
 		{
 			bu_Clear_click(null, EventArgs.Empty);
 
-			if (lb_Fx.SelectedIndex != -1)
+			if (_effect != null)
 			{
-				var effect = lb_Fx.SelectedItem as IResourceEntry;
-
-				string path = effect.Repository.Name;
-				Text = TITLE + " - " + path;
-
 				var sefgroup = new SEFGroup();
-				sefgroup.XmlUnserialize(effect.GetStream(false));
+				sefgroup.XmlUnserialize(_effect.GetStream(false));
 
 				if (rb_PlacedEffect.Checked)
 				{
 					var blueprint = new NWN2PlacedEffectBlueprint();
 					var iinstance = NWN2GlobalBlueprintManager.CreateInstanceFromBlueprint(blueprint);
 					(iinstance as NWN2PlacedEffectTemplate).Active = true;
-					(iinstance as NWN2PlacedEffectTemplate).Effect = effect;
+					(iinstance as NWN2PlacedEffectTemplate).Effect = _effect;
 
 					NetDisplayObject oPlacedEffect = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iinstance, _panel.NDWindow.Scene, 0);
 
@@ -643,7 +668,7 @@ namespace SpecialEffectsViewer
 				{
 					var iIdiot1 = new NWN2CreatureInstance();
 					iIdiot1.AppearanceType.Row = 4; // half-elf source/target
-					iIdiot1.AppearanceSEF = effect;
+					iIdiot1.AppearanceSEF = _effect;
 
 					NetDisplayObject oIdiot1 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot1, _panel.NDWindow.Scene, 0);
 
@@ -658,8 +683,57 @@ namespace SpecialEffectsViewer
 				PrintSefData(sefgroup);
 				_panel.NDWindow.Scene.SpecialEffectsManager.BeginUpdating();
 			}
-			else
-				Text = TITLE;
+		}
+
+		/// <summary>
+		/// Alters the current effect in accord with the Events menu and then
+		/// plays it.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void Events_click(object sender, EventArgs e)
+		{
+			if (lb_Fx.SelectedIndex != -1)
+			{
+				if (sender != null) // iff NOT Replay click ->
+				{
+					// set the items' check
+					var it = sender as MenuItem;
+					if (it == Menu.MenuItems[1].MenuItems[2]) // clear all events
+					{
+						for (int i = EventsItemsReserved; i != Menu.MenuItems[1].MenuItems.Count; ++i)
+							Menu.MenuItems[1].MenuItems[i].Checked = false;
+					}
+					else if (it == Menu.MenuItems[1].MenuItems[3]) // play all events
+					{
+						for (int i = EventsItemsReserved; i != Menu.MenuItems[1].MenuItems.Count; ++i)
+							Menu.MenuItems[1].MenuItems[i].Checked = true;
+					}
+					else
+						it.Checked = !it.Checked;
+				}
+
+				// clear the netdisplay
+				_bypassEventsClear = true;
+				bu_Clear_click(null, EventArgs.Empty);
+				_bypassEventsClear = false;
+
+				// alter the sefgroup
+				var effect_alt = CommonUtils.SerializationClone(lb_Fx.SelectedItem) as IResourceEntry;
+
+				var altgroup = new SEFGroup();
+				altgroup.XmlUnserialize(effect_alt.GetStream(false));
+
+				for (int i = altgroup.Events.Count - 1; i != -1; --i)
+				{
+					if (!Menu.MenuItems[1].MenuItems[i + EventsItemsReserved].Checked)
+						altgroup.Events.RemoveAt(i);
+				}
+
+				// play it
+				InstantiateSefgroup(altgroup);
+				_panel.NDWindow.Scene.SpecialEffectsManager.BeginUpdating();
+			}
 		}
 
 		/// <summary>
@@ -696,51 +770,6 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
-		/// Alters the current effect in accord with the Events menu and then
-		/// plays it.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void Events_click(object sender, EventArgs e)
-		{
-			// set the items' check
-			var it = sender as MenuItem;
-			if (it == Menu.MenuItems[1].MenuItems[Menu.MenuItems[1].MenuItems.Count - 2]) // clear all events
-			{
-				for (int i = 0; i != Menu.MenuItems[1].MenuItems.Count - 3; ++i)
-					Menu.MenuItems[1].MenuItems[i].Checked = false;
-			}
-			else if (it == Menu.MenuItems[1].MenuItems[Menu.MenuItems[1].MenuItems.Count - 1]) // play all events
-			{
-				for (int i = 0; i != Menu.MenuItems[1].MenuItems.Count - 3; ++i)
-					Menu.MenuItems[1].MenuItems[i].Checked = true;
-			}
-			else
-				it.Checked = !it.Checked;
-
-			// clear the netdisplay
-			_bypassEventsClear = true;
-			bu_Clear_click(null, EventArgs.Empty);
-			_bypassEventsClear = false;
-
-			// alter the sefgroup
-			var effect_alt = CommonUtils.SerializationClone(lb_Fx.SelectedItem) as IResourceEntry;
-
-			var altgroup = new SEFGroup();
-			altgroup.XmlUnserialize(effect_alt.GetStream(false));
-
-			for (int i = altgroup.Events.Count - 1; i != -1; --i)
-			{
-				if (!Menu.MenuItems[1].MenuItems[i].Checked)
-					altgroup.Events.RemoveAt(i);
-			}
-
-			// play it
-			InstantiateSefgroup(altgroup);
-			_panel.NDWindow.Scene.SpecialEffectsManager.BeginUpdating();
-		}
-
-		/// <summary>
 		/// Clears the scene.
 		/// </summary>
 		/// <param name="sender"></param>
@@ -757,7 +786,12 @@ namespace SpecialEffectsViewer
 			NWN2NetDisplayManager.Instance.RemoveObjects(objects);
 
 			if (!_bypassEventsClear)
+			{
 				Menu.MenuItems[1].MenuItems.Clear();
+
+				MenuItem it = Menu.MenuItems[1].MenuItems.Add("Replay", eventsclick_Replay);
+				it.Shortcut = Shortcut.F5;
+			}
 		}
 
 		/// <summary>
@@ -980,6 +1014,15 @@ namespace SpecialEffectsViewer
 			tb_SefData.Text = text;
 			sc_southwest.SplitterDistance = TextRenderer.MeasureText(text, Font).Height + 5;
 
+
+			if (rb_DoubleCharacter.Checked)
+			{
+				Menu.MenuItems[1].MenuItems.Add("-");
+				Menu.MenuItems[1].MenuItems.Add("Clear all events", Events_click);
+				Menu.MenuItems[1].MenuItems.Add("Play all events",  Events_click);
+				Menu.MenuItems[1].MenuItems.Add("-");
+			}
+
 			text = String.Empty;
 			ISEFEvent sefevent;
 			for (int i = 0; i != sefgroup.Events.Count; ++i)
@@ -1085,13 +1128,6 @@ namespace SpecialEffectsViewer
 				}
 			}
 			tb_EventData.Text = text;
-
-			if (rb_DoubleCharacter.Checked)
-			{
-				Menu.MenuItems[1].MenuItems.Add("-");
-				Menu.MenuItems[1].MenuItems.Add("Clear all events", Events_click);
-				Menu.MenuItems[1].MenuItems.Add("Play all events",  Events_click);
-			}
 		}
 
 		/// <summary>
