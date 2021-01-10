@@ -56,7 +56,7 @@ namespace SpecialEffectsViewer
 
 		static int WidthLeftPanel;
 
-		const int EventsItemsReserved = 5;
+		const int ItemsReserved = 5;
 		#endregion Fields (static)
 
 
@@ -581,7 +581,7 @@ namespace SpecialEffectsViewer
 			if (lb_Fx.SelectedIndex != -1)
 			{
 				_effect = lb_Fx.SelectedItem as IResourceEntry;
-				InstantiateSelectedEffect();
+				InstantiateEffect();
 				Text = TITLE + " - " + _effect.Repository.Name;
 			}
 			else
@@ -611,7 +611,7 @@ namespace SpecialEffectsViewer
 				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.doublecharacter;
 			}
 
-			InstantiateSelectedEffect();
+			InstantiateEffect();
 		}
 
 		/// <summary>
@@ -636,14 +636,14 @@ namespace SpecialEffectsViewer
 				Events_click(null, EventArgs.Empty);
 			}
 			else
-				InstantiateSelectedEffect();
+				InstantiateEffect();
 		}
 
 		/// <summary>
 		/// Clears the scene and the Events menu then instantiates objects and
 		/// applies the current effect.
 		/// </summary>
-		void InstantiateSelectedEffect()
+		void InstantiateEffect()
 		{
 			bu_Clear_click(null, EventArgs.Empty);
 
@@ -695,23 +695,20 @@ namespace SpecialEffectsViewer
 		{
 			if (lb_Fx.SelectedIndex != -1)
 			{
-				if (sender != null) // iff NOT Replay click ->
+				// set the items' check
+				var it = sender as MenuItem;
+				if (it == Menu.MenuItems[1].MenuItems[2]) // clear all events
 				{
-					// set the items' check
-					var it = sender as MenuItem;
-					if (it == Menu.MenuItems[1].MenuItems[2]) // clear all events
-					{
-						for (int i = EventsItemsReserved; i != Menu.MenuItems[1].MenuItems.Count; ++i)
-							Menu.MenuItems[1].MenuItems[i].Checked = false;
-					}
-					else if (it == Menu.MenuItems[1].MenuItems[3]) // play all events
-					{
-						for (int i = EventsItemsReserved; i != Menu.MenuItems[1].MenuItems.Count; ++i)
-							Menu.MenuItems[1].MenuItems[i].Checked = true;
-					}
-					else
-						it.Checked = !it.Checked;
+					for (int i = ItemsReserved; i != Menu.MenuItems[1].MenuItems.Count; ++i)
+						Menu.MenuItems[1].MenuItems[i].Checked = false;
 				}
+				else if (it == Menu.MenuItems[1].MenuItems[3]) // play all events
+				{
+					for (int i = ItemsReserved; i != Menu.MenuItems[1].MenuItems.Count; ++i)
+						Menu.MenuItems[1].MenuItems[i].Checked = true;
+				}
+				else
+					it.Checked = !it.Checked;
 
 				// clear the netdisplay
 				_bypassEventsClear = true;
@@ -726,7 +723,7 @@ namespace SpecialEffectsViewer
 
 				for (int i = altgroup.Events.Count - 1; i != -1; --i)
 				{
-					if (!Menu.MenuItems[1].MenuItems[i + EventsItemsReserved].Checked)
+					if (!Menu.MenuItems[1].MenuItems[i + ItemsReserved].Checked)
 						altgroup.Events.RemoveAt(i);
 				}
 
