@@ -38,6 +38,9 @@ namespace SpecialEffectsViewer
 		{
 			this.sc = new System.Windows.Forms.SplitContainer();
 			this.sc_left = new System.Windows.Forms.SplitContainer();
+			this.sc_southwest = new System.Windows.Forms.SplitContainer();
+			this.tb_SefData = new System.Windows.Forms.TextBox();
+			this.tb_EventData = new System.Windows.Forms.TextBox();
 			this.cb_Ground = new System.Windows.Forms.CheckBox();
 			this.gb_Scene = new System.Windows.Forms.GroupBox();
 			this.rb_PlacedEffect = new System.Windows.Forms.RadioButton();
@@ -53,20 +56,17 @@ namespace SpecialEffectsViewer
 			this.bu_Clear = new System.Windows.Forms.Button();
 			this.bu_Copy = new System.Windows.Forms.Button();
 			this.bu_Close = new System.Windows.Forms.Button();
-			this.sc_southwest = new System.Windows.Forms.SplitContainer();
-			this.tb_SefData = new System.Windows.Forms.TextBox();
-			this.tb_EventData = new System.Windows.Forms.TextBox();
 			this.sc.Panel1.SuspendLayout();
 			this.sc.Panel2.SuspendLayout();
 			this.sc.SuspendLayout();
 			this.sc_left.Panel1.SuspendLayout();
 			this.sc_left.SuspendLayout();
-			this.gb_Scene.SuspendLayout();
-			this.pa_Search.SuspendLayout();
-			this.pa_bot.SuspendLayout();
 			this.sc_southwest.Panel1.SuspendLayout();
 			this.sc_southwest.Panel2.SuspendLayout();
 			this.sc_southwest.SuspendLayout();
+			this.gb_Scene.SuspendLayout();
+			this.pa_Search.SuspendLayout();
+			this.pa_bot.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// sc
@@ -117,6 +117,55 @@ namespace SpecialEffectsViewer
 			this.sc_left.SplitterWidth = 1;
 			this.sc_left.TabIndex = 0;
 			// 
+			// sc_southwest
+			// 
+			this.sc_southwest.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.sc_southwest.Location = new System.Drawing.Point(0, 76);
+			this.sc_southwest.Margin = new System.Windows.Forms.Padding(0);
+			this.sc_southwest.Name = "sc_southwest";
+			this.sc_southwest.Orientation = System.Windows.Forms.Orientation.Horizontal;
+			// 
+			// sc_southwest.Panel1
+			// 
+			this.sc_southwest.Panel1.Controls.Add(this.tb_SefData);
+			this.sc_southwest.Panel1MinSize = 0;
+			// 
+			// sc_southwest.Panel2
+			// 
+			this.sc_southwest.Panel2.Controls.Add(this.tb_EventData);
+			this.sc_southwest.Panel2MinSize = 0;
+			this.sc_southwest.Size = new System.Drawing.Size(280, 298);
+			this.sc_southwest.SplitterDistance = 120;
+			this.sc_southwest.SplitterWidth = 2;
+			this.sc_southwest.TabIndex = 2;
+			// 
+			// tb_SefData
+			// 
+			this.tb_SefData.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.tb_SefData.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tb_SefData.HideSelection = false;
+			this.tb_SefData.Location = new System.Drawing.Point(0, 0);
+			this.tb_SefData.Margin = new System.Windows.Forms.Padding(0);
+			this.tb_SefData.Multiline = true;
+			this.tb_SefData.Name = "tb_SefData";
+			this.tb_SefData.ReadOnly = true;
+			this.tb_SefData.Size = new System.Drawing.Size(280, 120);
+			this.tb_SefData.TabIndex = 0;
+			// 
+			// tb_EventData
+			// 
+			this.tb_EventData.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.tb_EventData.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tb_EventData.HideSelection = false;
+			this.tb_EventData.Location = new System.Drawing.Point(0, 0);
+			this.tb_EventData.Margin = new System.Windows.Forms.Padding(0);
+			this.tb_EventData.Multiline = true;
+			this.tb_EventData.Name = "tb_EventData";
+			this.tb_EventData.ReadOnly = true;
+			this.tb_EventData.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.tb_EventData.Size = new System.Drawing.Size(280, 176);
+			this.tb_EventData.TabIndex = 0;
+			// 
 			// cb_Ground
 			// 
 			this.cb_Ground.Dock = System.Windows.Forms.DockStyle.Top;
@@ -150,10 +199,10 @@ namespace SpecialEffectsViewer
 			this.rb_PlacedEffect.Location = new System.Drawing.Point(6, 10);
 			this.rb_PlacedEffect.Margin = new System.Windows.Forms.Padding(0);
 			this.rb_PlacedEffect.Name = "rb_PlacedEffect";
-			this.rb_PlacedEffect.Size = new System.Drawing.Size(124, 16);
+			this.rb_PlacedEffect.Size = new System.Drawing.Size(269, 16);
 			this.rb_PlacedEffect.TabIndex = 0;
 			this.rb_PlacedEffect.TabStop = true;
-			this.rb_PlacedEffect.Text = "Placed effect";
+			this.rb_PlacedEffect.Text = "Placed effect object";
 			this.rb_PlacedEffect.UseVisualStyleBackColor = true;
 			this.rb_PlacedEffect.Click += new System.EventHandler(this.rb_click);
 			// 
@@ -162,9 +211,9 @@ namespace SpecialEffectsViewer
 			this.rb_SingleCharacter.Location = new System.Drawing.Point(6, 25);
 			this.rb_SingleCharacter.Margin = new System.Windows.Forms.Padding(0);
 			this.rb_SingleCharacter.Name = "rb_SingleCharacter";
-			this.rb_SingleCharacter.Size = new System.Drawing.Size(124, 16);
+			this.rb_SingleCharacter.Size = new System.Drawing.Size(269, 16);
 			this.rb_SingleCharacter.TabIndex = 1;
-			this.rb_SingleCharacter.Text = "Single character";
+			this.rb_SingleCharacter.Text = "Single character [AppearanceSEF]";
 			this.rb_SingleCharacter.UseVisualStyleBackColor = true;
 			this.rb_SingleCharacter.Click += new System.EventHandler(this.rb_click);
 			// 
@@ -173,9 +222,9 @@ namespace SpecialEffectsViewer
 			this.rb_DoubleCharacter.Location = new System.Drawing.Point(6, 40);
 			this.rb_DoubleCharacter.Margin = new System.Windows.Forms.Padding(0);
 			this.rb_DoubleCharacter.Name = "rb_DoubleCharacter";
-			this.rb_DoubleCharacter.Size = new System.Drawing.Size(124, 16);
+			this.rb_DoubleCharacter.Size = new System.Drawing.Size(269, 16);
 			this.rb_DoubleCharacter.TabIndex = 2;
-			this.rb_DoubleCharacter.Text = "Double character";
+			this.rb_DoubleCharacter.Text = "Double character [source+target]";
 			this.rb_DoubleCharacter.UseVisualStyleBackColor = true;
 			this.rb_DoubleCharacter.Click += new System.EventHandler(this.rb_click);
 			// 
@@ -305,55 +354,6 @@ namespace SpecialEffectsViewer
 			this.bu_Close.UseVisualStyleBackColor = true;
 			this.bu_Close.Click += new System.EventHandler(this.bu_Close_click);
 			// 
-			// sc_southwest
-			// 
-			this.sc_southwest.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.sc_southwest.Location = new System.Drawing.Point(0, 76);
-			this.sc_southwest.Margin = new System.Windows.Forms.Padding(0);
-			this.sc_southwest.Name = "sc_southwest";
-			this.sc_southwest.Orientation = System.Windows.Forms.Orientation.Horizontal;
-			// 
-			// sc_southwest.Panel1
-			// 
-			this.sc_southwest.Panel1.Controls.Add(this.tb_SefData);
-			this.sc_southwest.Panel1MinSize = 0;
-			// 
-			// sc_southwest.Panel2
-			// 
-			this.sc_southwest.Panel2.Controls.Add(this.tb_EventData);
-			this.sc_southwest.Panel2MinSize = 0;
-			this.sc_southwest.Size = new System.Drawing.Size(280, 298);
-			this.sc_southwest.SplitterDistance = 120;
-			this.sc_southwest.SplitterWidth = 2;
-			this.sc_southwest.TabIndex = 2;
-			// 
-			// tb_SefData
-			// 
-			this.tb_SefData.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.tb_SefData.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tb_SefData.HideSelection = false;
-			this.tb_SefData.Location = new System.Drawing.Point(0, 0);
-			this.tb_SefData.Margin = new System.Windows.Forms.Padding(0);
-			this.tb_SefData.Multiline = true;
-			this.tb_SefData.Name = "tb_SefData";
-			this.tb_SefData.ReadOnly = true;
-			this.tb_SefData.Size = new System.Drawing.Size(280, 120);
-			this.tb_SefData.TabIndex = 0;
-			// 
-			// tb_EventData
-			// 
-			this.tb_EventData.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.tb_EventData.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tb_EventData.HideSelection = false;
-			this.tb_EventData.Location = new System.Drawing.Point(0, 0);
-			this.tb_EventData.Margin = new System.Windows.Forms.Padding(0);
-			this.tb_EventData.Multiline = true;
-			this.tb_EventData.Name = "tb_EventData";
-			this.tb_EventData.ReadOnly = true;
-			this.tb_EventData.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.tb_EventData.Size = new System.Drawing.Size(280, 176);
-			this.tb_EventData.TabIndex = 0;
-			// 
 			// sevi
 			// 
 			this.ClientSize = new System.Drawing.Size(592, 374);
@@ -368,15 +368,15 @@ namespace SpecialEffectsViewer
 			this.sc.ResumeLayout(false);
 			this.sc_left.Panel1.ResumeLayout(false);
 			this.sc_left.ResumeLayout(false);
-			this.gb_Scene.ResumeLayout(false);
-			this.pa_Search.ResumeLayout(false);
-			this.pa_Search.PerformLayout();
-			this.pa_bot.ResumeLayout(false);
 			this.sc_southwest.Panel1.ResumeLayout(false);
 			this.sc_southwest.Panel1.PerformLayout();
 			this.sc_southwest.Panel2.ResumeLayout(false);
 			this.sc_southwest.Panel2.PerformLayout();
 			this.sc_southwest.ResumeLayout(false);
+			this.gb_Scene.ResumeLayout(false);
+			this.pa_Search.ResumeLayout(false);
+			this.pa_Search.PerformLayout();
+			this.pa_bot.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
