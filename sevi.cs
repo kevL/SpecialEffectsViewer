@@ -34,9 +34,9 @@ namespace SpecialEffectsViewer
 		enum Scene
 		{
 			none,				// 0
-			placedeffect,		// 1
+			doublecharacter,	// 1
 			singlecharacter,	// 2
-			doublecharacter		// 3
+			placedeffect		// 3
 		}
 		#endregion enums
 
@@ -44,7 +44,7 @@ namespace SpecialEffectsViewer
 		#region Fields (static)
 		const string TITLE = "Special Effects Viewer";
 
-		const string SEF_EXT = "sef";
+		const string SEF = "sef";
 
 		const string MODULES   = "modules";
 		const string CAMPAIGNS = "campaigns";
@@ -54,9 +54,15 @@ namespace SpecialEffectsViewer
 		const int STALE_Module   = 0x1;
 		const int STALE_Campaign = 0x2;
 
-		static int WidthLeftPanel;
-
 		const int ItemsReserved = 5;
+
+		const int MI_LIST = 0;
+		const int MI_VENT = 1;
+		const int MI_VIEW = 2;
+		const int MI_HELP = 3;
+
+		const int MI_VENT_CLEAR = 2;
+		const int MI_VENT_ENABL = 3;
 		#endregion Fields (static)
 
 
@@ -71,8 +77,8 @@ namespace SpecialEffectsViewer
 		MenuItem _itFxList_campaign;
 		MenuItem _itFxList_override;
 
-		MenuItem _itLeft;
 		MenuItem _itStayOnTop;
+		MenuItem _itOptions;
 
 		int _isListStale;
 
@@ -93,8 +99,6 @@ namespace SpecialEffectsViewer
 
 			InitializeComponent();
 
-			WidthLeftPanel = sc_left.SplitterDistance;
-
 			// set unicode text on the up/down Search btns.
 			bu_SearchD.Text = "\u25bc"; // down triangle
 			bu_SearchU.Text = "\u25b2"; // up triangle
@@ -107,7 +111,7 @@ namespace SpecialEffectsViewer
 			NWN2ToolsetMainForm.ModuleChanged                  += OnModuleChanged;
 			NWN2CampaignManager.Instance.ActiveCampaignChanged += OnActiveCampaignChanged;
 
-			listclick_All(null, EventArgs.Empty);
+			listAll_click(null, EventArgs.Empty);
 
 //			logger.log(StringDecryptor.Decrypt("ᒼᒮᒯ"));
 
@@ -127,29 +131,28 @@ namespace SpecialEffectsViewer
 			Menu.MenuItems.Add("&Help");	// 3
 
 // List ->
-			_itFxList_all      = Menu.MenuItems[0].MenuItems.Add("list &all fx",        listclick_All);
-			_itFxList_stock    = Menu.MenuItems[0].MenuItems.Add("list &stock only",    listclick_Stock);
-			_itFxList_module   = Menu.MenuItems[0].MenuItems.Add("list &module only",   listclick_Module);
-			_itFxList_campaign = Menu.MenuItems[0].MenuItems.Add("list &campaign only", listclick_Campaign);
-			_itFxList_override = Menu.MenuItems[0].MenuItems.Add("list &override only", listclick_Override);
+			_itFxList_all      = Menu.MenuItems[MI_LIST].MenuItems.Add("list &all fx",        listAll_click);
+			_itFxList_stock    = Menu.MenuItems[MI_LIST].MenuItems.Add("list &stock only",    listStock_click);
+			_itFxList_module   = Menu.MenuItems[MI_LIST].MenuItems.Add("list &module only",   listModule_click);
+			_itFxList_campaign = Menu.MenuItems[MI_LIST].MenuItems.Add("list &campaign only", listCampaign_click);
+			_itFxList_override = Menu.MenuItems[MI_LIST].MenuItems.Add("list &override only", listOverride_click);
 
 // Events ->
-			MenuItem it = Menu.MenuItems[1].MenuItems.Add("&Play", eventsclick_Play);
+			MenuItem it = Menu.MenuItems[MI_VENT].MenuItems.Add("&Play", eventsclick_Play);
 			it.Shortcut = Shortcut.F5;
 
 // View ->
-			_itLeft = Menu.MenuItems[2].MenuItems.Add("show &left panel", viewclick_Left);
-			_itLeft.Shortcut = Shortcut.F8;
-			_itLeft.Checked = true;
-
-			Menu.MenuItems[2].MenuItems.Add("-");
-
-			_itStayOnTop = Menu.MenuItems[2].MenuItems.Add("stay on &top", viewclick_StayOnTop);
+			_itStayOnTop = Menu.MenuItems[MI_VIEW].MenuItems.Add("stay on &top", viewclick_StayOnTop);
 			_itStayOnTop.Shortcut = Shortcut.CtrlT;
 			_itStayOnTop.Checked = true;
 
+			Menu.MenuItems[MI_VIEW].MenuItems.Add("-");
+
+			_itOptions = Menu.MenuItems[MI_VIEW].MenuItems.Add("show &Options panel", viewclick_Options);
+			_itOptions.Shortcut = Shortcut.F8;
+
 // Help ->
-			Menu.MenuItems[3].MenuItems.Add("&about", helpclick_About);
+			Menu.MenuItems[MI_HELP].MenuItems.Add("&about", helpclick_About);
 		}
 
 		/// <summary>
@@ -161,7 +164,7 @@ namespace SpecialEffectsViewer
 			_panel.BorderStyle = BorderStyle.FixedSingle;
 			_panel.MousePanel.KeyDown += Search_keydown;
 
-			sc_left.Panel2.Controls.Add(_panel);
+			sc2_Options.Panel2.Controls.Add(_panel);
 		}
 
 		/// <summary>
@@ -182,10 +185,11 @@ namespace SpecialEffectsViewer
 									  SpecialEffectsViewerPreferences.that.h);
 			}
 
-			sc.SplitterDistance = SpecialEffectsViewerPreferences.that.SplitterDistance;
+			sc1_Effects.SplitterDistance = SpecialEffectsViewerPreferences.that.SplitterDistanceEffects;
+			sc3_Events .SplitterDistance = SpecialEffectsViewerPreferences.that.SplitterDistanceEvents;
 
-			if (!SpecialEffectsViewerPreferences.that.ShowLeftPanel)
-				_itLeft.PerformClick();
+			if (SpecialEffectsViewerPreferences.that.OptionsPanel)
+				_itOptions.PerformClick();
 
 			if (!SpecialEffectsViewerPreferences.that.StayOnTop)
 				_itStayOnTop.PerformClick();
@@ -193,15 +197,15 @@ namespace SpecialEffectsViewer
 			if (SpecialEffectsViewerPreferences.that.Maximized)
 				WindowState = FormWindowState.Maximized;
 
-			if ((Scene)SpecialEffectsViewerPreferences.that.Scene != Scene.placedeffect)
+			if (SpecialEffectsViewerPreferences.that.Scene != (int)Scene.doublecharacter)
 			{
-				rb_PlacedEffect.Checked = false;
+				rb_DoubleCharacter.Checked = false;
 
 				switch ((Scene)SpecialEffectsViewerPreferences.that.Scene)
 				{
-					default:                    rb_PlacedEffect   .Checked = true; break;
+					default:                    rb_DoubleCharacter.Checked = true; break;
 					case Scene.singlecharacter: rb_SingleCharacter.Checked = true; break;
-					case Scene.doublecharacter: rb_DoubleCharacter.Checked = true; break;
+					case Scene.placedeffect:    rb_PlacedEffect   .Checked = true; break;
 				}
 			}
 
@@ -266,7 +270,10 @@ namespace SpecialEffectsViewer
 			SpecialEffectsViewerPreferences.that.w = ClientSize.Width;
 			SpecialEffectsViewerPreferences.that.h = ClientSize.Height;
 
-			SpecialEffectsViewerPreferences.that.SplitterDistance = sc.SplitterDistance;
+			SpecialEffectsViewerPreferences.that.SplitterDistanceEffects = sc1_Effects.SplitterDistance;
+
+			if (!sc2_Options.Panel1Collapsed)
+				SpecialEffectsViewerPreferences.that.SplitterDistanceEvents = sc3_Events.SplitterDistance;
 
 			StoreCameraState();
 		}
@@ -283,14 +290,14 @@ namespace SpecialEffectsViewer
 				if (_itFxList_all.Checked)
 				{
 					_itFxList_all.Checked = false;
-					listclick_All(null, EventArgs.Empty);
+					listAll_click(null, EventArgs.Empty);
 				}
 				else if (_itFxList_module.Checked)
 				{
 					if ((_isListStale & STALE_Module) != 0)
 					{
 						_itFxList_module.Checked = false;
-						listclick_Module(null, EventArgs.Empty);
+						listModule_click(null, EventArgs.Empty);
 					}
 				}
 				else if (_itFxList_campaign.Checked)
@@ -298,7 +305,7 @@ namespace SpecialEffectsViewer
 					if ((_isListStale & STALE_Campaign) != 0)
 					{
 						_itFxList_campaign.Checked = false;
-						listclick_Campaign(null, EventArgs.Empty);
+						listCampaign_click(null, EventArgs.Empty);
 					}
 				}
 				_isListStale = STALE_non;
@@ -349,7 +356,7 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void listclick_All(object sender, EventArgs e)
+		void listAll_click(object sender, EventArgs e)
 		{
 			if (!_itFxList_all.Checked)
 			{
@@ -358,7 +365,7 @@ namespace SpecialEffectsViewer
 				ClearFxList();
 				_itFxList_all.Checked = true;
 
-				var entries = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF_EXT));
+				var entries = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
 				foreach (IResourceEntry entry in entries)
 				{
 					if (_filtr == String.Empty || entry.ResRef.Value.ToLower().Contains(_filtr))
@@ -376,7 +383,7 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void listclick_Stock(object sender, EventArgs e)
+		void listStock_click(object sender, EventArgs e)
 		{
 			if (!_itFxList_stock.Checked)
 			{
@@ -385,7 +392,7 @@ namespace SpecialEffectsViewer
 				ClearFxList();
 				_itFxList_stock.Checked = true;
 
-				var entries = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF_EXT));
+				var entries = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
 				foreach (IResourceEntry entry in entries)
 				{
 					string label = entry.Repository.Name.ToLower();
@@ -409,7 +416,7 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void listclick_Module(object sender, EventArgs e)
+		void listModule_click(object sender, EventArgs e)
 		{
 			if (!_itFxList_module.Checked)
 			{
@@ -418,7 +425,7 @@ namespace SpecialEffectsViewer
 				ClearFxList();
 				_itFxList_module.Checked = true;
 
-				var entries = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF_EXT));
+				var entries = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
 				foreach (IResourceEntry entry in entries)
 				{
 					if (entry.Repository.Name.ToLower().Contains(MODULES) // fake it
@@ -439,7 +446,7 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void listclick_Campaign(object sender, EventArgs e)
+		void listCampaign_click(object sender, EventArgs e)
 		{
 			if (!_itFxList_campaign.Checked)
 			{
@@ -448,7 +455,7 @@ namespace SpecialEffectsViewer
 				ClearFxList();
 				_itFxList_campaign.Checked = true;
 
-				var entries = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF_EXT));
+				var entries = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
 				foreach (IResourceEntry entry in entries)
 				{
 					if (entry.Repository.Name.ToLower().Contains(CAMPAIGNS) // fake it
@@ -469,7 +476,7 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void listclick_Override(object sender, EventArgs e)
+		void listOverride_click(object sender, EventArgs e)
 		{
 			if (!_itFxList_override.Checked)
 			{
@@ -478,7 +485,7 @@ namespace SpecialEffectsViewer
 				ClearFxList();
 				_itFxList_override.Checked = true;
 
-				var entries = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF_EXT));
+				var entries = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
 				foreach (IResourceEntry entry in entries)
 				{
 					if (entry.Repository.Name.ToLower().Contains(OVERRIDE) // fake it
@@ -542,19 +549,20 @@ namespace SpecialEffectsViewer
 
 		#region eventhandlers (view)
 		/// <summary>
-		/// Toggles display of the leftsidepanel.
+		/// Toggles display of the Options/Events sidepanel.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void viewclick_Left(object sender, EventArgs e)
+		void viewclick_Options(object sender, EventArgs e)
 		{
-			if (SpecialEffectsViewerPreferences.that.ShowLeftPanel =
-				(_itLeft.Checked = !_itLeft.Checked))
+			if (!sc2_Options.Panel1Collapsed)
+				SpecialEffectsViewerPreferences.that.SplitterDistanceEvents = sc3_Events.SplitterDistance; // workaround.
+
+			if (!(sc2_Options.Panel1Collapsed = !(SpecialEffectsViewerPreferences.that.OptionsPanel =
+												 (_itOptions.Checked = !_itOptions.Checked))))
 			{
-				sc_left.SplitterDistance = WidthLeftPanel;
+				sc3_Events.SplitterDistance = SpecialEffectsViewerPreferences.that.SplitterDistanceEvents; // workaround.
 			}
-			else
-				sc_left.SplitterDistance = 0;
 		}
 
 		/// <summary>
@@ -565,7 +573,7 @@ namespace SpecialEffectsViewer
 		void viewclick_StayOnTop(object sender, EventArgs e)
 		{
 			if (SpecialEffectsViewerPreferences.that.StayOnTop =
-				(_itStayOnTop.Checked = !_itStayOnTop.Checked))
+			   (_itStayOnTop.Checked = !_itStayOnTop.Checked))
 			{
 				Owner = NWN2ToolsetMainForm.App;
 			}
@@ -622,17 +630,17 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void rb_click(object sender, EventArgs e)
 		{
-			if (rb_PlacedEffect.Checked)
+			if (rb_DoubleCharacter.Checked)
 			{
-				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.placedeffect;
+				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.doublecharacter;
 			}
 			else if (rb_SingleCharacter.Checked)
 			{
 				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.singlecharacter;
 			}
-			else //if (rb_DoubleCharacter.Checked)
+			else //if (rb_PlacedEffect.Checked)
 			{
-				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.doublecharacter;
+				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.placedeffect;
 			}
 
 			ApplyEffect();
@@ -655,13 +663,15 @@ namespace SpecialEffectsViewer
 			ConfigureElectronPanel();
 			OnLoad(EventArgs.Empty);
 
-			if (!rb_DoubleCharacter.Checked)
+			if (rb_DoubleCharacter.Checked) // special case
+			{
+				Events_click(null, EventArgs.Empty);
+			}
+			else
 			{
 				_altgroup = null;
 				ApplyEffect();
 			}
-			else
-				Events_click(null, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -725,15 +735,15 @@ namespace SpecialEffectsViewer
 				{
 					
 					// set the items' check
-					if (it == Menu.MenuItems[1].MenuItems[2]) // clear all events
+					if (it == Menu.MenuItems[MI_VENT].MenuItems[MI_VENT_CLEAR]) // clear all events
 					{
-						for (int i = ItemsReserved; i != Menu.MenuItems[1].MenuItems.Count; ++i)
-							Menu.MenuItems[1].MenuItems[i].Checked = false;
+						for (int i = ItemsReserved; i != Menu.MenuItems[MI_VENT].MenuItems.Count; ++i)
+							Menu.MenuItems[MI_VENT].MenuItems[i].Checked = false;
 					}
-					else if (it == Menu.MenuItems[1].MenuItems[3]) // play all events
+					else if (it == Menu.MenuItems[MI_VENT].MenuItems[MI_VENT_ENABL]) // enable all events
 					{
-						for (int i = ItemsReserved; i != Menu.MenuItems[1].MenuItems.Count; ++i)
-							Menu.MenuItems[1].MenuItems[i].Checked = true;
+						for (int i = ItemsReserved; i != Menu.MenuItems[MI_VENT].MenuItems.Count; ++i)
+							Menu.MenuItems[MI_VENT].MenuItems[i].Checked = true;
 					}
 					else if (!(isSolo = (ModifierKeys == Keys.Shift)))
 						it.Checked = !it.Checked;
@@ -759,7 +769,7 @@ namespace SpecialEffectsViewer
 					{
 						for (int i = _altgroup.Events.Count - 1; i != -1; --i)
 						{
-							if (!Menu.MenuItems[1].MenuItems[i + ItemsReserved].Checked)
+							if (!Menu.MenuItems[MI_VENT].MenuItems[i + ItemsReserved].Checked)
 								_altgroup.Events.RemoveAt(i);
 						}
 					}
@@ -832,9 +842,9 @@ namespace SpecialEffectsViewer
 
 				if (!_bypassEventsClear)
 				{
-					Menu.MenuItems[1].MenuItems.Clear();
+					Menu.MenuItems[MI_VENT].MenuItems.Clear();
 
-					MenuItem it = Menu.MenuItems[1].MenuItems.Add("&Play", eventsclick_Play);
+					MenuItem it = Menu.MenuItems[MI_VENT].MenuItems.Add("&Play", eventsclick_Play);
 					it.Shortcut = Shortcut.F5;
 				}
 			}
@@ -974,27 +984,27 @@ namespace SpecialEffectsViewer
 			if (_itFxList_all.Checked)
 			{
 				_itFxList_all.Checked = false;
-				listclick_All(null, EventArgs.Empty);
+				listAll_click(null, EventArgs.Empty);
 			}
 			else if (_itFxList_stock.Checked)
 			{
 				_itFxList_stock.Checked = false;
-				listclick_Stock(null, EventArgs.Empty);
+				listStock_click(null, EventArgs.Empty);
 			}
 			else if (_itFxList_module.Checked)
 			{
 				_itFxList_module.Checked = false;
-				listclick_Module(null, EventArgs.Empty);
+				listModule_click(null, EventArgs.Empty);
 			}
 			else if (_itFxList_campaign.Checked)
 			{
 				_itFxList_campaign.Checked = false;
-				listclick_Campaign(null, EventArgs.Empty);
+				listCampaign_click(null, EventArgs.Empty);
 			}
 			else //if (_itFxList_override.Checked)
 			{
 				_itFxList_override.Checked = false;
-				listclick_Override(null, EventArgs.Empty);
+				listOverride_click(null, EventArgs.Empty);
 			}
 			_bypassActivateSearchControl = false;
 		}
@@ -1058,15 +1068,14 @@ namespace SpecialEffectsViewer
 			text += sefgroup.SpecialTargetPosition;
 
 			tb_SefData.Text = text;
-			sc_southwest.SplitterDistance = TextRenderer.MeasureText(text, Font).Height + 5;
 
 
 			if (rb_DoubleCharacter.Checked)
 			{
-				Menu.MenuItems[1].MenuItems.Add("-");
-				Menu.MenuItems[1].MenuItems.Add("&Clear all events", Events_click);
-				Menu.MenuItems[1].MenuItems.Add("&Enable all events",  Events_click);
-				Menu.MenuItems[1].MenuItems.Add("-");
+				Menu.MenuItems[MI_VENT].MenuItems.Add("-");
+				Menu.MenuItems[MI_VENT].MenuItems.Add("&Clear all events",  Events_click);
+				Menu.MenuItems[MI_VENT].MenuItems.Add("&Enable all events", Events_click);
+				Menu.MenuItems[MI_VENT].MenuItems.Add("-");
 			}
 
 			text = String.Empty;
@@ -1078,7 +1087,10 @@ namespace SpecialEffectsViewer
 
 				sefevent = sefgroup.Events[i];
 
-				text += GetEventLabel(sefevent) + L;
+				string file = GetFileLabel(sefevent);
+
+				text += "[" + sefevent.Name + "]" + L;
+				if (file != null) text += file + L;
 				text += BwResourceTypes.GetResourceTypeString(sefevent.ResourceType) + L;
 				text += sefevent.EffectType + L;
 				text += sefevent.Position.X + "," + sefevent.Position.Y + "," + sefevent.Position.Z + L;
@@ -1169,7 +1181,7 @@ namespace SpecialEffectsViewer
 
 				if (rb_DoubleCharacter.Checked)
 				{
-					var it = Menu.MenuItems[1].MenuItems.Add("event " + i, Events_click);
+					var it = Menu.MenuItems[MI_VENT].MenuItems.Add("event " + i, Events_click);
 					it.Tag = i;
 					it.Checked = true;
 				}
@@ -1178,6 +1190,22 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sefevent"></param>
+		/// <returns></returns>
+		string GetFileLabel(ISEFEvent sefevent)
+		{
+			if (   sefevent.DefinitionFile              != null
+				&& sefevent.DefinitionFile.ResRef       != null
+				&& sefevent.DefinitionFile.ResRef.Value != String.Empty)
+			{
+				return sefevent.DefinitionFile.ResRef.Value;
+			}
+			return null;
+		}
+
+/*		/// <summary>
 		/// Concocts a label for a specified event.
 		/// </summary>
 		/// <param name="sefevent"></param>
@@ -1207,7 +1235,7 @@ namespace SpecialEffectsViewer
 				separator = String.Empty;
 
 			return "[" + label + separator + file + "]";
-		}
+		} */
 
 		/// <summary>
 		/// Stores the current camera-state in Preferences.

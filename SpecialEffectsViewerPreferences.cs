@@ -40,13 +40,16 @@ namespace SpecialEffectsViewer
 		public bool Maximized
 		{ get; set; }
 
-		public int SplitterDistance
+		public int SplitterDistanceEffects
 		{ get; set; }
 
-		public bool ShowLeftPanel
+		public int SplitterDistanceEvents
 		{ get; set; }
 
 		public bool StayOnTop
+		{ get; set; }
+
+		public bool OptionsPanel
 		{ get; set; }
 
 		public int Scene
@@ -88,10 +91,11 @@ namespace SpecialEffectsViewer
 
 			Maximized = false;
 
-			SplitterDistance = 375;
+			SplitterDistanceEffects = 375;
+			SplitterDistanceEvents  = 109;
 
-			ShowLeftPanel = true;
-			StayOnTop     = true;
+			StayOnTop    = true;
+			OptionsPanel = false;
 
 			Scene = 1;
 
