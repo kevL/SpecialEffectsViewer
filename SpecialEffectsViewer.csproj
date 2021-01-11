@@ -84,6 +84,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <PostBuildEvent>copy /y C:\GIT\SpecialEffectsViewer\bin\Release\SpecialEffectsViewer.dll "C:\Neverwinter Nights 2\NWN2Toolset\Plugins\"</PostBuildEvent>
+    <PostBuildEvent>copy /y C:\GIT\SpecialEffectsViewer\bin\Release\SpecialEffectsViewer.dll "C:\Neverwinter Nights 2\NWN2Toolset\Plugins\"
+copy /y C:\GIT\SpecialEffectsViewer\SpecialEffectsViewer.txt "C:\Neverwinter Nights 2\NWN2Toolset\Plugins\"</PostBuildEvent>
   </PropertyGroup>
 </Project>

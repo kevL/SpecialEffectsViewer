@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 
 using Microsoft.DirectX;
@@ -132,6 +135,7 @@ namespace SpecialEffectsViewer
 
 // List ->
 			_itFxList_all      = Menu.MenuItems[MI_LIST].MenuItems.Add("list &all fx",        listAll_click);
+								 Menu.MenuItems[MI_LIST].MenuItems.Add("-");
 			_itFxList_stock    = Menu.MenuItems[MI_LIST].MenuItems.Add("list &stock only",    listStock_click);
 			_itFxList_module   = Menu.MenuItems[MI_LIST].MenuItems.Add("list &module only",   listModule_click);
 			_itFxList_campaign = Menu.MenuItems[MI_LIST].MenuItems.Add("list &campaign only", listCampaign_click);
@@ -158,7 +162,10 @@ namespace SpecialEffectsViewer
 			_itOptions.Shortcut = Shortcut.F8;
 
 // Help ->
-			Menu.MenuItems[MI_HELP].MenuItems.Add("&about", helpAbout_click);
+			it = Menu.MenuItems[MI_HELP].MenuItems.Add("&help",  helpHelp_click);
+			it.Shortcut = Shortcut.F1;
+			it = Menu.MenuItems[MI_HELP].MenuItems.Add("&about", helpAbout_click);
+			it.Shortcut = Shortcut.F2;
 		}
 
 		/// <summary>
@@ -590,6 +597,19 @@ namespace SpecialEffectsViewer
 
 
 		#region eventhandlers (help)
+		/// <summary>
+		/// Opens 'SpecialEffectsViewer.txt' via Windows file-association.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void helpHelp_click(object sender, EventArgs e)
+		{
+			string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			path = Path.Combine(path, "SpecialEffectsViewer.txt");
+			if (File.Exists(path))
+				Process.Start(path);
+		}
+
 		/// <summary>
 		/// Displays the About dialog.
 		/// </summary>
@@ -1079,8 +1099,8 @@ namespace SpecialEffectsViewer
 			if (rb_DoubleCharacter.Checked)
 			{
 				Menu.MenuItems[MI_VENT].MenuItems.Add("-");
-				Menu.MenuItems[MI_VENT].MenuItems.Add("&Clear all events",  Events_click);
-				Menu.MenuItems[MI_VENT].MenuItems.Add("&Enable all events", Events_click);
+				Menu.MenuItems[MI_VENT].MenuItems.Add("&Disable all events", Events_click);
+				Menu.MenuItems[MI_VENT].MenuItems.Add("&Enable all events",  Events_click);
 				Menu.MenuItems[MI_VENT].MenuItems.Add("-");
 			}
 

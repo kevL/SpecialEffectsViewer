@@ -1,0 +1,92 @@
+The location of the currently selected effect is shown on the titlebar.
+
+The special effect file (.sef) without extension is listed in the rightside
+panel.
+
+
+MENUS
+
+List
+----
+list all Fx        - lists all available effects
+list stock only    - lists stock effects only (installation data folder)
+list module only   - lists module-level effects (if a module is loaded)
+list campaign only - lists campaign-level effects (if a module with a campaign
+                     is loaded)
+list override only - lists effects in override only
+
+Note: Those aren't absolute determinations; Module, Campaign, and Override check
+merely for a substring in each effect's path: "modules", "campaigns", or
+"override" respectively. Stock checks merely for the absence of those strings.
+
+I might try to figure it out for real later ...
+
+Events
+------
+Play - plays or replays the currently loaded effect's enabled events.
+
+Note: Only the option DoubleCharacter lists and allows disabling individual
+effect-events. The following items appear on the menu only if DoubleCharacter
+has been selected:
+
+Disable all events - disables all events
+Enable all events  - re-enables all events
+
+If and only if the DoubleCharacter option is selected does a list of events
+appear in the menu. The events can be toggled on or off with a click. Keypress
+[Shift] when clicking to play only that event. I had to sacrifice a chicken to
+get this to work ...
+
+View
+----
+stay on top        - keeps the plugin on top of the toolset when enabled
+show Options panel - shows a panel on the left that has several options and
+                     lists the currently loaded effect's events
+
+Note: The details for each event are not always comprehensive. Some types of
+events have LOTS of parameters. Do what it takes to open the effect in the stock
+VFXEditor if you want to see (and edit) parameters exhaustively.
+
+Help
+----
+help  - opens this textfile via Windows file-type association
+about - opens a dialog with version and date of build
+
+
+OPTIONS
+
+When View|show Options panel is activated, several options are shown at the top
+of the panel. The three radio-buttons select how the scene will be rendered:
+
+Double character     - renders the scene with two NPCs. This creates source
+                       and target creatures, and uses their attachment-nodes if
+                       appropriate.
+Single character     - renders the scene with a single NPC. This applies the
+                       currently selected effect to a single creature using its
+                       'AppearanceSEF' property
+Placed effect object - renders the effect on a placed-effect object
+
+Note: Deciding which option above to use depends on the special effect file and
+the usage that you intend to put it to for NwN2 play.
+
+Ground - toggles the ground on and off. Some effect-events have textures that
+         only render on the ground
+
+The currently selected effect's events will be listed beneath those options.
+They are simply informational and can't be edited here; if you want to edit a
+special effect or any of its events, breakout the files (they are listed) and
+open them in the stock VFXEditor plugin.
+
+
+BUTTONS
+
+Clear - clears the scene
+Copy  - copies the label of the currently selected special effect file to the
+        Windows clipboard
+Close - closes the plugin
+
+filtr - toggles the effects-list filter on and off. Enter a string in search and
+        click the filter button to set a filter-string. A filtered list can
+        still be searched by typing a different string in search. To apply a
+        different filter, enter a different string and toggle the filter button
+        on and off. Note that the filter respects the currently selected List
