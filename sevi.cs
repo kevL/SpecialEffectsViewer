@@ -138,21 +138,21 @@ namespace SpecialEffectsViewer
 			_itFxList_override = Menu.MenuItems[MI_LIST].MenuItems.Add("list &override only", listOverride_click);
 
 // Events ->
-			MenuItem it = Menu.MenuItems[MI_VENT].MenuItems.Add("&Play", eventsclick_Play);
+			MenuItem it = Menu.MenuItems[MI_VENT].MenuItems.Add("&Play", eventsPlay_click);
 			it.Shortcut = Shortcut.F5;
 
 // View ->
-			_itStayOnTop = Menu.MenuItems[MI_VIEW].MenuItems.Add("stay on &top", viewclick_StayOnTop);
+			_itStayOnTop = Menu.MenuItems[MI_VIEW].MenuItems.Add("stay on &top", viewStayOnTop_click);
 			_itStayOnTop.Shortcut = Shortcut.CtrlT;
 			_itStayOnTop.Checked = true;
 
 			Menu.MenuItems[MI_VIEW].MenuItems.Add("-");
 
-			_itOptions = Menu.MenuItems[MI_VIEW].MenuItems.Add("show &Options panel", viewclick_Options);
+			_itOptions = Menu.MenuItems[MI_VIEW].MenuItems.Add("show &Options panel", viewOptions_click);
 			_itOptions.Shortcut = Shortcut.F8;
 
 // Help ->
-			Menu.MenuItems[MI_HELP].MenuItems.Add("&about", helpclick_About);
+			Menu.MenuItems[MI_HELP].MenuItems.Add("&about", helpAbout_click);
 		}
 
 		/// <summary>
@@ -521,7 +521,7 @@ namespace SpecialEffectsViewer
 
 
 		#region eventhandlers (events)
-		void eventsclick_Play(object sender, EventArgs e)
+		void eventsPlay_click(object sender, EventArgs e)
 		{
 			_panel.NDWindow.Scene.SpecialEffectsManager.EndUpdating();
 
@@ -553,7 +553,7 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void viewclick_Options(object sender, EventArgs e)
+		void viewOptions_click(object sender, EventArgs e)
 		{
 			if (!sc2_Options.Panel1Collapsed)
 				SpecialEffectsViewerPreferences.that.SplitterDistanceEvents = sc3_Events.SplitterDistance; // workaround.
@@ -570,7 +570,7 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void viewclick_StayOnTop(object sender, EventArgs e)
+		void viewStayOnTop_click(object sender, EventArgs e)
 		{
 			if (SpecialEffectsViewerPreferences.that.StayOnTop =
 			   (_itStayOnTop.Checked = !_itStayOnTop.Checked))
@@ -589,7 +589,7 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void helpclick_About(object sender, EventArgs e)
+		void helpAbout_click(object sender, EventArgs e)
 		{
 			using (var f = new AboutF())
 				f.ShowDialog(this);
@@ -844,7 +844,7 @@ namespace SpecialEffectsViewer
 				{
 					Menu.MenuItems[MI_VENT].MenuItems.Clear();
 
-					MenuItem it = Menu.MenuItems[MI_VENT].MenuItems.Add("&Play", eventsclick_Play);
+					MenuItem it = Menu.MenuItems[MI_VENT].MenuItems.Add("&Play", eventsPlay_click);
 					it.Shortcut = Shortcut.F5;
 				}
 			}
