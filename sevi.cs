@@ -131,11 +131,16 @@ namespace SpecialEffectsViewer
 			Menu.MenuItems.Add("&Help");	// 3
 
 // List ->
-			_itFxList_all      = Menu.MenuItems[MI_LIST].MenuItems.Add("list &all fx",        listAll_click);
-			_itFxList_stock    = Menu.MenuItems[MI_LIST].MenuItems.Add("list &stock only",    listStock_click);
-			_itFxList_module   = Menu.MenuItems[MI_LIST].MenuItems.Add("list &module only",   listModule_click);
-			_itFxList_campaign = Menu.MenuItems[MI_LIST].MenuItems.Add("list &campaign only", listCampaign_click);
-			_itFxList_override = Menu.MenuItems[MI_LIST].MenuItems.Add("list &override only", listOverride_click);
+			_itFxList_all               = Menu.MenuItems[MI_LIST].MenuItems.Add("list &all fx",        listAll_click);
+			_itFxList_all     .Shortcut = Shortcut.Ctrl1;
+			_itFxList_stock             = Menu.MenuItems[MI_LIST].MenuItems.Add("list &stock only",    listStock_click);
+			_itFxList_stock   .Shortcut = Shortcut.Ctrl2;
+			_itFxList_module            = Menu.MenuItems[MI_LIST].MenuItems.Add("list &module only",   listModule_click);
+			_itFxList_module  .Shortcut = Shortcut.Ctrl3;
+			_itFxList_campaign          = Menu.MenuItems[MI_LIST].MenuItems.Add("list &campaign only", listCampaign_click);
+			_itFxList_campaign.Shortcut = Shortcut.Ctrl4;
+			_itFxList_override          = Menu.MenuItems[MI_LIST].MenuItems.Add("list &override only", listOverride_click);
+			_itFxList_override.Shortcut = Shortcut.Ctrl5;
 
 // Events ->
 			MenuItem it = Menu.MenuItems[MI_VENT].MenuItems.Add("&Play", eventsPlay_click);
