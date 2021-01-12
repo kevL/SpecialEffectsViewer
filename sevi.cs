@@ -1204,17 +1204,19 @@ namespace SpecialEffectsViewer
 			for (int i = 0; i != sefgroup.Events.Count; ++i)
 			{
 				if (text != String.Empty) text += L + L;
-				text += i + L;
 
 				sefevent = sefgroup.Events[i];
 
-				string file = GetFileLabel(sefevent);
+				text += i + " [" + sefevent.Name + "]" + L;
 
-				text += "[" + sefevent.Name + "]" + L;
+				string file = GetFileLabel(sefevent);
 				if (file != null) text += file + L;
+
 				text += BwResourceTypes.GetResourceTypeString(sefevent.ResourceType) + L;
+
 				text += sefevent.EffectType + L;
 				text += sefevent.Position.X + "," + sefevent.Position.Y + "," + sefevent.Position.Z + L;
+
 				text += "1st - "   + sefevent.FirstAttachmentObject + L;
 				text += "1st - "   + sefevent.FirstAttachment + L;
 				text += "2nd - "   + sefevent.SecondAttachmentObject + L;
