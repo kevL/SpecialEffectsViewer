@@ -189,7 +189,9 @@ namespace SpecialEffectsViewer
 		{
 			_panel.Dock = DockStyle.Fill;
 			_panel.BorderStyle = BorderStyle.FixedSingle;
-			_panel.MousePanel.KeyDown += lb_Effects_keydown;
+			_panel.MousePanel.KeyDown   += lb_Effects_keydown;
+			_panel.MousePanel.MouseDown += panel_mousedown;
+			_panel.MousePanel.MouseUp   += panel_mouseup;
 
 			sc2_Options.Panel2.Controls.Add(_panel);
 		}
@@ -1110,6 +1112,36 @@ namespace SpecialEffectsViewer
 				tb.SelectionStart = 0;
 				tb.SelectionLength = tb.Text.Length;
 			}
+		}
+
+		/// <summary>
+		/// Changes the mouse-cursor appropriately on mousedown event in the
+		/// ElectronPanel.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void panel_mousedown(object sender, EventArgs e)
+		{
+			if (lb_Effects.SelectedIndex != -1)
+			{
+				if ((ModifierKeys & Keys.Control) != 0)
+				{
+					Cursor.Current = Cursors.Cross;
+				}
+				else
+					Cursor.Current = Cursors.SizeAll;
+			}
+		}
+
+		/// <summary>
+		/// Reverts the mouse-cursor to default on the mouseup event in the
+		/// ElectronPanel.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void panel_mouseup(object sender, EventArgs e)
+		{
+			Cursor.Current = Cursors.Default;
 		}
 		#endregion eventhandlers (controls)
 
