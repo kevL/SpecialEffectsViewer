@@ -347,8 +347,10 @@ namespace SpecialEffectsViewer
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			if (e.KeyData == Keys.Escape)
+			{
+				e.Handled = e.SuppressKeyPress = true;
 				Close();
-
+			}
 			base.OnKeyDown(e);
 		}
 		#endregion eventhandlers (override)
@@ -683,7 +685,10 @@ namespace SpecialEffectsViewer
 		void lb_Effects_keydown(object sender, KeyEventArgs e)
 		{
 			if (e.KeyData == Keys.Enter)
+			{
+				e.Handled = e.SuppressKeyPress = true;
 				eventsPlay_click(null, EventArgs.Empty);
+			}
 		}
 
 		/// <summary>
@@ -951,13 +956,13 @@ namespace SpecialEffectsViewer
 			switch (e.KeyData)
 			{
 				case Keys.Enter:
-					bu_Search_click(bu_SearchD, EventArgs.Empty);
 					e.SuppressKeyPress = e.Handled = true;
+					bu_Search_click(bu_SearchD, EventArgs.Empty);
 					break;
 
 				case Keys.Enter | Keys.Shift:
-					bu_Search_click(bu_SearchU, EventArgs.Empty);
 					e.SuppressKeyPress = e.Handled = true;
+					bu_Search_click(bu_SearchU, EventArgs.Empty);
 					break;
 			}
 		}
@@ -1085,8 +1090,25 @@ namespace SpecialEffectsViewer
 		{
 			if (e.KeyData == Keys.Enter)
 			{
+				e.Handled = e.SuppressKeyPress = true;
 				cb_Filter.Checked = !cb_Filter.Checked;
 				cb_Filter_click(null, EventArgs.Empty);
+			}
+		}
+
+		/// <summary>
+		/// Selects all text on [Ctrl+a].
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void tb_keydown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyData == Keys.Control | Keys.A)
+			{
+				e.Handled = e.SuppressKeyPress = true;
+				var tb = sender as TextBox;
+				tb.SelectionStart = 0;
+				tb.SelectionLength = tb.Text.Length;
 			}
 		}
 		#endregion eventhandlers (controls)

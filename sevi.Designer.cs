@@ -151,6 +151,7 @@ namespace SpecialEffectsViewer
 			this.tb_SefData.ReadOnly = true;
 			this.tb_SefData.Size = new System.Drawing.Size(266, 109);
 			this.tb_SefData.TabIndex = 0;
+			this.tb_SefData.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tb_keydown);
 			// 
 			// tb_EventData
 			// 
@@ -164,6 +165,7 @@ namespace SpecialEffectsViewer
 			this.tb_EventData.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 			this.tb_EventData.Size = new System.Drawing.Size(266, 187);
 			this.tb_EventData.TabIndex = 0;
+			this.tb_EventData.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tb_keydown);
 			// 
 			// cb_Ground
 			// 
