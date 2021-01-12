@@ -100,3 +100,11 @@ RMB-drag + Control - rotates the camera around its focal point
 Mousewheel         - zooms the camera in/out
 
 Note: The display panel must be focused to adjust the camera.
+
+
+KEYBOARD
+
+Enter  - plays the currently selected effect if the effects list or the scene
+         panel has focus. Searches if search is focused, toggles the list filter
+         if the filter button has focus
+Escape - closes the plugin
