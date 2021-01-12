@@ -114,7 +114,7 @@ namespace SpecialEffectsViewer
 			this.sc2_Options.Panel2.BackColor = System.Drawing.Color.Black;
 			this.sc2_Options.Panel2MinSize = 0;
 			this.sc2_Options.Size = new System.Drawing.Size(375, 374);
-			this.sc2_Options.SplitterDistance = 281;
+			this.sc2_Options.SplitterDistance = 271;
 			this.sc2_Options.SplitterWidth = 1;
 			this.sc2_Options.TabIndex = 0;
 			// 
@@ -136,7 +136,7 @@ namespace SpecialEffectsViewer
 			// 
 			this.sc3_Events.Panel2.Controls.Add(this.tb_EventData);
 			this.sc3_Events.Panel2MinSize = 0;
-			this.sc3_Events.Size = new System.Drawing.Size(281, 298);
+			this.sc3_Events.Size = new System.Drawing.Size(271, 24);
 			this.sc3_Events.SplitterDistance = 109;
 			this.sc3_Events.SplitterWidth = 2;
 			this.sc3_Events.TabIndex = 2;
@@ -151,7 +151,7 @@ namespace SpecialEffectsViewer
 			this.tb_SefData.Multiline = true;
 			this.tb_SefData.Name = "tb_SefData";
 			this.tb_SefData.ReadOnly = true;
-			this.tb_SefData.Size = new System.Drawing.Size(281, 109);
+			this.tb_SefData.Size = new System.Drawing.Size(271, 109);
 			this.tb_SefData.TabIndex = 0;
 			// 
 			// tb_EventData
@@ -165,7 +165,7 @@ namespace SpecialEffectsViewer
 			this.tb_EventData.Name = "tb_EventData";
 			this.tb_EventData.ReadOnly = true;
 			this.tb_EventData.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.tb_EventData.Size = new System.Drawing.Size(281, 187);
+			this.tb_EventData.Size = new System.Drawing.Size(271, 0);
 			this.tb_EventData.TabIndex = 0;
 			// 
 			// cb_Ground
@@ -175,7 +175,7 @@ namespace SpecialEffectsViewer
 			this.cb_Ground.Margin = new System.Windows.Forms.Padding(0);
 			this.cb_Ground.Name = "cb_Ground";
 			this.cb_Ground.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
-			this.cb_Ground.Size = new System.Drawing.Size(281, 16);
+			this.cb_Ground.Size = new System.Drawing.Size(271, 16);
 			this.cb_Ground.TabIndex = 1;
 			this.cb_Ground.Text = "Ground";
 			this.cb_Ground.UseVisualStyleBackColor = false;
@@ -191,7 +191,7 @@ namespace SpecialEffectsViewer
 			this.gb_Scene.Margin = new System.Windows.Forms.Padding(0);
 			this.gb_Scene.Name = "gb_Scene";
 			this.gb_Scene.Padding = new System.Windows.Forms.Padding(0);
-			this.gb_Scene.Size = new System.Drawing.Size(281, 60);
+			this.gb_Scene.Size = new System.Drawing.Size(271, 60);
 			this.gb_Scene.TabIndex = 0;
 			this.gb_Scene.TabStop = false;
 			// 
