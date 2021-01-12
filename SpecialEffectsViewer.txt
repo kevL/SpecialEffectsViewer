@@ -90,3 +90,10 @@ filtr - toggles the effects-list filter on and off. Enter a string in search and
         still be searched by typing a different string in search. To apply a
         different filter, enter a different string and toggle the filter button
         on and off. Note that the filter respects the currently selected List
+
+
+MOUSE
+
+RMB-drag           - pans the camera up/down/left/right
+RMB-drag + Control - rotates the camera around its focal point
+Mousewheel         - zooms the camera in/out
