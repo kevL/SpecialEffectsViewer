@@ -59,13 +59,14 @@ namespace SpecialEffectsViewer
 
 		const int ItemsReserved = 5;
 
-		const int MI_LIST = 0;
-		const int MI_VENT = 1;
-		const int MI_VIEW = 2;
-		const int MI_HELP = 3;
+		const int MI_EFFECTS = 0;
+		const int MI_EVENTS  = 1;
+		const int MI_VIEW    = 2;
+		const int MI_HELP    = 3;
 
-		const int MI_VENT_CLEAR = 2;
-		const int MI_VENT_ENABL = 3;
+		const int MI_VENT_PLAY    = 0;
+		const int MI_VENT_DISABLE = 2;
+		const int MI_VENT_ENABLE  = 3;
 		#endregion Fields (static)
 
 
@@ -130,18 +131,21 @@ namespace SpecialEffectsViewer
 		{
 			Menu = new MainMenu();
 
-			Menu.MenuItems.Add("&List");	// 0
-			Menu.MenuItems.Add("&Events");	// 1
-			Menu.MenuItems.Add("&View");	// 2
-			Menu.MenuItems.Add("&Help");	// 3
+			MenuItem it;
+
+			Menu.MenuItems.Add("E&ffects");		// 0
+			it = Menu.MenuItems.Add("&Events");	// 1
+			it.Popup += events_popout;
+			Menu.MenuItems.Add("&View");		// 2
+			Menu.MenuItems.Add("&Help");		// 3
 
 // List ->
-			_itFxList_all      = Menu.MenuItems[MI_LIST].MenuItems.Add("list &all fx",        listAll_click);
-								 Menu.MenuItems[MI_LIST].MenuItems.Add("-");
-			_itFxList_stock    = Menu.MenuItems[MI_LIST].MenuItems.Add("list &stock only",    listStock_click);
-			_itFxList_module   = Menu.MenuItems[MI_LIST].MenuItems.Add("list &module only",   listModule_click);
-			_itFxList_campaign = Menu.MenuItems[MI_LIST].MenuItems.Add("list &campaign only", listCampaign_click);
-			_itFxList_override = Menu.MenuItems[MI_LIST].MenuItems.Add("list &override only", listOverride_click);
+			_itFxList_all      = Menu.MenuItems[MI_EFFECTS].MenuItems.Add("list &all effects", listAll_click);
+								 Menu.MenuItems[MI_EFFECTS].MenuItems.Add("-");
+			_itFxList_stock    = Menu.MenuItems[MI_EFFECTS].MenuItems.Add("&stock only",       listStock_click);
+			_itFxList_module   = Menu.MenuItems[MI_EFFECTS].MenuItems.Add("&module only",      listModule_click);
+			_itFxList_campaign = Menu.MenuItems[MI_EFFECTS].MenuItems.Add("&campaign only",    listCampaign_click);
+			_itFxList_override = Menu.MenuItems[MI_EFFECTS].MenuItems.Add("&override only",    listOverride_click);
 
 			_itFxList_all     .Shortcut = Shortcut.Ctrl1;
 			_itFxList_stock   .Shortcut = Shortcut.Ctrl2;
@@ -150,7 +154,7 @@ namespace SpecialEffectsViewer
 			_itFxList_override.Shortcut = Shortcut.Ctrl5;
 
 // Events ->
-			MenuItem it = Menu.MenuItems[MI_VENT].MenuItems.Add("&Play", eventsPlay_click);
+			it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Play", eventsPlay_click);
 			it.Shortcut = Shortcut.F5;
 
 // View ->
@@ -541,6 +545,21 @@ namespace SpecialEffectsViewer
 
 
 		#region eventhandlers (events)
+		/// <summary>
+		/// Disables Play if there is not a selected effect.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void events_popout(object sender, EventArgs e)
+		{
+			Menu.MenuItems[MI_EVENTS].MenuItems[MI_VENT_PLAY].Enabled = (lb_Fx.SelectedIndex != -1);
+		}
+
+		/// <summary>
+		/// Plays the currently selected effect.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		void eventsPlay_click(object sender, EventArgs e)
 		{
 			_panel.NDWindow.Scene.SpecialEffectsManager.EndUpdating();
@@ -759,21 +778,22 @@ namespace SpecialEffectsViewer
 			{
 				var it = sender as MenuItem;
 
-				bool isSolo = false;
+				bool isDisable = false;
+				bool isSolo    = false;
 
 				if (sender != null) // if NOT cb_Ground_click() ie. is a real Events click ->
 				{
-					
 					// set the items' check
-					if (it == Menu.MenuItems[MI_VENT].MenuItems[MI_VENT_CLEAR]) // clear all events
+					if (it == Menu.MenuItems[MI_EVENTS].MenuItems[MI_VENT_DISABLE]) // disable all events
 					{
-						for (int i = ItemsReserved; i != Menu.MenuItems[MI_VENT].MenuItems.Count; ++i)
-							Menu.MenuItems[MI_VENT].MenuItems[i].Checked = false;
+						isDisable = true;
+						for (int i = ItemsReserved; i != Menu.MenuItems[MI_EVENTS].MenuItems.Count; ++i)
+							Menu.MenuItems[MI_EVENTS].MenuItems[i].Checked = false;
 					}
-					else if (it == Menu.MenuItems[MI_VENT].MenuItems[MI_VENT_ENABL]) // enable all events
+					else if (it == Menu.MenuItems[MI_EVENTS].MenuItems[MI_VENT_ENABLE]) // enable all events
 					{
-						for (int i = ItemsReserved; i != Menu.MenuItems[MI_VENT].MenuItems.Count; ++i)
-							Menu.MenuItems[MI_VENT].MenuItems[i].Checked = true;
+						for (int i = ItemsReserved; i != Menu.MenuItems[MI_EVENTS].MenuItems.Count; ++i)
+							Menu.MenuItems[MI_EVENTS].MenuItems[i].Checked = true;
 					}
 					else if (!(isSolo = (ModifierKeys == Keys.Shift)))
 						it.Checked = !it.Checked;
@@ -799,7 +819,7 @@ namespace SpecialEffectsViewer
 					{
 						for (int i = _altgroup.Events.Count - 1; i != -1; --i)
 						{
-							if (!Menu.MenuItems[MI_VENT].MenuItems[i + ItemsReserved].Checked)
+							if (!Menu.MenuItems[MI_EVENTS].MenuItems[i + ItemsReserved].Checked)
 								_altgroup.Events.RemoveAt(i);
 						}
 					}
@@ -815,7 +835,9 @@ namespace SpecialEffectsViewer
 
 				// play it
 				LoadSefgroup(_altgroup);
-				_panel.NDWindow.Scene.SpecialEffectsManager.BeginUpdating();
+
+				if (!isDisable)
+					_panel.NDWindow.Scene.SpecialEffectsManager.BeginUpdating();
 			}
 		}
 
@@ -872,9 +894,9 @@ namespace SpecialEffectsViewer
 
 				if (!_bypassEventsClear)
 				{
-					Menu.MenuItems[MI_VENT].MenuItems.Clear();
+					Menu.MenuItems[MI_EVENTS].MenuItems.Clear();
 
-					MenuItem it = Menu.MenuItems[MI_VENT].MenuItems.Add("&Play", eventsPlay_click);
+					MenuItem it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Play", eventsPlay_click);
 					it.Shortcut = Shortcut.F5;
 				}
 			}
@@ -1102,10 +1124,10 @@ namespace SpecialEffectsViewer
 
 			if (rb_DoubleCharacter.Checked)
 			{
-				Menu.MenuItems[MI_VENT].MenuItems.Add("-");
-				Menu.MenuItems[MI_VENT].MenuItems.Add("&Disable all events", Events_click);
-				Menu.MenuItems[MI_VENT].MenuItems.Add("&Enable all events",  Events_click);
-				Menu.MenuItems[MI_VENT].MenuItems.Add("-");
+				Menu.MenuItems[MI_EVENTS].MenuItems.Add("-");
+				Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Disable all events", Events_click);
+				Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Enable all events",  Events_click);
+				Menu.MenuItems[MI_EVENTS].MenuItems.Add("-");
 			}
 
 			text = String.Empty;
@@ -1211,7 +1233,7 @@ namespace SpecialEffectsViewer
 
 				if (rb_DoubleCharacter.Checked)
 				{
-					var it = Menu.MenuItems[MI_VENT].MenuItems.Add("event " + i, Events_click);
+					var it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("event " + i, Events_click);
 					it.Tag = i;
 					it.Checked = true;
 				}
