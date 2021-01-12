@@ -1135,16 +1135,22 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void panel_mousedown(object sender, EventArgs e)
+		void panel_mousedown(object sender, MouseEventArgs e)
 		{
-			if (lb_Effects.SelectedIndex != -1)
+			if (_panel != null)
 			{
-				if ((ModifierKeys & Keys.Control) != 0)
+				switch (e.Button)
 				{
-					Cursor.Current = Cursors.Cross;
+					case MouseButtons.Right:
+					case MouseButtons.Middle:
+							if ((ModifierKeys & Keys.Control) != 0)
+							{
+								Cursor.Current = Cursors.Cross;
+							}
+							else
+								Cursor.Current = Cursors.SizeAll;
+					break;
 				}
-				else
-					Cursor.Current = Cursors.SizeAll;
 			}
 		}
 
