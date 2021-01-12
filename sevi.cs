@@ -573,7 +573,7 @@ namespace SpecialEffectsViewer
 
 			if (lb_Effects.SelectedIndex != -1)
 			{
-				if (rb_DoubleCharacter.Checked)
+				if (rb_DoubleCharacter.Checked && CanPlayEvents())
 				{
 					// clear the netdisplay
 					// - recreate the scene in case a solo-event was played previously.
@@ -589,6 +589,21 @@ namespace SpecialEffectsViewer
 				else
 					_panel.NDWindow.Scene.SpecialEffectsManager.BeginUpdating();
 			}
+		}
+
+		/// <summary>
+		/// Checks if any event is currently checked in the Events menu for
+		/// DoubleCharacter active.
+		/// </summary>
+		/// <returns>true if any event is checked</returns>
+		bool CanPlayEvents()
+		{
+			for (int i = ItemsReserved; i != Menu.MenuItems[MI_EVENTS].MenuItems.Count; ++i)
+			{
+				if (Menu.MenuItems[MI_EVENTS].MenuItems[i].Checked)
+					return true;
+			}
+			return false;
 		}
 		#endregion eventhandlers (events)
 
