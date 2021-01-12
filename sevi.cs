@@ -64,9 +64,9 @@ namespace SpecialEffectsViewer
 		const int MI_VIEW    = 2;
 		const int MI_HELP    = 3;
 
-		const int MI_VENT_PLAY    = 0;
-		const int MI_VENT_DISABLE = 2;
-		const int MI_VENT_ENABLE  = 3;
+		const int MI_EVENTS_PLAY    = 0;
+		const int MI_EVENTS_DISABLE = 2;
+		const int MI_EVENTS_ENABLE  = 3;
 		#endregion Fields (static)
 
 
@@ -555,7 +555,7 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void events_popout(object sender, EventArgs e)
 		{
-			Menu.MenuItems[MI_EVENTS].MenuItems[MI_VENT_PLAY].Enabled = (lb_Fx.SelectedIndex != -1);
+			Menu.MenuItems[MI_EVENTS].MenuItems[MI_EVENTS_PLAY].Enabled = (lb_Fx.SelectedIndex != -1);
 		}
 
 		/// <summary>
@@ -787,13 +787,13 @@ namespace SpecialEffectsViewer
 				if (sender != null) // if NOT cb_Ground_click() ie. is a real Events click ->
 				{
 					// set the items' check
-					if (it == Menu.MenuItems[MI_EVENTS].MenuItems[MI_VENT_DISABLE]) // disable all events
+					if (it == Menu.MenuItems[MI_EVENTS].MenuItems[MI_EVENTS_DISABLE]) // disable all events
 					{
 						isDisable = true;
 						for (int i = ItemsReserved; i != Menu.MenuItems[MI_EVENTS].MenuItems.Count; ++i)
 							Menu.MenuItems[MI_EVENTS].MenuItems[i].Checked = false;
 					}
-					else if (it == Menu.MenuItems[MI_EVENTS].MenuItems[MI_VENT_ENABLE]) // enable all events
+					else if (it == Menu.MenuItems[MI_EVENTS].MenuItems[MI_EVENTS_ENABLE]) // enable all events
 					{
 						for (int i = ItemsReserved; i != Menu.MenuItems[MI_EVENTS].MenuItems.Count; ++i)
 							Menu.MenuItems[MI_EVENTS].MenuItems[i].Checked = true;
