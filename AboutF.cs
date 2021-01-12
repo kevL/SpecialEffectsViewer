@@ -60,8 +60,14 @@ namespace SpecialEffectsViewer
 		#region Handlers (override)
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			if (e.KeyCode == Keys.Escape)
-				Close();
+			switch (e.KeyData)
+			{
+				case Keys.Escape:
+				case Keys.Enter:
+				case Keys.F2:
+					Close();
+					break;
+			}
 		}
 		#endregion Handlers (override)
 
