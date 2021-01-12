@@ -89,6 +89,8 @@ namespace SpecialEffectsViewer
 		bool _bypassActivateSearchControl;
 
 		bool _bypassEventsClear;
+
+		string _pfe_helpfile;
 		#endregion Fields
 
 
@@ -152,18 +154,23 @@ namespace SpecialEffectsViewer
 			it.Shortcut = Shortcut.F5;
 
 // View ->
+			_itOptions = Menu.MenuItems[MI_VIEW].MenuItems.Add("show &Options panel", viewOptions_click);
+			_itOptions.Shortcut = Shortcut.F8;
+
+			Menu.MenuItems[MI_VIEW].MenuItems.Add("-");
+
 			_itStayOnTop = Menu.MenuItems[MI_VIEW].MenuItems.Add("stay on &top", viewStayOnTop_click);
 			_itStayOnTop.Shortcut = Shortcut.CtrlT;
 			_itStayOnTop.Checked = true;
 
-			Menu.MenuItems[MI_VIEW].MenuItems.Add("-");
-
-			_itOptions = Menu.MenuItems[MI_VIEW].MenuItems.Add("show &Options panel", viewOptions_click);
-			_itOptions.Shortcut = Shortcut.F8;
-
 // Help ->
-			it = Menu.MenuItems[MI_HELP].MenuItems.Add("&help",  helpHelp_click);
-			it.Shortcut = Shortcut.F1;
+			_pfe_helpfile = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			_pfe_helpfile = Path.Combine(_pfe_helpfile, "SpecialEffectsViewer.txt");
+			if (File.Exists(_pfe_helpfile))
+			{
+				it = Menu.MenuItems[MI_HELP].MenuItems.Add("&help",  helpHelp_click);
+				it.Shortcut = Shortcut.F1;
+			}
 			it = Menu.MenuItems[MI_HELP].MenuItems.Add("&about", helpAbout_click);
 			it.Shortcut = Shortcut.F2;
 		}
@@ -604,10 +611,7 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void helpHelp_click(object sender, EventArgs e)
 		{
-			string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-			path = Path.Combine(path, "SpecialEffectsViewer.txt");
-			if (File.Exists(path))
-				Process.Start(path);
+			if (File.Exists(_pfe_helpfile)) Process.Start(_pfe_helpfile);
 		}
 
 		/// <summary>
