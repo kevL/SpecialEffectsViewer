@@ -2,7 +2,7 @@ Special Effects Viewer
 - nwn2 toolset plugin
 
 ver 1.0.0.0
-2021 jan 11
+2021 jan 12
 kevL's
 
 
@@ -15,7 +15,8 @@ Copy SpecialEffectsViewer.dll and SpecialEffectsViewer.txt to
 
   <installation>\Neverwinter Nights 2\NWN2Toolset\Plugins
 
-The .dll is the plugin and the .txt file is its helpfile.
+The .dll is the plugin and the .txt file is its helpfile. The helpfile is not
+required but can be opened with [F1].
 
 
 
