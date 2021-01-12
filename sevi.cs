@@ -387,7 +387,7 @@ namespace SpecialEffectsViewer
 		{
 			if (!_itFxList_all.Checked)
 			{
-				lb_Fx.BeginUpdate();
+				lb_Effects.BeginUpdate();
 
 				ClearFxList();
 				_itFxList_all.Checked = true;
@@ -396,9 +396,9 @@ namespace SpecialEffectsViewer
 				foreach (IResourceEntry entry in entries)
 				{
 					if (_filtr == String.Empty || entry.ResRef.Value.ToLower().Contains(_filtr))
-						lb_Fx.Items.Add(entry);
+						lb_Effects.Items.Add(entry);
 				}
-				lb_Fx.EndUpdate();
+				lb_Effects.EndUpdate();
 			}
 
 			if (!_bypassActivateSearchControl)
@@ -414,7 +414,7 @@ namespace SpecialEffectsViewer
 		{
 			if (!_itFxList_stock.Checked)
 			{
-				lb_Fx.BeginUpdate();
+				lb_Effects.BeginUpdate();
 
 				ClearFxList();
 				_itFxList_stock.Checked = true;
@@ -428,10 +428,10 @@ namespace SpecialEffectsViewer
 						&& !label.Contains(OVERRIDE)
 						&& (_filtr == String.Empty || entry.ResRef.Value.ToLower().Contains(_filtr)))
 					{
-						lb_Fx.Items.Add(entry);
+						lb_Effects.Items.Add(entry);
 					}
 				}
-				lb_Fx.EndUpdate();
+				lb_Effects.EndUpdate();
 			}
 
 			if (!_bypassActivateSearchControl)
@@ -447,7 +447,7 @@ namespace SpecialEffectsViewer
 		{
 			if (!_itFxList_module.Checked)
 			{
-				lb_Fx.BeginUpdate();
+				lb_Effects.BeginUpdate();
 
 				ClearFxList();
 				_itFxList_module.Checked = true;
@@ -458,10 +458,10 @@ namespace SpecialEffectsViewer
 					if (entry.Repository.Name.ToLower().Contains(MODULES) // fake it
 						&& (_filtr == String.Empty || entry.ResRef.Value.ToLower().Contains(_filtr)))
 					{
-						lb_Fx.Items.Add(entry);
+						lb_Effects.Items.Add(entry);
 					}
 				}
-				lb_Fx.EndUpdate();
+				lb_Effects.EndUpdate();
 			}
 
 			if (!_bypassActivateSearchControl)
@@ -477,7 +477,7 @@ namespace SpecialEffectsViewer
 		{
 			if (!_itFxList_campaign.Checked)
 			{
-				lb_Fx.BeginUpdate();
+				lb_Effects.BeginUpdate();
 
 				ClearFxList();
 				_itFxList_campaign.Checked = true;
@@ -488,10 +488,10 @@ namespace SpecialEffectsViewer
 					if (entry.Repository.Name.ToLower().Contains(CAMPAIGNS) // fake it
 						&& (_filtr == String.Empty || entry.ResRef.Value.ToLower().Contains(_filtr)))
 					{
-						lb_Fx.Items.Add(entry);
+						lb_Effects.Items.Add(entry);
 					}
 				}
-				lb_Fx.EndUpdate();
+				lb_Effects.EndUpdate();
 			}
 
 			if (!_bypassActivateSearchControl)
@@ -507,7 +507,7 @@ namespace SpecialEffectsViewer
 		{
 			if (!_itFxList_override.Checked)
 			{
-				lb_Fx.BeginUpdate();
+				lb_Effects.BeginUpdate();
 
 				ClearFxList();
 				_itFxList_override.Checked = true;
@@ -518,10 +518,10 @@ namespace SpecialEffectsViewer
 					if (entry.Repository.Name.ToLower().Contains(OVERRIDE) // fake it
 						&& (_filtr == String.Empty || entry.ResRef.Value.ToLower().Contains(_filtr)))
 					{
-						lb_Fx.Items.Add(entry);
+						lb_Effects.Items.Add(entry);
 					}
 				}
-				lb_Fx.EndUpdate();
+				lb_Effects.EndUpdate();
 			}
 
 			if (!_bypassActivateSearchControl)
@@ -535,8 +535,8 @@ namespace SpecialEffectsViewer
 		{
 			bu_Clear_click(null, EventArgs.Empty);
 
-			lb_Fx.SelectedIndex = -1;
-			lb_Fx.Items.Clear();
+			lb_Effects.SelectedIndex = -1;
+			lb_Effects.Items.Clear();
 
 			_itFxList_all     .Checked =
 			_itFxList_stock   .Checked =
@@ -555,7 +555,7 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void events_popout(object sender, EventArgs e)
 		{
-			Menu.MenuItems[MI_EVENTS].MenuItems[MI_EVENTS_PLAY].Enabled = (lb_Fx.SelectedIndex != -1);
+			Menu.MenuItems[MI_EVENTS].MenuItems[MI_EVENTS_PLAY].Enabled = (lb_Effects.SelectedIndex != -1);
 		}
 
 		/// <summary>
@@ -567,7 +567,7 @@ namespace SpecialEffectsViewer
 		{
 			_panel.NDWindow.Scene.SpecialEffectsManager.EndUpdating();
 
-			if (lb_Fx.SelectedIndex != -1)
+			if (lb_Effects.SelectedIndex != -1)
 			{
 				if (rb_DoubleCharacter.Checked)
 				{
@@ -658,9 +658,9 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void lb_Effects_selectedindexchanged(object sender, EventArgs e)
 		{
-			if (lb_Fx.SelectedIndex != -1)
+			if (lb_Effects.SelectedIndex != -1)
 			{
-				_effect = lb_Fx.SelectedItem as IResourceEntry;
+				_effect = lb_Effects.SelectedItem as IResourceEntry;
 				_sefgroup = new SEFGroup();
 				_sefgroup.XmlUnserialize(_effect.GetStream(false));
 
@@ -745,7 +745,7 @@ namespace SpecialEffectsViewer
 		{
 			bu_Clear_click(null, EventArgs.Empty);
 
-			if (lb_Fx.SelectedIndex != -1)
+			if (lb_Effects.SelectedIndex != -1)
 			{
 				if (rb_PlacedEffect.Checked)
 				{
@@ -788,7 +788,7 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void Events_click(object sender, EventArgs e)
 		{
-			if (lb_Fx.SelectedIndex != -1)
+			if (lb_Effects.SelectedIndex != -1)
 			{
 				var it = sender as MenuItem;
 
@@ -923,8 +923,8 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void bu_Copy_click(object sender, EventArgs e)
 		{
-			if (lb_Fx.SelectedIndex != -1)
-				Clipboard.SetDataObject(lb_Fx.SelectedItem.ToString());
+			if (lb_Effects.SelectedIndex != -1)
+				Clipboard.SetDataObject(lb_Effects.SelectedItem.ToString());
 		}
 
 		/// <summary>
@@ -965,7 +965,7 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void bu_Search_click(object sender, EventArgs e)
 		{
-			int count = lb_Fx.Items.Count;
+			int count = lb_Effects.Items.Count;
 			if (count != 0)
 			{
 				string text = tb_Search.Text;
@@ -978,16 +978,16 @@ namespace SpecialEffectsViewer
 					var bu = sender as Button;
 					if (bu == bu_SearchD)
 					{
-						if (lb_Fx.SelectedIndex == count - 1)
+						if (lb_Effects.SelectedIndex == count - 1)
 						{
 							id = 0;
 						}
 						else
-							id = lb_Fx.SelectedIndex + 1;
+							id = lb_Effects.SelectedIndex + 1;
 
-						while (!lb_Fx.Items[id].ToString().ToLower().Contains(text))
+						while (!lb_Effects.Items[id].ToString().ToLower().Contains(text))
 						{
-							if (id == lb_Fx.SelectedIndex) // not found.
+							if (id == lb_Effects.SelectedIndex) // not found.
 							{
 								System.Media.SystemSounds.Beep.Play();
 								break;
@@ -1001,16 +1001,16 @@ namespace SpecialEffectsViewer
 					}
 					else //if (bu == bu_SearchU)
 					{
-						if (lb_Fx.SelectedIndex < 1)
+						if (lb_Effects.SelectedIndex < 1)
 						{
 							id = count - 1;
 						}
 						else
-							id = lb_Fx.SelectedIndex - 1;
+							id = lb_Effects.SelectedIndex - 1;
 
-						while (!lb_Fx.Items[id].ToString().ToLower().Contains(text))
+						while (!lb_Effects.Items[id].ToString().ToLower().Contains(text))
 						{
-							if (id == lb_Fx.SelectedIndex) // not found.
+							if (id == lb_Effects.SelectedIndex) // not found.
 							{
 								System.Media.SystemSounds.Beep.Play();
 								break;
@@ -1023,7 +1023,7 @@ namespace SpecialEffectsViewer
 						}
 					}
 
-					lb_Fx.SelectedIndex = id;
+					lb_Effects.SelectedIndex = id;
 				}
 			}
 		}

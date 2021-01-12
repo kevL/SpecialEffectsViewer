@@ -20,7 +20,7 @@ namespace SpecialEffectsViewer
 		Button bu_SearchD;
 		Button bu_SearchU;
 		CheckBox cb_Filter;
-		ListBox lb_Fx;
+		ListBox lb_Effects;
 		Panel pa_bot;
 		Button bu_Clear;
 		Button bu_Copy;
@@ -46,7 +46,7 @@ namespace SpecialEffectsViewer
 			this.rb_PlacedEffect = new System.Windows.Forms.RadioButton();
 			this.rb_SingleCharacter = new System.Windows.Forms.RadioButton();
 			this.rb_DoubleCharacter = new System.Windows.Forms.RadioButton();
-			this.lb_Fx = new System.Windows.Forms.ListBox();
+			this.lb_Effects = new System.Windows.Forms.ListBox();
 			this.pa_Search = new System.Windows.Forms.Panel();
 			this.tb_Search = new System.Windows.Forms.TextBox();
 			this.bu_SearchD = new System.Windows.Forms.Button();
@@ -84,7 +84,7 @@ namespace SpecialEffectsViewer
 			// 
 			// sc1_Effects.Panel2
 			// 
-			this.sc1_Effects.Panel2.Controls.Add(this.lb_Fx);
+			this.sc1_Effects.Panel2.Controls.Add(this.lb_Effects);
 			this.sc1_Effects.Panel2.Controls.Add(this.pa_Search);
 			this.sc1_Effects.Panel2.Controls.Add(this.pa_bot);
 			this.sc1_Effects.Panel2MinSize = 0;
@@ -227,19 +227,19 @@ namespace SpecialEffectsViewer
 			this.rb_DoubleCharacter.UseVisualStyleBackColor = true;
 			this.rb_DoubleCharacter.Click += new System.EventHandler(this.rb_click);
 			// 
-			// lb_Fx
+			// lb_Effects
 			// 
-			this.lb_Fx.BackColor = System.Drawing.Color.Beige;
-			this.lb_Fx.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.lb_Fx.FormattingEnabled = true;
-			this.lb_Fx.Location = new System.Drawing.Point(0, 20);
-			this.lb_Fx.Margin = new System.Windows.Forms.Padding(0);
-			this.lb_Fx.Name = "lb_Fx";
-			this.lb_Fx.Size = new System.Drawing.Size(213, 328);
-			this.lb_Fx.Sorted = true;
-			this.lb_Fx.TabIndex = 1;
-			this.lb_Fx.SelectedIndexChanged += new System.EventHandler(this.lb_Effects_selectedindexchanged);
-			this.lb_Fx.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lb_Effects_keydown);
+			this.lb_Effects.BackColor = System.Drawing.Color.Beige;
+			this.lb_Effects.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.lb_Effects.FormattingEnabled = true;
+			this.lb_Effects.Location = new System.Drawing.Point(0, 20);
+			this.lb_Effects.Margin = new System.Windows.Forms.Padding(0);
+			this.lb_Effects.Name = "lb_Effects";
+			this.lb_Effects.Size = new System.Drawing.Size(213, 328);
+			this.lb_Effects.Sorted = true;
+			this.lb_Effects.TabIndex = 1;
+			this.lb_Effects.SelectedIndexChanged += new System.EventHandler(this.lb_Effects_selectedindexchanged);
+			this.lb_Effects.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lb_Effects_keydown);
 			// 
 			// pa_Search
 			// 
