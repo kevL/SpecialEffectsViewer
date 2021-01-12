@@ -105,6 +105,9 @@ namespace SpecialEffectsViewer
 
 			InitializeComponent();
 
+			// leave Options-panel open in the designer but close it here
+			sc2_Options.Panel1Collapsed = true;
+
 			// set unicode text on the up/down Search btns.
 			bu_SearchD.Text = "\u25bc"; // down triangle
 			bu_SearchU.Text = "\u25b2"; // up triangle
@@ -209,11 +212,11 @@ namespace SpecialEffectsViewer
 									  SpecialEffectsViewerPreferences.that.h);
 			}
 
-			sc1_Effects.SplitterDistance = SpecialEffectsViewerPreferences.that.SplitterDistanceEffects;
-			sc3_Events .SplitterDistance = SpecialEffectsViewerPreferences.that.SplitterDistanceEvents;
-
 			if (SpecialEffectsViewerPreferences.that.OptionsPanel)
 				_itOptions.PerformClick();
+
+			sc1_Effects.SplitterDistance = SpecialEffectsViewerPreferences.that.SplitterDistanceEffects;
+			sc3_Events .SplitterDistance = SpecialEffectsViewerPreferences.that.SplitterDistanceEvents;
 
 			if (!SpecialEffectsViewerPreferences.that.StayOnTop)
 				_itStayOnTop.PerformClick();
