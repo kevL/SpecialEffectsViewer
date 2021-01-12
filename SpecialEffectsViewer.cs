@@ -81,7 +81,7 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void launch(object sender, EventArgs e)
 		{
-//			logger.create();
+			//logger.create();
 			var f = new sevi();
 		}
 	}

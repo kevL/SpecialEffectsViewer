@@ -67,6 +67,8 @@ namespace SpecialEffectsViewer
 		const int MI_EVENTS_PLAY    = 0;
 		const int MI_EVENTS_DISABLE = 2;
 		const int MI_EVENTS_ENABLE  = 3;
+
+//		const int MI_VIEW_TOP = 2;
 		#endregion Fields (static)
 
 
@@ -970,17 +972,26 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void tb_Search_keydown(object sender, KeyEventArgs e)
 		{
+			//logger.log("tb_Search_keydown()");
 			switch (e.KeyData)
 			{
 				case Keys.Enter:
+					//logger.log("Keys.Enter");
 					e.SuppressKeyPress = e.Handled = true;
 					bu_Search_click(bu_SearchD, EventArgs.Empty);
 					break;
 
 				case Keys.Enter | Keys.Shift:
+					//logger.log("Keys.Enter | Keys.Shift");
 					e.SuppressKeyPress = e.Handled = true;
 					bu_Search_click(bu_SearchU, EventArgs.Empty);
 					break;
+
+//				case Keys.Control | Keys.A: // <- works okay don't know why
+//				case Keys.Control | Keys.C:
+//					//logger.log("Keys.Control | Keys.C"); // toolset freezes -> see tb_keydown()
+//					tb_keydown(sender, e);
+//					break;
 			}
 		}
 
@@ -1120,12 +1131,28 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void tb_keydown(object sender, KeyEventArgs e)
 		{
-			if (e.KeyData == (Keys.Control | Keys.A))
+			//logger.log("tb_keydown()");
+			switch (e.KeyData)
 			{
-				e.Handled = e.SuppressKeyPress = true;
-				var tb = sender as TextBox;
-				tb.SelectionStart = 0;
-				tb.SelectionLength = tb.Text.Length;
+				case Keys.Control | Keys.A:
+					//logger.log(". Keys.Control | Keys.C");
+					e.Handled = e.SuppressKeyPress = true;
+					var tb = sender as TextBox;
+					tb.SelectionStart = 0;
+					tb.SelectionLength = tb.Text.Length;
+					break;
+
+//				case Keys.Control | Keys.C: // toolset freezes ->
+//					//logger.log(". Keys.Control | Keys.C");
+//					// the toolset handles [Ctrl+c] if it's the Owner of this plugin
+//					// so it needs to be re-handled here
+//					if (Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_TOP].Checked)
+//					{
+//						e.Handled = e.SuppressKeyPress = true;
+//						Clipboard.Clear();
+//						Clipboard.SetText((sender as TextBox).SelectedText); // doesn't work anyway.
+//					}
+//					break;
 			}
 		}
 
