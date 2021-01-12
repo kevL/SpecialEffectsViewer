@@ -189,7 +189,7 @@ namespace SpecialEffectsViewer
 		{
 			_panel.Dock = DockStyle.Fill;
 			_panel.BorderStyle = BorderStyle.FixedSingle;
-			_panel.MousePanel.KeyDown += Search_keydown;
+			_panel.MousePanel.KeyDown += lb_Effects_keydown;
 
 			sc2_Options.Panel2.Controls.Add(_panel);
 		}
@@ -656,7 +656,7 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void lb_Fx_selectedindexchanged(object sender, EventArgs e)
+		void lb_Effects_selectedindexchanged(object sender, EventArgs e)
 		{
 			if (lb_Fx.SelectedIndex != -1)
 			{
@@ -673,6 +673,17 @@ namespace SpecialEffectsViewer
 				_effect = null; _sefgroup = null; _altgroup = null;
 				Text = TITLE;
 			}
+		}
+
+		/// <summary>
+		/// Replays the currently selected effect.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void lb_Effects_keydown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyData == Keys.Enter)
+				eventsPlay_click(null, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -927,14 +938,11 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
-		/// Search on KeyDown event when control has focus:
-		/// - search textbox
-		/// - fx listbox
-		/// - electron panel
+		/// Search on keydown event when control has focus.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void Search_keydown(object sender, KeyEventArgs e)
+		void tb_Search_keydown(object sender, KeyEventArgs e)
 		{
 			switch (e.KeyData)
 			{

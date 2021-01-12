@@ -238,8 +238,8 @@ namespace SpecialEffectsViewer
 			this.lb_Fx.Size = new System.Drawing.Size(213, 328);
 			this.lb_Fx.Sorted = true;
 			this.lb_Fx.TabIndex = 1;
-			this.lb_Fx.SelectedIndexChanged += new System.EventHandler(this.lb_Fx_selectedindexchanged);
-			this.lb_Fx.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Search_keydown);
+			this.lb_Fx.SelectedIndexChanged += new System.EventHandler(this.lb_Effects_selectedindexchanged);
+			this.lb_Fx.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lb_Effects_keydown);
 			// 
 			// pa_Search
 			// 
@@ -263,7 +263,7 @@ namespace SpecialEffectsViewer
 			this.tb_Search.Size = new System.Drawing.Size(122, 20);
 			this.tb_Search.TabIndex = 0;
 			this.tb_Search.WordWrap = false;
-			this.tb_Search.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Search_keydown);
+			this.tb_Search.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tb_Search_keydown);
 			// 
 			// bu_SearchD
 			// 
