@@ -924,7 +924,11 @@ namespace SpecialEffectsViewer
 		void bu_Copy_click(object sender, EventArgs e)
 		{
 			if (lb_Effects.SelectedIndex != -1)
-				Clipboard.SetDataObject(lb_Effects.SelectedItem.ToString());
+			{
+				// TODO: Ensure the clipboard is not locked by another process.
+				Clipboard.Clear();
+				Clipboard.SetText(lb_Effects.SelectedItem.ToString());
+			}
 		}
 
 		/// <summary>
