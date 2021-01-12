@@ -117,7 +117,7 @@ namespace SpecialEffectsViewer
 			NWN2ToolsetMainForm.ModuleChanged                  += OnModuleChanged;
 			NWN2CampaignManager.Instance.ActiveCampaignChanged += OnActiveCampaignChanged;
 
-			listAll_click(null, EventArgs.Empty);
+			effectsAll_click(null, EventArgs.Empty);
 
 //			logger.log(StringDecryptor.Decrypt("ᒼᒮᒯ"));
 
@@ -140,12 +140,12 @@ namespace SpecialEffectsViewer
 			Menu.MenuItems.Add("&Help");		// 3
 
 // List ->
-			_itFxList_all      = Menu.MenuItems[MI_EFFECTS].MenuItems.Add("list &all effects", listAll_click);
+			_itFxList_all      = Menu.MenuItems[MI_EFFECTS].MenuItems.Add("list &all effects", effectsAll_click);
 								 Menu.MenuItems[MI_EFFECTS].MenuItems.Add("-");
-			_itFxList_stock    = Menu.MenuItems[MI_EFFECTS].MenuItems.Add("&stock only",       listStock_click);
-			_itFxList_module   = Menu.MenuItems[MI_EFFECTS].MenuItems.Add("&module only",      listModule_click);
-			_itFxList_campaign = Menu.MenuItems[MI_EFFECTS].MenuItems.Add("&campaign only",    listCampaign_click);
-			_itFxList_override = Menu.MenuItems[MI_EFFECTS].MenuItems.Add("&override only",    listOverride_click);
+			_itFxList_stock    = Menu.MenuItems[MI_EFFECTS].MenuItems.Add("&stock only",       effectsStock_click);
+			_itFxList_module   = Menu.MenuItems[MI_EFFECTS].MenuItems.Add("&module only",      effectsModule_click);
+			_itFxList_campaign = Menu.MenuItems[MI_EFFECTS].MenuItems.Add("&campaign only",    effectsCampaign_click);
+			_itFxList_override = Menu.MenuItems[MI_EFFECTS].MenuItems.Add("&override only",    effectsOverride_click);
 
 			_itFxList_all     .Shortcut = Shortcut.Ctrl1;
 			_itFxList_stock   .Shortcut = Shortcut.Ctrl2;
@@ -314,14 +314,14 @@ namespace SpecialEffectsViewer
 				if (_itFxList_all.Checked)
 				{
 					_itFxList_all.Checked = false;
-					listAll_click(null, EventArgs.Empty);
+					effectsAll_click(null, EventArgs.Empty);
 				}
 				else if (_itFxList_module.Checked)
 				{
 					if ((_isListStale & STALE_Module) != 0)
 					{
 						_itFxList_module.Checked = false;
-						listModule_click(null, EventArgs.Empty);
+						effectsModule_click(null, EventArgs.Empty);
 					}
 				}
 				else if (_itFxList_campaign.Checked)
@@ -329,7 +329,7 @@ namespace SpecialEffectsViewer
 					if ((_isListStale & STALE_Campaign) != 0)
 					{
 						_itFxList_campaign.Checked = false;
-						listCampaign_click(null, EventArgs.Empty);
+						effectsCampaign_click(null, EventArgs.Empty);
 					}
 				}
 				_isListStale = STALE_non;
@@ -374,13 +374,13 @@ namespace SpecialEffectsViewer
 		#endregion eventhandlers (toolset)
 
 
-		#region eventhandlers (list)
+		#region eventhandlers (effects)
 		/// <summary>
 		/// Populates the Fx-list with everything it can find.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void listAll_click(object sender, EventArgs e)
+		void effectsAll_click(object sender, EventArgs e)
 		{
 			if (!_itFxList_all.Checked)
 			{
@@ -407,7 +407,7 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void listStock_click(object sender, EventArgs e)
+		void effectsStock_click(object sender, EventArgs e)
 		{
 			if (!_itFxList_stock.Checked)
 			{
@@ -440,7 +440,7 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void listModule_click(object sender, EventArgs e)
+		void effectsModule_click(object sender, EventArgs e)
 		{
 			if (!_itFxList_module.Checked)
 			{
@@ -470,7 +470,7 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void listCampaign_click(object sender, EventArgs e)
+		void effectsCampaign_click(object sender, EventArgs e)
 		{
 			if (!_itFxList_campaign.Checked)
 			{
@@ -500,7 +500,7 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void listOverride_click(object sender, EventArgs e)
+		void effectsOverride_click(object sender, EventArgs e)
 		{
 			if (!_itFxList_override.Checked)
 			{
@@ -541,7 +541,7 @@ namespace SpecialEffectsViewer
 			_itFxList_campaign.Checked =
 			_itFxList_override.Checked = false;
 		}
-		#endregion eventhandlers (list)
+		#endregion eventhandlers (effects)
 
 
 		#region eventhandlers (events)
@@ -1036,27 +1036,27 @@ namespace SpecialEffectsViewer
 			if (_itFxList_all.Checked)
 			{
 				_itFxList_all.Checked = false;
-				listAll_click(null, EventArgs.Empty);
+				effectsAll_click(null, EventArgs.Empty);
 			}
 			else if (_itFxList_stock.Checked)
 			{
 				_itFxList_stock.Checked = false;
-				listStock_click(null, EventArgs.Empty);
+				effectsStock_click(null, EventArgs.Empty);
 			}
 			else if (_itFxList_module.Checked)
 			{
 				_itFxList_module.Checked = false;
-				listModule_click(null, EventArgs.Empty);
+				effectsModule_click(null, EventArgs.Empty);
 			}
 			else if (_itFxList_campaign.Checked)
 			{
 				_itFxList_campaign.Checked = false;
-				listCampaign_click(null, EventArgs.Empty);
+				effectsCampaign_click(null, EventArgs.Empty);
 			}
 			else //if (_itFxList_override.Checked)
 			{
 				_itFxList_override.Checked = false;
-				listOverride_click(null, EventArgs.Empty);
+				effectsOverride_click(null, EventArgs.Empty);
 			}
 			_bypassActivateSearchControl = false;
 		}
