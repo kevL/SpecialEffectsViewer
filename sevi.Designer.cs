@@ -121,6 +121,7 @@ namespace SpecialEffectsViewer
 			// sc3_Events
 			// 
 			this.sc3_Events.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.sc3_Events.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
 			this.sc3_Events.Location = new System.Drawing.Point(0, 76);
 			this.sc3_Events.Margin = new System.Windows.Forms.Padding(0);
 			this.sc3_Events.Name = "sc3_Events";
@@ -136,7 +137,7 @@ namespace SpecialEffectsViewer
 			this.sc3_Events.Panel2.Controls.Add(this.tb_EventData);
 			this.sc3_Events.Panel2MinSize = 0;
 			this.sc3_Events.Size = new System.Drawing.Size(281, 298);
-			this.sc3_Events.SplitterDistance = 120;
+			this.sc3_Events.SplitterDistance = 109;
 			this.sc3_Events.SplitterWidth = 2;
 			this.sc3_Events.TabIndex = 2;
 			// 
@@ -150,7 +151,7 @@ namespace SpecialEffectsViewer
 			this.tb_SefData.Multiline = true;
 			this.tb_SefData.Name = "tb_SefData";
 			this.tb_SefData.ReadOnly = true;
-			this.tb_SefData.Size = new System.Drawing.Size(281, 120);
+			this.tb_SefData.Size = new System.Drawing.Size(281, 109);
 			this.tb_SefData.TabIndex = 0;
 			// 
 			// tb_EventData
@@ -164,7 +165,7 @@ namespace SpecialEffectsViewer
 			this.tb_EventData.Name = "tb_EventData";
 			this.tb_EventData.ReadOnly = true;
 			this.tb_EventData.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.tb_EventData.Size = new System.Drawing.Size(281, 176);
+			this.tb_EventData.Size = new System.Drawing.Size(281, 187);
 			this.tb_EventData.TabIndex = 0;
 			// 
 			// cb_Ground
