@@ -1103,7 +1103,7 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void tb_keydown(object sender, KeyEventArgs e)
 		{
-			if (e.KeyData == Keys.Control | Keys.A)
+			if (e.KeyData == (Keys.Control | Keys.A))
 			{
 				e.Handled = e.SuppressKeyPress = true;
 				var tb = sender as TextBox;
