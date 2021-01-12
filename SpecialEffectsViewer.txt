@@ -1,19 +1,19 @@
 The location of the currently selected effect is shown on the titlebar.
 
 The special effect file (.sef) without extension is listed in the rightside
-panel.
+panel. Click a file in the list to play or replay it.
 
 
 MENUS
 
-List
-----
-list all Fx        - lists all available effects
-list stock only    - lists stock effects only (installation data folder)
-list module only   - lists module-level effects (if a module is loaded)
-list campaign only - lists campaign-level effects (if a module with a campaign
-                     is loaded)
-list override only - lists effects in override only
+Effects
+-------
+list all effects - lists all available effects
+stock only       - lists stock effects only (installation data folder)
+module only      - lists module-level effects (if a module is loaded)
+campaign only    - lists campaign-level effects (if a module with a campaign is
+                   loaded)
+override only    - lists effects in override only
 
 Note: Those aren't absolute determinations; Module, Campaign, and Override check
 merely for a substring in each effect's path: "modules", "campaigns", or
@@ -89,7 +89,8 @@ filtr - toggles the effects-list filter on and off. Enter a string in search and
         click the filter button to set a filter-string. A filtered list can
         still be searched by typing a different string in search. To apply a
         different filter, enter a different string and toggle the filter button
-        on and off. Note that the filter respects the currently selected List
+        on and off. Note that the filter respects the currently selected Effects
+        list
 
 
 MOUSE
@@ -97,3 +98,5 @@ MOUSE
 RMB-drag           - pans the camera up/down/left/right
 RMB-drag + Control - rotates the camera around its focal point
 Mousewheel         - zooms the camera in/out
+
+Note: The display panel must be focused to adjust the camera.
