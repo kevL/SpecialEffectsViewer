@@ -121,7 +121,7 @@ namespace SpecialEffectsViewer
 			// 
 			this.sc3_Events.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.sc3_Events.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-			this.sc3_Events.Location = new System.Drawing.Point(0, 76);
+			this.sc3_Events.Location = new System.Drawing.Point(0, 77);
 			this.sc3_Events.Margin = new System.Windows.Forms.Padding(0);
 			this.sc3_Events.Name = "sc3_Events";
 			this.sc3_Events.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -135,7 +135,7 @@ namespace SpecialEffectsViewer
 			// 
 			this.sc3_Events.Panel2.Controls.Add(this.tb_EventData);
 			this.sc3_Events.Panel2MinSize = 0;
-			this.sc3_Events.Size = new System.Drawing.Size(266, 298);
+			this.sc3_Events.Size = new System.Drawing.Size(266, 297);
 			this.sc3_Events.SplitterDistance = 109;
 			this.sc3_Events.SplitterWidth = 2;
 			this.sc3_Events.TabIndex = 2;
@@ -163,14 +163,14 @@ namespace SpecialEffectsViewer
 			this.tb_EventData.Name = "tb_EventData";
 			this.tb_EventData.ReadOnly = true;
 			this.tb_EventData.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.tb_EventData.Size = new System.Drawing.Size(266, 187);
+			this.tb_EventData.Size = new System.Drawing.Size(266, 186);
 			this.tb_EventData.TabIndex = 0;
 			this.tb_EventData.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tb_keydown);
 			// 
 			// cb_Ground
 			// 
 			this.cb_Ground.Dock = System.Windows.Forms.DockStyle.Top;
-			this.cb_Ground.Location = new System.Drawing.Point(0, 60);
+			this.cb_Ground.Location = new System.Drawing.Point(0, 61);
 			this.cb_Ground.Margin = new System.Windows.Forms.Padding(0);
 			this.cb_Ground.Name = "cb_Ground";
 			this.cb_Ground.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
@@ -190,16 +190,16 @@ namespace SpecialEffectsViewer
 			this.gb_Scene.Margin = new System.Windows.Forms.Padding(0);
 			this.gb_Scene.Name = "gb_Scene";
 			this.gb_Scene.Padding = new System.Windows.Forms.Padding(0);
-			this.gb_Scene.Size = new System.Drawing.Size(266, 60);
+			this.gb_Scene.Size = new System.Drawing.Size(266, 61);
 			this.gb_Scene.TabIndex = 0;
 			this.gb_Scene.TabStop = false;
 			// 
 			// rb_PlacedEffect
 			// 
-			this.rb_PlacedEffect.Location = new System.Drawing.Point(6, 40);
+			this.rb_PlacedEffect.Location = new System.Drawing.Point(6, 42);
 			this.rb_PlacedEffect.Margin = new System.Windows.Forms.Padding(0);
 			this.rb_PlacedEffect.Name = "rb_PlacedEffect";
-			this.rb_PlacedEffect.Size = new System.Drawing.Size(269, 16);
+			this.rb_PlacedEffect.Size = new System.Drawing.Size(149, 16);
 			this.rb_PlacedEffect.TabIndex = 2;
 			this.rb_PlacedEffect.Text = "Placed effect object";
 			this.rb_PlacedEffect.UseVisualStyleBackColor = true;
@@ -207,10 +207,10 @@ namespace SpecialEffectsViewer
 			// 
 			// rb_SingleCharacter
 			// 
-			this.rb_SingleCharacter.Location = new System.Drawing.Point(6, 25);
+			this.rb_SingleCharacter.Location = new System.Drawing.Point(6, 26);
 			this.rb_SingleCharacter.Margin = new System.Windows.Forms.Padding(0);
 			this.rb_SingleCharacter.Name = "rb_SingleCharacter";
-			this.rb_SingleCharacter.Size = new System.Drawing.Size(269, 16);
+			this.rb_SingleCharacter.Size = new System.Drawing.Size(219, 16);
 			this.rb_SingleCharacter.TabIndex = 1;
 			this.rb_SingleCharacter.Text = "Single character [AppearanceSEF]";
 			this.rb_SingleCharacter.UseVisualStyleBackColor = true;
@@ -222,7 +222,7 @@ namespace SpecialEffectsViewer
 			this.rb_DoubleCharacter.Location = new System.Drawing.Point(6, 10);
 			this.rb_DoubleCharacter.Margin = new System.Windows.Forms.Padding(0);
 			this.rb_DoubleCharacter.Name = "rb_DoubleCharacter";
-			this.rb_DoubleCharacter.Size = new System.Drawing.Size(269, 16);
+			this.rb_DoubleCharacter.Size = new System.Drawing.Size(219, 16);
 			this.rb_DoubleCharacter.TabIndex = 0;
 			this.rb_DoubleCharacter.TabStop = true;
 			this.rb_DoubleCharacter.Text = "Double character [source+target]";
