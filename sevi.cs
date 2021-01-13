@@ -65,8 +65,8 @@ namespace SpecialEffectsViewer
 		const int MI_HELP    = 3;
 
 		const int MI_EVENTS_PLAY    = 0;
-		const int MI_EVENTS_DISABLE = 2;
-		const int MI_EVENTS_ENABLE  = 3;
+		const int MI_EVENTS_ENABLE  = 2;
+		const int MI_EVENTS_DISABLE = 3;
 
 //		const int MI_VIEW_TOP = 2;
 		#endregion Fields (static)
@@ -575,18 +575,21 @@ namespace SpecialEffectsViewer
 
 			if (lb_Effects.SelectedIndex != -1)
 			{
-				if (rb_DoubleCharacter.Checked && CanPlayEvents())
+				if (rb_DoubleCharacter.Checked)
 				{
-					// clear the netdisplay
-					// - recreate the scene in case a solo-event was played previously.
-					// - the toolset code is not as cooperative as I'd like ...
-					_bypassEventsClear = true;
-					bu_Clear_click(null, EventArgs.Empty);
-					_bypassEventsClear = false;
+					if (CanPlayEvents())
+					{
+						// clear the netdisplay
+						// - recreate the scene in case a solo-event was played previously.
+						// - the toolset code is not as cooperative as I'd like ...
+						_bypassEventsClear = true;
+						bu_Clear_click(null, EventArgs.Empty);
+						_bypassEventsClear = false;
 
-					_altgroup = null;
+						_altgroup = null;
 
-					Events_click(null, EventArgs.Empty);
+						Events_click(null, EventArgs.Empty);
+					}
 				}
 				else
 					_panel.NDWindow.Scene.SpecialEffectsManager.BeginUpdating();
@@ -795,12 +798,12 @@ namespace SpecialEffectsViewer
 					NWN2NetDisplayManager.Instance.MoveObjects(new NetDisplayObjectCollection(oIdiot1), ChangeType.Absolute, false, oIdiot1.Position);
 				}
 				else //if (rb_DoubleCharacter.Checked)
-				{
 					LoadSefgroup(_sefgroup);
-				}
 
 				PrintSefData(_sefgroup);
-				_panel.NDWindow.Scene.SpecialEffectsManager.BeginUpdating();
+
+				if (!rb_DoubleCharacter.Checked || CanPlayEvents())
+					_panel.NDWindow.Scene.SpecialEffectsManager.BeginUpdating();
 			}
 		}
 
@@ -822,16 +825,16 @@ namespace SpecialEffectsViewer
 				if (sender != null) // if NOT cb_Ground_click() ie. is a real Events click ->
 				{
 					// set the items' check
-					if (it == Menu.MenuItems[MI_EVENTS].MenuItems[MI_EVENTS_DISABLE]) // disable all events
+					if (it == Menu.MenuItems[MI_EVENTS].MenuItems[MI_EVENTS_ENABLE]) // enable all events
+					{
+						for (int i = ItemsReserved; i != Menu.MenuItems[MI_EVENTS].MenuItems.Count; ++i)
+							Menu.MenuItems[MI_EVENTS].MenuItems[i].Checked = true;
+					}
+					else if (it == Menu.MenuItems[MI_EVENTS].MenuItems[MI_EVENTS_DISABLE]) // disable all events
 					{
 						isDisable = true;
 						for (int i = ItemsReserved; i != Menu.MenuItems[MI_EVENTS].MenuItems.Count; ++i)
 							Menu.MenuItems[MI_EVENTS].MenuItems[i].Checked = false;
-					}
-					else if (it == Menu.MenuItems[MI_EVENTS].MenuItems[MI_EVENTS_ENABLE]) // enable all events
-					{
-						for (int i = ItemsReserved; i != Menu.MenuItems[MI_EVENTS].MenuItems.Count; ++i)
-							Menu.MenuItems[MI_EVENTS].MenuItems[i].Checked = true;
 					}
 					else if (!(isSolo = (ModifierKeys == Keys.Shift)))
 						it.Checked = !it.Checked;
@@ -880,9 +883,9 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
-		/// Instantiates a SEFGroup. Only double-characters play a sefgroup. A
-		/// single-character could play a sefgroup I suppose, but prefer to use
-		/// single-character to apply 'AppearanceSEF'.
+		/// Loads a SEFGroup. Only double-characters play a sefgroup. A single-
+		/// character could play a sefgroup I suppose, but prefer to use single-
+		/// character to apply 'AppearanceSEF'.
 		/// </summary>
 		/// <param name="sefgroup"></param>
 		void LoadSefgroup(SEFGroup sefgroup)
@@ -1241,9 +1244,13 @@ namespace SpecialEffectsViewer
 
 			if (rb_DoubleCharacter.Checked)
 			{
+				MenuItem it;
+
 				Menu.MenuItems[MI_EVENTS].MenuItems.Add("-");
-				Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Disable all events", Events_click);
-				Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Enable all events",  Events_click);
+				it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Enable all events",  Events_click);
+				it.Shortcut = Shortcut.F6;
+				it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Disable all events", Events_click);
+				it.Shortcut = Shortcut.F7;
 				Menu.MenuItems[MI_EVENTS].MenuItems.Add("-");
 			}
 
@@ -1255,7 +1262,10 @@ namespace SpecialEffectsViewer
 
 				sefevent = sefgroup.Events[i];
 
-				text += i + " [" + sefevent.Name + "]" + L;
+				text += i.ToString();
+				if (!String.IsNullOrEmpty(sefevent.Name))
+					text += " [" + sefevent.Name + "]";
+				text += L;
 
 				string file = GetFileLabel(sefevent);
 				if (file != null) text += file + L;
