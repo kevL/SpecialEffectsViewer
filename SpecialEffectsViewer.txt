@@ -23,7 +23,8 @@ I might try to figure it out for real later ...
 
 Events
 ------
-Play - plays or replays the currently loaded effect's enabled events.
+Play - plays or replays the currently selected effect's enabled events
+Stop - stops play
 
 Note: Only the option DoubleCharacter lists and allows disabling individual
 effect-events. The following items appear on the menu only if DoubleCharacter

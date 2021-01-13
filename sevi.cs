@@ -57,21 +57,23 @@ namespace SpecialEffectsViewer
 		const int STALE_Module   = 0x1;
 		const int STALE_Campaign = 0x2;
 
-		const int ItemsReserved = 5;
-
 		const int MI_EFFECTS = 0;
 		const int MI_EVENTS  = 1;
 		const int MI_VIEW    = 2;
 		const int MI_HELP    = 3;
 
 		const int MI_EVENTS_PLAY    = 0;
-		const int MI_EVENTS_ENABLE  = 2;
-		const int MI_EVENTS_DISABLE = 3;
+		const int MI_EVENTS_STOP    = 1;
+		const int MI_EVENTS_ENABLE  = 3;
+		const int MI_EVENTS_DISABLE = 4;
+
+		const int ItemsReserved = 6;
 		#endregion Fields (static)
 
 
 		#region Fields
 		IResourceEntry _effect; SEFGroup _sefgroup, _altgroup;
+		// TODO: Probably don't need both '_sefgroup' and '_altgroup'.
 
 		ElectronPanel _panel = new ElectronPanel(); // i hate u
 
@@ -153,7 +155,7 @@ namespace SpecialEffectsViewer
 			_itFxList_override.Shortcut = Shortcut.Ctrl5;
 
 // Events ->
-			CreatePlay();
+			CreateBasicEvents();
 
 // View ->
 			_itOptions = Menu.MenuItems[MI_VIEW].MenuItems.Add("show &Options panel", viewOptions_click);
@@ -253,7 +255,7 @@ namespace SpecialEffectsViewer
 			}
 
 			if (cb_Ground.Checked)
-				NWN2NetDisplayManager.Instance.UpdateTerrainSize(_panel.NDWindow.Scene, new Size(4,4)); // note: 4x4 is min area (200x200)
+				NWN2NetDisplayManager.Instance.UpdateTerrainSize(_panel.Scene, new Size(4,4)); // note: 4x4 is min area (200x200)
 
 			var receiver = new ModelViewerInputCameraReceiver(); // is null on Load
 			_panel.CameraMovementReceiver = receiver;
@@ -535,7 +537,7 @@ namespace SpecialEffectsViewer
 		void ClearEffectsList()
 		{
 			ClearScene();
-			CreatePlay();
+			CreateBasicEvents();
 
 			lb_Effects.SelectedIndex = -1;
 			lb_Effects.Items.Clear();
@@ -557,7 +559,8 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void events_popout(object sender, EventArgs e)
 		{
-			Menu.MenuItems[MI_EVENTS].MenuItems[MI_EVENTS_PLAY].Enabled = (lb_Effects.SelectedIndex != -1);
+			Menu.MenuItems[MI_EVENTS].MenuItems[MI_EVENTS_PLAY].Enabled =
+			Menu.MenuItems[MI_EVENTS].MenuItems[MI_EVENTS_STOP].Enabled = (lb_Effects.SelectedIndex != -1);
 		}
 
 		/// <summary>
@@ -567,7 +570,7 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void eventsPlay_click(object sender, EventArgs e)
 		{
-			_panel.NDWindow.Scene.SpecialEffectsManager.EndUpdating();
+			_panel.Scene.SpecialEffectsManager.EndUpdating();
 
 			if (lb_Effects.SelectedIndex != -1)
 			{
@@ -585,8 +588,18 @@ namespace SpecialEffectsViewer
 					}
 				}
 				else
-					_panel.NDWindow.Scene.SpecialEffectsManager.BeginUpdating();
+					_panel.Scene.SpecialEffectsManager.BeginUpdating();
 			}
+		}
+
+		/// <summary>
+		/// Stops the currently selected effect.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void eventsStop_click(object sender, EventArgs e)
+		{
+			_panel.Scene.SpecialEffectsManager.EndUpdating();
 		}
 
 		/// <summary>
@@ -764,7 +777,7 @@ namespace SpecialEffectsViewer
 		void ApplyEffect()
 		{
 			ClearScene();
-			CreatePlay();
+			CreateBasicEvents();
 
 			if (lb_Effects.SelectedIndex != -1)
 			{
@@ -775,7 +788,7 @@ namespace SpecialEffectsViewer
 					(iinstance as NWN2PlacedEffectTemplate).Active = true;
 					(iinstance as NWN2PlacedEffectTemplate).Effect = _effect;
 
-					NetDisplayObject oPlacedEffect = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iinstance, _panel.NDWindow.Scene, 0);
+					NetDisplayObject oPlacedEffect = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iinstance, _panel.Scene, 0);
 
 					oPlacedEffect.Position = new Vector3(100f,100f,0f);
 					NWN2NetDisplayManager.Instance.MoveObjects(new NetDisplayObjectCollection(oPlacedEffect), ChangeType.Absolute, false, oPlacedEffect.Position);
@@ -786,7 +799,7 @@ namespace SpecialEffectsViewer
 					iIdiot1.AppearanceType.Row = 4; // half-elf source/target
 					iIdiot1.AppearanceSEF = _effect;
 
-					NetDisplayObject oIdiot1 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot1, _panel.NDWindow.Scene, 0);
+					NetDisplayObject oIdiot1 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot1, _panel.Scene, 0);
 
 					oIdiot1.Position = new Vector3(100f,100f,0f);
 					NWN2NetDisplayManager.Instance.MoveObjects(new NetDisplayObjectCollection(oIdiot1), ChangeType.Absolute, false, oIdiot1.Position);
@@ -797,7 +810,7 @@ namespace SpecialEffectsViewer
 				PrintSefData();
 
 				if (!rb_DoubleCharacter.Checked || CanPlayEvents())
-					_panel.NDWindow.Scene.SpecialEffectsManager.BeginUpdating();
+					_panel.Scene.SpecialEffectsManager.BeginUpdating();
 			}
 		}
 
@@ -870,7 +883,7 @@ namespace SpecialEffectsViewer
 				LoadSefgroup(_altgroup);
 
 				if (!isDisable)
-					_panel.NDWindow.Scene.SpecialEffectsManager.BeginUpdating();
+					_panel.Scene.SpecialEffectsManager.BeginUpdating();
 			}
 		}
 
@@ -887,8 +900,8 @@ namespace SpecialEffectsViewer
 			iIdiot1.AppearanceType.Row = 5; // half-orc source
 			iIdiot2.AppearanceType.Row = 2; // gnome target
 
-			NetDisplayObject oIdiot1 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot1, _panel.NDWindow.Scene, 0);
-			NetDisplayObject oIdiot2 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot2, _panel.NDWindow.Scene, 0);
+			NetDisplayObject oIdiot1 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot1, _panel.Scene, 0);
+			NetDisplayObject oIdiot2 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot2, _panel.Scene, 0);
 
 			oIdiot1.Position = new Vector3(103f,100f,0f);
 			oIdiot2.Position = new Vector3( 97f,100f,0f);
@@ -904,28 +917,31 @@ namespace SpecialEffectsViewer
 
 			sefgroup.FirstObject  = oIdiot1;
 			sefgroup.SecondObject = oIdiot2;
-			_panel.NDWindow.Scene.SpecialEffectsManager.Groups.Add(sefgroup);
+			_panel.Scene.SpecialEffectsManager.Groups.Add(sefgroup);
 		}
 
 		/// <summary>
-		/// Clears the scene.
+		/// 
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		void bu_Clear_click(object sender, EventArgs e)
 		{
 			ClearScene();
-			CreatePlay();
+			CreateBasicEvents();
 
 			lb_Effects.SelectedIndex = -1;
 		}
 
+		/// <summary>
+		/// Clears the scene.
+		/// </summary>
 		void ClearScene()
 		{
-			if (_panel.NDWindow != null) // netdisplaywindow is null on launch
+			if (_panel.Scene != null) // netdisplaywindow is null on launch
 			{
-				_panel.NDWindow.Scene.SpecialEffectsManager.EndUpdating();
-				_panel.NDWindow.Scene.SpecialEffectsManager.Groups.Clear();
+				_panel.Scene.SpecialEffectsManager.EndUpdating();
+				_panel.Scene.SpecialEffectsManager.Groups.Clear();
 
 				var objects = new NetDisplayObjectCollection();
 				foreach (NetDisplayObject @object in _panel.Scene.Objects)
@@ -935,12 +951,18 @@ namespace SpecialEffectsViewer
 			}
 		}
 
-		void CreatePlay()
+		/// <summary>
+		/// Clears the events-list and re-creates Play and Stop.
+		/// </summary>
+		void CreateBasicEvents()
 		{
 			Menu.MenuItems[MI_EVENTS].MenuItems.Clear();
 
-			MenuItem it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Play", eventsPlay_click);
+			MenuItem it;
+			it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Play", eventsPlay_click);
 			it.Shortcut = Shortcut.F5;
+			it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Stop", eventsStop_click);
+			it.Shortcut = Shortcut.F6;
 		}
 
 		/// <summary>
@@ -1135,8 +1157,8 @@ namespace SpecialEffectsViewer
 					break;
 
 				// NOTE: Don't bother trying to handle [Ctrl+c] (whether or not
-				// the toolset is set as the plugin's Owner) since the toolset
-				// will freeze.
+				// the toolset is set as the plugin's Owner ...) since the
+				// toolset will freeze.
 			}
 		}
 
@@ -1229,9 +1251,9 @@ namespace SpecialEffectsViewer
 
 				Menu.MenuItems[MI_EVENTS].MenuItems.Add("-");
 				it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Enable all events",  Events_click);
-				it.Shortcut = Shortcut.F6;
-				it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Disable all events", Events_click);
 				it.Shortcut = Shortcut.F7;
+				it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Disable all events", Events_click);
+				it.Shortcut = Shortcut.F8;
 				Menu.MenuItems[MI_EVENTS].MenuItems.Add("-");
 			}
 
@@ -1260,9 +1282,9 @@ namespace SpecialEffectsViewer
 				text += "1st - "   + sefevent.FirstAttachment + L;
 				text += "2nd - "   + sefevent.SecondAttachmentObject + L;
 				text += "2nd - "   + sefevent.SecondAttachment + L;
+				text += "delay - " + sefevent.Delay + L;
 				text += "dur - "   + sefevent.HasMaximumDuration + L;
-				text += "dur - "   + sefevent.MaximumDuration + L;
-				text += "delay - " + sefevent.Delay;
+				text += "dur - "   + sefevent.MaximumDuration;
 
 				// NOTE: switch() possible here ->
 
