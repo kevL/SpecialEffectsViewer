@@ -67,8 +67,6 @@ namespace SpecialEffectsViewer
 		const int MI_EVENTS_PLAY    = 0;
 		const int MI_EVENTS_ENABLE  = 2;
 		const int MI_EVENTS_DISABLE = 3;
-
-//		const int MI_VIEW_TOP = 2;
 		#endregion Fields (static)
 
 
@@ -90,8 +88,6 @@ namespace SpecialEffectsViewer
 
 		string _filtr = String.Empty;
 		bool _bypassActivateSearchControl;
-
-		bool _bypassEventsClear;
 
 		string _pfe_helpfile;
 		#endregion Fields
@@ -123,8 +119,6 @@ namespace SpecialEffectsViewer
 			NWN2CampaignManager.Instance.ActiveCampaignChanged += OnActiveCampaignChanged;
 
 			effectsAll_click(null, EventArgs.Empty);
-
-//			logger.log(StringDecryptor.Decrypt("ᒼᒮᒯ"));
 
 			Show();
 		}
@@ -159,8 +153,7 @@ namespace SpecialEffectsViewer
 			_itFxList_override.Shortcut = Shortcut.Ctrl5;
 
 // Events ->
-			it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Play", eventsPlay_click);
-			it.Shortcut = Shortcut.F5;
+			CreatePlay();
 
 // View ->
 			_itOptions = Menu.MenuItems[MI_VIEW].MenuItems.Add("show &Options panel", viewOptions_click);
@@ -395,7 +388,7 @@ namespace SpecialEffectsViewer
 			{
 				lb_Effects.BeginUpdate();
 
-				ClearFxList();
+				ClearEffectsList();
 				_itFxList_all.Checked = true;
 
 				var entries = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
@@ -422,7 +415,7 @@ namespace SpecialEffectsViewer
 			{
 				lb_Effects.BeginUpdate();
 
-				ClearFxList();
+				ClearEffectsList();
 				_itFxList_stock.Checked = true;
 
 				var entries = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
@@ -455,7 +448,7 @@ namespace SpecialEffectsViewer
 			{
 				lb_Effects.BeginUpdate();
 
-				ClearFxList();
+				ClearEffectsList();
 				_itFxList_module.Checked = true;
 
 				var entries = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
@@ -485,7 +478,7 @@ namespace SpecialEffectsViewer
 			{
 				lb_Effects.BeginUpdate();
 
-				ClearFxList();
+				ClearEffectsList();
 				_itFxList_campaign.Checked = true;
 
 				var entries = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
@@ -515,7 +508,7 @@ namespace SpecialEffectsViewer
 			{
 				lb_Effects.BeginUpdate();
 
-				ClearFxList();
+				ClearEffectsList();
 				_itFxList_override.Checked = true;
 
 				var entries = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
@@ -535,11 +528,14 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
-		/// Clears the Fx-list and unchecks the List menuitems.
+		/// Clears the scene, the events-list, and the effects-list, then
+		/// unchecks the repo-list so things are ready for the effects in a repo
+		/// to be listed.
 		/// </summary>
-		void ClearFxList()
+		void ClearEffectsList()
 		{
-			bu_Clear_click(null, EventArgs.Empty);
+			ClearScene();
+			CreatePlay();
 
 			lb_Effects.SelectedIndex = -1;
 			lb_Effects.Items.Clear();
@@ -582,12 +578,9 @@ namespace SpecialEffectsViewer
 						// clear the netdisplay
 						// - recreate the scene in case a solo-event was played previously.
 						// - the toolset code is not as cooperative as I'd like ...
-						_bypassEventsClear = true;
-						bu_Clear_click(null, EventArgs.Empty);
-						_bypassEventsClear = false;
+						ClearScene();
 
 						_altgroup = null;
-
 						Events_click(null, EventArgs.Empty);
 					}
 				}
@@ -667,8 +660,7 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void helpAbout_click(object sender, EventArgs e)
 		{
-			using (var f = new AboutF())
-				f.ShowDialog(this);
+			using (var f = new AboutF()) f.ShowDialog(this);
 		}
 		#endregion eventhandlers (help)
 
@@ -694,8 +686,9 @@ namespace SpecialEffectsViewer
 			}
 			else
 			{
-				_effect = null; _sefgroup = null; _altgroup = null;
 				Text = TITLE;
+				_effect = null; _sefgroup = null; _altgroup = null;
+				tb_SefData.Text = tb_EventData.Text = String.Empty;
 			}
 		}
 
@@ -770,7 +763,8 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		void ApplyEffect()
 		{
-			bu_Clear_click(null, EventArgs.Empty);
+			ClearScene();
+			CreatePlay();
 
 			if (lb_Effects.SelectedIndex != -1)
 			{
@@ -800,7 +794,7 @@ namespace SpecialEffectsViewer
 				else //if (rb_DoubleCharacter.Checked)
 					LoadSefgroup(_sefgroup);
 
-				PrintSefData(_sefgroup);
+				PrintSefData();
 
 				if (!rb_DoubleCharacter.Checked || CanPlayEvents())
 					_panel.NDWindow.Scene.SpecialEffectsManager.BeginUpdating();
@@ -841,9 +835,7 @@ namespace SpecialEffectsViewer
 
 					// clear the netdisplay
 					// - don't bother with this for a Ground-toggle since the ElectronPanel will be recreated for that.
-					_bypassEventsClear = true;
-					bu_Clear_click(null, EventArgs.Empty);
-					_bypassEventsClear = false;
+					ClearScene();
 
 					_altgroup = null;
 				}
@@ -922,6 +914,14 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void bu_Clear_click(object sender, EventArgs e)
 		{
+			ClearScene();
+			CreatePlay();
+
+			lb_Effects.SelectedIndex = -1;
+		}
+
+		void ClearScene()
+		{
 			if (_panel.NDWindow != null) // netdisplaywindow is null on launch
 			{
 				_panel.NDWindow.Scene.SpecialEffectsManager.EndUpdating();
@@ -932,15 +932,15 @@ namespace SpecialEffectsViewer
 					objects.Add(@object);
 
 				NWN2NetDisplayManager.Instance.RemoveObjects(objects);
-
-				if (!_bypassEventsClear)
-				{
-					Menu.MenuItems[MI_EVENTS].MenuItems.Clear();
-
-					MenuItem it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Play", eventsPlay_click);
-					it.Shortcut = Shortcut.F5;
-				}
 			}
+		}
+
+		void CreatePlay()
+		{
+			Menu.MenuItems[MI_EVENTS].MenuItems.Clear();
+
+			MenuItem it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Play", eventsPlay_click);
+			it.Shortcut = Shortcut.F5;
 		}
 
 		/// <summary>
@@ -975,26 +975,17 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void tb_Search_keydown(object sender, KeyEventArgs e)
 		{
-			//logger.log("tb_Search_keydown()");
 			switch (e.KeyData)
 			{
 				case Keys.Enter:
-					//logger.log("Keys.Enter");
 					e.SuppressKeyPress = e.Handled = true;
 					bu_Search_click(bu_SearchD, EventArgs.Empty);
 					break;
 
 				case Keys.Enter | Keys.Shift:
-					//logger.log("Keys.Enter | Keys.Shift");
 					e.SuppressKeyPress = e.Handled = true;
 					bu_Search_click(bu_SearchU, EventArgs.Empty);
 					break;
-
-//				case Keys.Control | Keys.A: // <- works okay don't know why
-//				case Keys.Control | Keys.C:
-//					//logger.log("Keys.Control | Keys.C"); // toolset freezes -> see tb_keydown()
-//					tb_keydown(sender, e);
-//					break;
 			}
 		}
 
@@ -1134,28 +1125,18 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void tb_keydown(object sender, KeyEventArgs e)
 		{
-			//logger.log("tb_keydown()");
 			switch (e.KeyData)
 			{
 				case Keys.Control | Keys.A:
-					//logger.log(". Keys.Control | Keys.C");
 					e.Handled = e.SuppressKeyPress = true;
 					var tb = sender as TextBox;
 					tb.SelectionStart = 0;
 					tb.SelectionLength = tb.Text.Length;
 					break;
 
-//				case Keys.Control | Keys.C: // toolset freezes ->
-//					//logger.log(". Keys.Control | Keys.C");
-//					// the toolset handles [Ctrl+c] if it's the Owner of this plugin
-//					// so it needs to be re-handled here
-//					if (Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_TOP].Checked)
-//					{
-//						e.Handled = e.SuppressKeyPress = true;
-//						Clipboard.Clear();
-//						Clipboard.SetText((sender as TextBox).SelectedText); // doesn't work anyway.
-//					}
-//					break;
+				// NOTE: Don't bother trying to handle [Ctrl+c] (whether or not
+				// the toolset is set as the plugin's Owner) since the toolset
+				// will freeze.
 			}
 		}
 
@@ -1173,13 +1154,14 @@ namespace SpecialEffectsViewer
 				{
 					case MouseButtons.Right:
 					case MouseButtons.Middle:
-							if ((ModifierKeys & Keys.Control) != 0)
-							{
-								Cursor.Current = Cursors.Cross;
-							}
-							else
-								Cursor.Current = Cursors.SizeAll;
-					break;
+						if ((ModifierKeys & Keys.Control) != 0)
+						{
+							Cursor.Current = Cursors.Cross;
+						}
+						else
+							Cursor.Current = Cursors.SizeAll;
+
+						break;
 				}
 			}
 		}
@@ -1224,20 +1206,19 @@ namespace SpecialEffectsViewer
 		/// Prints the currently loaded Sef-events to the left panel. Adds an
 		/// item to the Events menu for each event.
 		/// </summary>
-		/// <param name="sefgroup"></param>
-		void PrintSefData(SEFGroup sefgroup)
+		void PrintSefData()
 		{
 			string text = String.Empty;
 			string L = Environment.NewLine;
 
-			text += "[" + sefgroup.Name + "]" + L;
-			text += sefgroup.Position.X + "," + sefgroup.Position.Y + "," + sefgroup.Position.Z + L;
-			text += "1st - " + sefgroup.FirstObject + L;
-			text += "2nd - " + sefgroup.SecondObject + L;
-			text += "fog - " + sefgroup.FogMultiplier + L;
-			text += "dur - " + sefgroup.HasMaximumDuration + L;
-			text += "dur - " + sefgroup.MaximumDuration + L;
-			text += sefgroup.SpecialTargetPosition;
+			text += "[" + _sefgroup.Name + "]" + L;
+			text += _sefgroup.Position.X + "," + _sefgroup.Position.Y + "," + _sefgroup.Position.Z + L;
+			text += "1st - " + _sefgroup.FirstObject + L;
+			text += "2nd - " + _sefgroup.SecondObject + L;
+			text += "fog - " + _sefgroup.FogMultiplier + L;
+			text += "dur - " + _sefgroup.HasMaximumDuration + L;
+			text += "dur - " + _sefgroup.MaximumDuration + L;
+			text += _sefgroup.SpecialTargetPosition;
 
 			tb_SefData.Text = text;
 
@@ -1256,11 +1237,11 @@ namespace SpecialEffectsViewer
 
 			text = String.Empty;
 			ISEFEvent sefevent;
-			for (int i = 0; i != sefgroup.Events.Count; ++i)
+			for (int i = 0; i != _sefgroup.Events.Count; ++i)
 			{
 				if (text != String.Empty) text += L + L;
 
-				sefevent = sefgroup.Events[i];
+				sefevent = _sefgroup.Events[i];
 
 				text += i.ToString();
 				if (!String.IsNullOrEmpty(sefevent.Name))
@@ -1385,38 +1366,6 @@ namespace SpecialEffectsViewer
 			}
 			return null;
 		}
-
-/*		/// <summary>
-		/// Concocts a label for a specified event.
-		/// </summary>
-		/// <param name="sefevent"></param>
-		/// <returns></returns>
-		string GetEventLabel(ISEFEvent sefevent)
-		{
-			string label;
-			if (sefevent.Name != null)
-				label = sefevent.Name;
-			else
-				label = String.Empty;
-
-			string file;
-			if (   sefevent.DefinitionFile              != null
-				&& sefevent.DefinitionFile.ResRef       != null
-				&& sefevent.DefinitionFile.ResRef.Value != null)
-			{
-				file = sefevent.DefinitionFile.ResRef.Value;
-			}
-			else
-				file = String.Empty;
-
-			string separator;
-			if (label != String.Empty && file != String.Empty)
-				separator = " - ";
-			else
-				separator = String.Empty;
-
-			return "[" + label + separator + file + "]";
-		} */
 
 		/// <summary>
 		/// Stores the current camera-state in Preferences.
