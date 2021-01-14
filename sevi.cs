@@ -57,24 +57,7 @@ namespace SpecialEffectsViewer
 		const int STALE_Module   = 0x1;
 		const int STALE_Campaign = 0x2;
 
-		const int MI_RESREP = 0;
-		const int MI_EVENTS = 1;
-		const int MI_VIEW   = 2;
-		const int MI_HELP   = 3;
-
-		const int MI_EVENTS_PLAY    = 0;
-		const int MI_EVENTS_STOP    = 1;
-		const int MI_EVENTS_ENABLE  = 3;
-		const int MI_EVENTS_DISABLE = 4;
-
-		const int MI_VIEW_DC = 0; // doublechar
-		const int MI_VIEW_SC = 1; // singlechar
-		const int MI_VIEW_PE = 2; // placedeffect
-
-		const int MI_VIEW_GROUND = 4;
-		const int MI_VIEW_EXTEND = 7; // extended event-info
-
-		const int ItemsReserved = 6; // on the Events dropdown
+		const int ItemsReserved = 6; // standard its in the Events dropdown
 
 		static int WidthOptions;
 		#endregion Fields (static)
@@ -92,8 +75,19 @@ namespace SpecialEffectsViewer
 		MenuItem _itFxList_campaign;
 		MenuItem _itFxList_override;
 
-		MenuItem _itStayOnTop;
-		MenuItem _itOptions;
+		MenuItem _itEvents;
+		MenuItem _itEvents_Play;
+		MenuItem _itEvents_Stop;
+		MenuItem _itEvents_Enable;
+		MenuItem _itEvents_Disable;
+
+		MenuItem _itView_DoubleCharacter;
+		MenuItem _itView_SingleCharacter;
+		MenuItem _itView_PlacedEffect;
+		MenuItem _itView_Ground;
+		MenuItem _itView_Options;
+		MenuItem _itView_ExtendedInfo;
+		MenuItem _itView_StayOnTop;
 
 		int _isListStale;
 
@@ -143,21 +137,17 @@ namespace SpecialEffectsViewer
 		{
 			Menu = new MainMenu();
 
-			MenuItem it;
-
-			Menu.MenuItems.Add("&Resrep");		// 0
-			it = Menu.MenuItems.Add("&Events");	// 1
-			it.Popup += mi_events_popout;
-			Menu.MenuItems.Add("&View");		// 2
-			Menu.MenuItems.Add("&Help");		// 3
+			MenuItem it, it0;
 
 // List ->
-			_itFxList_all      = Menu.MenuItems[MI_RESREP].MenuItems.Add("list &all effects", mi_resrep_All);
-								 Menu.MenuItems[MI_RESREP].MenuItems.Add("-");
-			_itFxList_stock    = Menu.MenuItems[MI_RESREP].MenuItems.Add("&stock only",       mi_resrep_Stock);
-			_itFxList_module   = Menu.MenuItems[MI_RESREP].MenuItems.Add("&module only",      mi_resrep_Module);
-			_itFxList_campaign = Menu.MenuItems[MI_RESREP].MenuItems.Add("&campaign only",    mi_resrep_Campaign);
-			_itFxList_override = Menu.MenuItems[MI_RESREP].MenuItems.Add("&override only",    mi_resrep_Override);
+			it = Menu.MenuItems.Add("&Resrep"); // 0
+
+			_itFxList_all      = it.MenuItems.Add("list &all effects", mi_resrep_All);
+								 it.MenuItems.Add("-");
+			_itFxList_stock    = it.MenuItems.Add("&stock only",       mi_resrep_Stock);
+			_itFxList_module   = it.MenuItems.Add("&module only",      mi_resrep_Module);
+			_itFxList_campaign = it.MenuItems.Add("&campaign only",    mi_resrep_Campaign);
+			_itFxList_override = it.MenuItems.Add("&override only",    mi_resrep_Override);
 
 			_itFxList_all     .Shortcut = Shortcut.Ctrl1;
 			_itFxList_stock   .Shortcut = Shortcut.Ctrl2;
@@ -166,48 +156,49 @@ namespace SpecialEffectsViewer
 			_itFxList_override.Shortcut = Shortcut.Ctrl5;
 
 // Events ->
+			_itEvents = Menu.MenuItems.Add("&Events"); // 1
+			_itEvents.Popup += mi_events_popup;
+
 			CreateBasicEvents();
 
 // View ->
-			it = Menu.MenuItems[MI_VIEW].MenuItems.Add("&Double character", mi_view_DoubleCharacter);
-			it.Shortcut = Shortcut.F10;
-			it.Checked = true;
+			 it = Menu.MenuItems.Add("&View"); // 2
 
-			it = Menu.MenuItems[MI_VIEW].MenuItems.Add("&Single character", mi_view_SingleCharacter);
-			it.Shortcut = Shortcut.F11;
+			_itView_DoubleCharacter = it.MenuItems.Add("&Double character",     mi_view_DoubleCharacter);
+			_itView_SingleCharacter = it.MenuItems.Add("&Single character",     mi_view_SingleCharacter);
+			_itView_PlacedEffect    = it.MenuItems.Add("&placed effect object", mi_view_PlacedEffect);
+									  it.MenuItems.Add("-");
+			_itView_Ground          = it.MenuItems.Add("show &Ground",          mi_view_Ground);
+									  it.MenuItems.Add("-");
+			_itView_Options         = it.MenuItems.Add("show &Options panel",   mi_view_Options);
+			_itView_ExtendedInfo    = it.MenuItems.Add("show extended &info",   mi_view_Extended);
+									  it.MenuItems.Add("-");
+			_itView_StayOnTop       = it.MenuItems.Add("stay on &top",          mi_view_StayOnTop);
 
-			it = Menu.MenuItems[MI_VIEW].MenuItems.Add("&placed effect object", mi_view_PlacedEffect);
-			it.Shortcut = Shortcut.F12;
+			_itView_DoubleCharacter.Shortcut = Shortcut.F10;
+			_itView_SingleCharacter.Shortcut = Shortcut.F11;
+			_itView_PlacedEffect   .Shortcut = Shortcut.F12;
+			_itView_Ground         .Shortcut = Shortcut.CtrlG;
+			_itView_Options        .Shortcut = Shortcut.F9;
+			_itView_ExtendedInfo   .Shortcut = Shortcut.CtrlI;
+			_itView_StayOnTop      .Shortcut = Shortcut.CtrlT;
 
-			Menu.MenuItems[MI_VIEW].MenuItems.Add("-");
-
-			it = Menu.MenuItems[MI_VIEW].MenuItems.Add("show &Ground", mi_view_Ground);
-			it.Shortcut = Shortcut.CtrlG;
-
-			Menu.MenuItems[MI_VIEW].MenuItems.Add("-");
-
-			_itOptions = Menu.MenuItems[MI_VIEW].MenuItems.Add("show &Options panel", mi_view_Options);
-			_itOptions.Shortcut = Shortcut.F9;
-
-			it = Menu.MenuItems[MI_VIEW].MenuItems.Add("show extended &info", mi_view_Extended);
-			it.Shortcut = Shortcut.CtrlI;
-
-			Menu.MenuItems[MI_VIEW].MenuItems.Add("-");
-
-			_itStayOnTop = Menu.MenuItems[MI_VIEW].MenuItems.Add("stay on &top", mi_view_StayOnTop);
-			_itStayOnTop.Shortcut = Shortcut.CtrlT;
-			_itStayOnTop.Checked = true;
+			_itView_DoubleCharacter.Checked =
+			_itView_StayOnTop      .Checked = true;
 
 // Help ->
+			it = Menu.MenuItems.Add("&Help"); // 3
+
 			_pfe_helpfile = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 			_pfe_helpfile = Path.Combine(_pfe_helpfile, "SpecialEffectsViewer.txt");
 			if (File.Exists(_pfe_helpfile))
 			{
-				it = Menu.MenuItems[MI_HELP].MenuItems.Add("&help",  mi_help_Help);
-				it.Shortcut = Shortcut.F1;
+				it0 = it.MenuItems.Add("&help", mi_help_Help);
+				it0.Shortcut = Shortcut.F1;
 			}
-			it = Menu.MenuItems[MI_HELP].MenuItems.Add("&about", mi_help_About);
-			it.Shortcut = Shortcut.F2;
+
+			it0 = it.MenuItems.Add("&about", mi_help_About);
+			it0.Shortcut = Shortcut.F2;
 		}
 
 		/// <summary>
@@ -243,46 +234,39 @@ namespace SpecialEffectsViewer
 			}
 
 			if (SpecialEffectsViewerPreferences.that.OptionsPanel)
-				_itOptions.PerformClick();
+				_itView_Options.PerformClick();
 
 			sc1_Effects.SplitterDistance = SpecialEffectsViewerPreferences.that.SplitterDistanceEffects;
 			sc3_Events .SplitterDistance = SpecialEffectsViewerPreferences.that.SplitterDistanceEvents;
 
 			if (!SpecialEffectsViewerPreferences.that.StayOnTop)
-				_itStayOnTop.PerformClick();
+				_itView_StayOnTop.PerformClick();
 
 			if (SpecialEffectsViewerPreferences.that.Maximized)
 				WindowState = FormWindowState.Maximized;
 
 			if (SpecialEffectsViewerPreferences.that.Scene != (int)Scene.doublecharacter)
 			{
-				Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_DC].Checked =
-				(rb_DoubleCharacter.Checked = false);
+				_itView_DoubleCharacter.Checked = (rb_DoubleCharacter.Checked = false);
 
 				switch ((Scene)SpecialEffectsViewerPreferences.that.Scene)
 				{
 					default: // safety.
-						Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_DC].Checked =
-						(rb_DoubleCharacter.Checked = true);
+						_itView_DoubleCharacter.Checked = (rb_DoubleCharacter.Checked = true);
 						break;
 
 					case Scene.singlecharacter:
-						Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_SC].Checked =
-						(rb_SingleCharacter.Checked = true);
+						_itView_SingleCharacter.Checked = (rb_SingleCharacter.Checked = true);
 						break;
 
 					case Scene.placedeffect:
-						Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_PE].Checked =
-						(rb_PlacedEffect.Checked = true);
+						_itView_PlacedEffect.Checked = (rb_PlacedEffect.Checked = true);
 						break;
 				}
 			}
 
-			Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_GROUND].Checked =
-			(cb_Ground.Checked = SpecialEffectsViewerPreferences.that.Ground);
-
-			Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_EXTEND].Checked
-				= SpecialEffectsViewerPreferences.that.ExtendedInfo;
+			_itView_Ground      .Checked = (cb_Ground.Checked = SpecialEffectsViewerPreferences.that.Ground);
+			_itView_ExtendedInfo.Checked = SpecialEffectsViewerPreferences.that.ExtendedInfo;
 		}
 		#endregion cTor
 
@@ -584,10 +568,10 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void mi_events_popout(object sender, EventArgs e)
+		void mi_events_popup(object sender, EventArgs e)
 		{
-			Menu.MenuItems[MI_EVENTS].MenuItems[MI_EVENTS_PLAY].Enabled =
-			Menu.MenuItems[MI_EVENTS].MenuItems[MI_EVENTS_STOP].Enabled = (lb_Effects.SelectedIndex != -1);
+			_itEvents_Play.Enabled =
+			_itEvents_Stop.Enabled = (lb_Effects.SelectedIndex != -1);
 		}
 
 		/// <summary>
@@ -647,16 +631,16 @@ namespace SpecialEffectsViewer
 				if (sender != null) // if NOT cb_Ground_click() ie. is a real Events click ->
 				{
 					// set the items' check
-					if (it == Menu.MenuItems[MI_EVENTS].MenuItems[MI_EVENTS_ENABLE]) // enable all events
+					if (it == _itEvents_Enable) // enable all events
 					{
-						for (int i = ItemsReserved; i != Menu.MenuItems[MI_EVENTS].MenuItems.Count; ++i)
-							Menu.MenuItems[MI_EVENTS].MenuItems[i].Checked = true;
+						for (int i = ItemsReserved; i != _itEvents.MenuItems.Count; ++i)
+							_itEvents.MenuItems[i].Checked = true;
 					}
-					else if (it == Menu.MenuItems[MI_EVENTS].MenuItems[MI_EVENTS_DISABLE]) // disable all events
+					else if (it == _itEvents_Disable) // disable all events
 					{
 						isDisable = true;
-						for (int i = ItemsReserved; i != Menu.MenuItems[MI_EVENTS].MenuItems.Count; ++i)
-							Menu.MenuItems[MI_EVENTS].MenuItems[i].Checked = false;
+						for (int i = ItemsReserved; i != _itEvents.MenuItems.Count; ++i)
+							_itEvents.MenuItems[i].Checked = false;
 					}
 					else if (!(isSolo = (ModifierKeys == Keys.Shift)))
 						it.Checked = !it.Checked;
@@ -680,7 +664,7 @@ namespace SpecialEffectsViewer
 					{
 						for (int i = _altgroup.Events.Count - 1; i != -1; --i)
 						{
-							if (!Menu.MenuItems[MI_EVENTS].MenuItems[i + ItemsReserved].Checked)
+							if (!_itEvents.MenuItems[i + ItemsReserved].Checked)
 								_altgroup.Events.RemoveAt(i);
 						}
 					}
@@ -712,7 +696,7 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void mi_view_DoubleCharacter(object sender, EventArgs e)
 		{
-			if (!Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_DC].Checked)
+			if (!_itView_DoubleCharacter.Checked)
 			{
 				rb_DoubleCharacter.Checked = true;
 				rb_click(null, EventArgs.Empty);
@@ -726,7 +710,7 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void mi_view_SingleCharacter(object sender, EventArgs e)
 		{
-			if (!Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_SC].Checked)
+			if (!_itView_SingleCharacter.Checked)
 			{
 				rb_SingleCharacter.Checked = true;
 				rb_click(null, EventArgs.Empty);
@@ -740,7 +724,7 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void mi_view_PlacedEffect(object sender, EventArgs e)
 		{
-			if (!Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_PE].Checked)
+			if (!_itView_PlacedEffect.Checked)
 			{
 				rb_PlacedEffect.Checked = true;
 				rb_click(null, EventArgs.Empty);
@@ -769,7 +753,7 @@ namespace SpecialEffectsViewer
 				SpecialEffectsViewerPreferences.that.SplitterDistanceEvents = sc3_Events.SplitterDistance; // workaround.
 
 			if (!(sc2_Options.Panel1Collapsed = !(SpecialEffectsViewerPreferences.that.OptionsPanel =
-												 (_itOptions.Checked = !_itOptions.Checked))))
+												 (_itView_Options.Checked = !_itView_Options.Checked))))
 			{
 				sc3_Events.SplitterDistance = SpecialEffectsViewerPreferences.that.SplitterDistanceEvents; // workaround.
 			}
@@ -782,8 +766,8 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void mi_view_Extended(object sender, EventArgs e)
 		{
-			MenuItem it = Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_EXTEND];
-			SpecialEffectsViewerPreferences.that.ExtendedInfo = (it.Checked = !it.Checked);
+			SpecialEffectsViewerPreferences.that.ExtendedInfo =
+			(_itView_ExtendedInfo.Checked = !_itView_ExtendedInfo.Checked);
 
 			CreateBasicEvents();
 			PrintEffectData();
@@ -797,7 +781,7 @@ namespace SpecialEffectsViewer
 		void mi_view_StayOnTop(object sender, EventArgs e)
 		{
 			if (SpecialEffectsViewerPreferences.that.StayOnTop =
-			   (_itStayOnTop.Checked = !_itStayOnTop.Checked))
+			   (_itView_StayOnTop.Checked = !_itView_StayOnTop.Checked))
 			{
 				Owner = NWN2ToolsetMainForm.App;
 			}
@@ -881,17 +865,17 @@ namespace SpecialEffectsViewer
 			if (rb_DoubleCharacter.Checked)
 			{
 				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.doublecharacter;
-				SetSceneType(MI_VIEW_DC);
+				SetSceneType(Scene.doublecharacter);
 			}
 			else if (rb_SingleCharacter.Checked)
 			{
 				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.singlecharacter;
-				SetSceneType(MI_VIEW_SC);
+				SetSceneType(Scene.singlecharacter);
 			}
 			else //if (rb_PlacedEffect.Checked)
 			{
 				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.placedeffect;
-				SetSceneType(MI_VIEW_PE);
+				SetSceneType(Scene.placedeffect);
 			}
 
 			ApplyEffect();
@@ -906,7 +890,7 @@ namespace SpecialEffectsViewer
 		void cb_Ground_click(object sender, EventArgs e)
 		{
 			SpecialEffectsViewerPreferences.that.Ground =
-			(Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_GROUND].Checked = cb_Ground.Checked);
+			(_itView_Ground.Checked = cb_Ground.Checked);
 
 			StoreCameraState();
 
@@ -1217,13 +1201,13 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		void CreateBasicEvents()
 		{
-			Menu.MenuItems[MI_EVENTS].MenuItems.Clear();
+			_itEvents.MenuItems.Clear();
 
-			MenuItem it;
-			it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Play", mi_events_Play);
-			it.Shortcut = Shortcut.F5;
-			it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Stop", mi_events_Stop);
-			it.Shortcut = Shortcut.F6;
+			_itEvents_Play = _itEvents.MenuItems.Add("&Play", mi_events_Play);
+			_itEvents_Stop = _itEvents.MenuItems.Add("&Stop", mi_events_Stop);
+
+			_itEvents_Play.Shortcut = Shortcut.F5;
+			_itEvents_Stop.Shortcut = Shortcut.F6;
 		}
 
 		/// <summary>
@@ -1233,9 +1217,9 @@ namespace SpecialEffectsViewer
 		/// <returns>true if any event is checked</returns>
 		bool CanPlayEvents()
 		{
-			for (int i = ItemsReserved; i != Menu.MenuItems[MI_EVENTS].MenuItems.Count; ++i)
+			for (int i = ItemsReserved; i != _itEvents.MenuItems.Count; ++i)
 			{
-				if (Menu.MenuItems[MI_EVENTS].MenuItems[i].Checked)
+				if (_itEvents.MenuItems[i].Checked)
 					return true;
 			}
 			return false;
@@ -1245,12 +1229,12 @@ namespace SpecialEffectsViewer
 		/// Toggles view-type checkboxes on the View menu and keeps them
 		/// synchronized.
 		/// </summary>
-		/// <param name="target"></param>
-		void SetSceneType(int target)
+		/// <param name="scene"></param>
+		void SetSceneType(Scene scene)
 		{
-			Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_DC].Checked = (target == MI_VIEW_DC);
-			Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_SC].Checked = (target == MI_VIEW_SC);
-			Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_PE].Checked = (target == MI_VIEW_PE);
+			_itView_DoubleCharacter.Checked = (scene == Scene.doublecharacter);
+			_itView_SingleCharacter.Checked = (scene == Scene.singlecharacter);
+			_itView_PlacedEffect   .Checked = (scene == Scene.placedeffect);
 		}
 
 		/// <summary>
@@ -1355,17 +1339,17 @@ namespace SpecialEffectsViewer
 
 				if (rb_DoubleCharacter.Checked)
 				{
-					MenuItem it;
+					_itEvents.MenuItems.Add("-");
 
-					Menu.MenuItems[MI_EVENTS].MenuItems.Add("-");
-					it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Enable all events",  mi_events_Event);
-					it.Shortcut = Shortcut.F7;
-					it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Disable all events", mi_events_Event);
-					it.Shortcut = Shortcut.F8;
-					Menu.MenuItems[MI_EVENTS].MenuItems.Add("-");
+					_itEvents_Enable  = _itEvents.MenuItems.Add("&Enable all events",  mi_events_Event);
+					_itEvents_Disable = _itEvents.MenuItems.Add("&Disable all events", mi_events_Event);
+
+					_itEvents_Enable .Shortcut = Shortcut.F7;
+					_itEvents_Disable.Shortcut = Shortcut.F8;
+
+					_itEvents.MenuItems.Add("-");
 				}
 
-				bool extendInfo = Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_EXTEND].Checked;
 
 				text = String.Empty;
 				ISEFEvent sefevent;
@@ -1408,7 +1392,7 @@ namespace SpecialEffectsViewer
 //					}
 
 
-					if (extendInfo)
+					if (_itView_ExtendedInfo.Checked)
 					{
 						// NOTE: switch() possible here ->
 
@@ -1552,7 +1536,7 @@ namespace SpecialEffectsViewer
 
 					if (rb_DoubleCharacter.Checked)
 					{
-						var it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("event " + i, mi_events_Event);
+						var it = _itEvents.MenuItems.Add("event " + i, mi_events_Event);
 						it.Tag = i;
 						it.Checked = true;
 					}
