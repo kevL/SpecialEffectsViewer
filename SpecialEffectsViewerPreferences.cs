@@ -67,6 +67,9 @@ namespace SpecialEffectsViewer
 		public bool Ground
 		{ get; set; }
 
+		public bool ExtendedInfo
+		{ get; set; }
+
 		public float FocusPoint_x
 		{ get; set; }
 
@@ -106,7 +109,8 @@ namespace SpecialEffectsViewer
 			FocusPoint_y = 100f;
 			FocusPoint_z = 1f;
 
-			Ground = true;
+			Ground       = true;
+			ExtendedInfo = false;
 		}
 		#endregion cTor
 	}

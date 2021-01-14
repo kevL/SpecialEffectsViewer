@@ -72,8 +72,11 @@ namespace SpecialEffectsViewer
 		const int MI_VIEW_PE = 2; // placedeffect
 
 		const int MI_VIEW_GROUND = 4;
+		const int MI_VIEW_EXTEND = 7; // extended event-info
 
 		const int ItemsReserved = 6;
+
+		static int WidthOptions;
 		#endregion Fields (static)
 
 
@@ -111,6 +114,8 @@ namespace SpecialEffectsViewer
 
 			InitializeComponent();
 
+			WidthOptions = sc2_Options.SplitterDistance;
+
 			// leave Options-panel open in the designer but close it here
 			sc2_Options.Panel1Collapsed = true;
 
@@ -140,7 +145,7 @@ namespace SpecialEffectsViewer
 
 			MenuItem it;
 
-			Menu.MenuItems.Add("E&ffects");		// 0
+			Menu.MenuItems.Add("&Resrep");		// 0
 			it = Menu.MenuItems.Add("&Events");	// 1
 			it.Popup += events_popout;
 			Menu.MenuItems.Add("&View");		// 2
@@ -164,25 +169,28 @@ namespace SpecialEffectsViewer
 			CreateBasicEvents();
 
 // View ->
-			it = Menu.MenuItems[MI_VIEW].MenuItems.Add("Double character", mi_DoubleCharacter);
+			it = Menu.MenuItems[MI_VIEW].MenuItems.Add("&Double character", mi_DoubleCharacter);
 			it.Shortcut = Shortcut.F10;
 			it.Checked = true;
 
-			it = Menu.MenuItems[MI_VIEW].MenuItems.Add("Single character", mi_SingleCharacter);
+			it = Menu.MenuItems[MI_VIEW].MenuItems.Add("&Single character", mi_SingleCharacter);
 			it.Shortcut = Shortcut.F11;
 
-			it = Menu.MenuItems[MI_VIEW].MenuItems.Add("placed effect object", mi_PlacedEffect);
+			it = Menu.MenuItems[MI_VIEW].MenuItems.Add("&placed effect object", mi_PlacedEffect);
 			it.Shortcut = Shortcut.F12;
 
 			Menu.MenuItems[MI_VIEW].MenuItems.Add("-");
 
-			it = Menu.MenuItems[MI_VIEW].MenuItems.Add("show Ground", mi_Ground);
+			it = Menu.MenuItems[MI_VIEW].MenuItems.Add("show &Ground", mi_Ground);
 			it.Shortcut = Shortcut.CtrlG;
 
 			Menu.MenuItems[MI_VIEW].MenuItems.Add("-");
 
 			_itOptions = Menu.MenuItems[MI_VIEW].MenuItems.Add("show &Options panel", viewOptions_click);
 			_itOptions.Shortcut = Shortcut.F9;
+
+			it = Menu.MenuItems[MI_VIEW].MenuItems.Add("show extended &info", mi_Extended);
+			it.Shortcut = Shortcut.CtrlI;
 
 			Menu.MenuItems[MI_VIEW].MenuItems.Add("-");
 
@@ -272,6 +280,9 @@ namespace SpecialEffectsViewer
 
 			Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_GROUND].Checked =
 			(cb_Ground.Checked = SpecialEffectsViewerPreferences.that.Ground);
+
+			Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_EXTEND].Checked
+				= SpecialEffectsViewerPreferences.that.ExtendedInfo;
 		}
 		#endregion cTor
 
@@ -724,6 +735,20 @@ namespace SpecialEffectsViewer
 			{
 				sc3_Events.SplitterDistance = SpecialEffectsViewerPreferences.that.SplitterDistanceEvents; // workaround.
 			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void mi_Extended(object sender, EventArgs e)
+		{
+			MenuItem it = Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_EXTEND];
+			SpecialEffectsViewerPreferences.that.ExtendedInfo = (it.Checked = !it.Checked);
+
+			CreateBasicEvents();
+			PrintSefData();
 		}
 
 		/// <summary>
@@ -1282,12 +1307,9 @@ namespace SpecialEffectsViewer
 					case MouseButtons.Right:
 					case MouseButtons.Middle:
 						if ((ModifierKeys & Keys.Control) != 0)
-						{
 							Cursor.Current = Cursors.Cross;
-						}
 						else
 							Cursor.Current = Cursors.SizeAll;
-
 						break;
 				}
 			}
@@ -1335,159 +1357,249 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		void PrintSefData()
 		{
-			string text = String.Empty;
-			string L = Environment.NewLine;
-
-			text += "[" + _sefgroup.Name + "]" + L;
-			text += _sefgroup.Position.X + "," + _sefgroup.Position.Y + "," + _sefgroup.Position.Z + L;
-//			text += "1st - " + _sefgroup.FirstObject + L;
-//			text += "2nd - " + _sefgroup.SecondObject + L;
-			text += "fog - " + _sefgroup.FogMultiplier + L;
-			text += "dur - " + _sefgroup.HasMaximumDuration + L;
-			text += "dur - " + _sefgroup.MaximumDuration + L;
-			text += _sefgroup.SpecialTargetPosition;
-
-			tb_SefData.Text = text;
-
-
-			if (rb_DoubleCharacter.Checked)
+			if (_sefgroup != null)
 			{
-				MenuItem it;
+				string text = String.Empty;
+				string L = Environment.NewLine;
 
-				Menu.MenuItems[MI_EVENTS].MenuItems.Add("-");
-				it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Enable all events",  Events_click);
-				it.Shortcut = Shortcut.F7;
-				it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Disable all events", Events_click);
-				it.Shortcut = Shortcut.F8;
-				Menu.MenuItems[MI_EVENTS].MenuItems.Add("-");
-			}
+				text += "[" + _sefgroup.Name + "]" + L;
+				text += GetPositionString(_sefgroup.Position) + L;
+//				text += "1st - " + _sefgroup.FirstObject + L;
+//				text += "2nd - " + _sefgroup.SecondObject + L;
+				text += "fog - " + _sefgroup.FogMultiplier + L;
+				text += "dur - " + _sefgroup.HasMaximumDuration + L;
+				text += "dur - " + _sefgroup.MaximumDuration + L;
+				text += _sefgroup.SpecialTargetPosition;
 
-			text = String.Empty;
-			ISEFEvent sefevent;
-			for (int i = 0; i != _sefgroup.Events.Count; ++i)
-			{
-				// NOTE: a line is 13 px high (+5 pad total)
-				if (text != String.Empty) text += L + L;
+				tb_SefData.Text = text;
 
-				sefevent = _sefgroup.Events[i];
-
-				text += i.ToString();
-				if (!String.IsNullOrEmpty(sefevent.Name))
-					text += " [" + sefevent.Name + "]";
-				text += L;
-
-				string file = GetFileLabel(sefevent);
-				if (file != null) text += file + L;
-
-				text += BwResourceTypes.GetResourceTypeString(sefevent.ResourceType) + L;
-
-				text += sefevent.EffectType + L;
-				text += sefevent.Position.X + "," + sefevent.Position.Y + "," + sefevent.Position.Z + L;
-
-				text += "1st - "   + sefevent.FirstAttachmentObject + L;
-				text += "1st - "   + sefevent.FirstAttachment + L;
-				text += "2nd - "   + sefevent.SecondAttachmentObject + L;
-				text += "2nd - "   + sefevent.SecondAttachment + L;
-
-				text += "delay - " + sefevent.Delay + L;
-
-				text += "dur - "   + sefevent.HasMaximumDuration;
-				if (sefevent.HasMaximumDuration)
-					text += L + "dur - " + sefevent.MaximumDuration;
-
-
-				// NOTE: switch() possible here ->
-
-				if (sefevent as SEFBeam != null)
-				{
-					// none.
-				}
-				else if (sefevent as SEFBillboard != null)
-				{
-					// none.
-				}
-//				else if (sefevent as SEFEvent != null)
-//				{
-//					// Can a SEFEvent be assigned to a SEFEvent.
-//					// SEFEvents *are* SEFEvents ...
-//				}
-				else if (sefevent as SEFGameModelEffect != null)
-				{
-					var modeleffect = (sefevent as SEFGameModelEffect);
-					text += L + "type - "    + modeleffect.GameModelEffectType;
-					text += L + "texture - " + modeleffect.TextureName;
-					text += L + "alpha - "   + modeleffect.Alpha;
-					// TODO: plus a few other vars
-				}
-				else if (sefevent as SEFLight != null)
-				{
-					var light = (sefevent as SEFLight);
-					text += L + "shadow - "  + light.CastsShadow;
-					text += L + "shadow - "  + light.ShadowIntensity;
-					text += L + "flicker - " + light.Flicker;
-					text += L + "flicker - " + light.FlickerType;
-					text += L + "lerp - "    + light.Lerp;
-					text += L + "lerp - "    + light.LerpPeriod;
-					// TODO: plus a lot of other vars
-				}
-				else if (sefevent as SEFLightning != null)
-				{
-					// none.
-				}
-				else if (sefevent as SEFLineParticleSystem != null)
-				{
-					// none.
-				}
-				else if (sefevent as SEFModel != null)
-				{
-					var model = (sefevent as SEFModel);
-					text += L + "skel - " + model.SkeletonFile;
-//					text += L + "tint - " + model.TintSet;
-					text += L + "ani - "  + model.AnimationToPlay;
-					text += L + "loop - " + model.Looping;
-					text += L + "sef - "  + model.SEFToPlayOnModel;
-				}
-				else if (sefevent as SEFParticleMesh != null)
-				{
-//					var mesh = (sefevent as SEFParticleMesh);
-//					text += L + " - " + mesh.ModelParts;
-				}
-				else if (sefevent as SEFParticleSystem != null)
-				{
-					// none.
-				}
-				else if (sefevent as SEFProjectedTexture != null)
-				{
-					var texture = (sefevent as SEFProjectedTexture);
-					text += L + "texture - " + texture.Texture;
-					// TODO: plus a lot of other vars
-				}
-				else if (sefevent as SEFSound != null)
-				{
-					var sound = (sefevent as SEFSound);
-					text += L + "loop - " + sound.SoundLoops;
-				}
-				else if (sefevent as SEFTrail != null)
-				{
-					var trail = (sefevent as SEFTrail);
-					text += L + "width - " + trail.TrailWidth;
-				}
 
 				if (rb_DoubleCharacter.Checked)
 				{
-					var it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("event " + i, Events_click);
-					it.Tag = i;
-					it.Checked = true;
+					MenuItem it;
+
+					Menu.MenuItems[MI_EVENTS].MenuItems.Add("-");
+					it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Enable all events",  Events_click);
+					it.Shortcut = Shortcut.F7;
+					it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("&Disable all events", Events_click);
+					it.Shortcut = Shortcut.F8;
+					Menu.MenuItems[MI_EVENTS].MenuItems.Add("-");
 				}
+
+				bool extendInfo = Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_EXTEND].Checked;
+
+				text = String.Empty;
+				ISEFEvent sefevent;
+				for (int i = 0; i != _sefgroup.Events.Count; ++i)
+				{
+					// NOTE: a line is 13 px high (+5 pad total)
+					if (text != String.Empty) text += L + L;
+
+					sefevent = _sefgroup.Events[i];
+
+					text += i.ToString();
+					if (!String.IsNullOrEmpty(sefevent.Name))
+						text += " [" + sefevent.Name + "]";
+					text += L;
+
+					string file = GetFileLabel(sefevent);
+					if (file != null) text += file + L;
+
+					text += BwResourceTypes.GetResourceTypeString(sefevent.ResourceType) + L;
+
+					text += sefevent.EffectType + L;
+					text += GetPositionString(sefevent.Position) + L;
+					text += "orient - " + (sefevent as SEFEvent).UseOrientedPosition + L;
+
+					text += "1st - "   + sefevent.FirstAttachmentObject + L;
+					text += "1st - "   + sefevent.FirstAttachment + L;
+					text += "2nd - "   + sefevent.SecondAttachmentObject + L;
+					text += "2nd - "   + sefevent.SecondAttachment + L;
+
+					text += "delay - " + sefevent.Delay + L;
+
+					text += "dur - "   + sefevent.HasMaximumDuration;
+					if (sefevent.HasMaximumDuration)
+						text += L + "dur - " + sefevent.MaximumDuration;
+
+//					if (sefevent.Parent != null)
+//					{
+//						text += L + "parent - " + sefevent.Parent;
+//						text += L + "parent - " + GetPositionString(sefevent.ParentPosition);
+//					}
+
+
+					if (extendInfo)
+					{
+						// NOTE: switch() possible here ->
+
+//						if (sefevent as SEFBeam != null)
+//						{
+//							// none.
+//						}
+//						else if (sefevent as SEFBillboard != null)
+//						{
+//							// none.
+//						}
+//						else if (sefevent as SEFEvent != null)
+//						{
+//							// Can a SEFEvent be assigned to a SEFEvent.
+//							// SEFEvents *are* SEFEvents ... do not enable this because
+//							// it takes precedence over any following types
+//						}
+						if (sefevent as SEFGameModelEffect != null)
+						{
+							var modeleffect = (sefevent as SEFGameModelEffect);
+							text += L + "type - " + modeleffect.GameModelEffectType;
+
+							string texture = modeleffect.TextureName.ToString();
+							if (!String.IsNullOrEmpty(texture))
+								text += L + "texture - " + texture;
+
+							text += L + "alpha - "   + modeleffect.Alpha;
+							text += L + "tint - "    + modeleffect.SkinTintColor;
+							text += L + "lerpin - "  + modeleffect.LerpInTime;
+							text += L + "lerpout - " + modeleffect.LerpOutTime;
+						}
+						else if (sefevent as SEFLight != null)
+						{
+							var light = (sefevent as SEFLight);
+							text += L + "fadein - " + light.FadeInTime;
+							text += L + "range - "  + light.LightRange;
+							text += L + "shadow - " + light.CastsShadow;
+							if (light.CastsShadow)
+								text += L + "shadow - " + light.ShadowIntensity;
+
+							text += L + "flicker - " + light.Flicker;
+							if (light.Flicker)
+							{
+								text += L + "flicker - "      + light.FlickerType;
+								text += L + "flicker_rate - " + light.FlickerRate;
+								text += L + "flicker_vari - " + light.FlickerVariance;
+							}
+							text += L + "lerp - " + light.Lerp;
+							if (light.Lerp)
+								text += L + "lerp - " + light.LerpPeriod;
+
+							text += L + "effect - " + light.VisionEffect;
+							text += L + "start - "  + light.StartLighting;
+							text += L + "end - "    + light.EndLighting;
+						}
+//						else if (sefevent as SEFLightning != null)
+//						{
+//							// none.
+//						}
+//						else if (sefevent as SEFLineParticleSystem != null)
+//						{
+//							// none.
+//						}
+						else if (sefevent as SEFModel != null)
+						{
+							var model = (sefevent as SEFModel);
+							text += L + "skel - " + model.SkeletonFile;
+							text += L + "ani - "  + model.AnimationToPlay;
+							text += L + "loop - " + model.Looping;
+							text += L + "tint - " + model.TintSet;
+
+							string sef = model.SEFToPlayOnModel.ToString();
+							if (!String.IsNullOrEmpty(sef))
+								text += L + "sef - " + sef;
+//								+ "." + BwResourceTypes.GetResourceTypeString(model.SEFToPlayOnModel.ResourceType); // .sef
+						}
+						else if (sefevent as SEFParticleMesh != null)
+						{
+							var mesh = (sefevent as SEFParticleMesh);
+							string parts = String.Empty;
+							for (int j = 0; j != mesh.ModelParts.Count; ++j)
+							{
+								if (!String.IsNullOrEmpty(parts)) parts += L + "        ";
+								parts += mesh.ModelParts[j].ToString();
+							}
+
+							if (parts != String.Empty)
+								text += L + "parts - " + parts;
+						}
+//						else if (sefevent as SEFParticleSystem != null)
+//						{
+//							// none.
+//						}
+						else if (sefevent as SEFProjectedTexture != null)
+						{
+							var texture = (sefevent as SEFProjectedTexture);
+							text += L + "texture - " + texture.Texture;
+
+							text += L + "fadein - "          + texture.FadeInTime;
+							text += L + "ground - "          + texture.GroundOnly;
+							text += L + "projection - "      + texture.ProjectionType;
+							text += L + "orientation - "     + GetPositionString(texture.Orientation);
+
+							text += L + "height - "          + texture.Height;
+							if (texture.HeightEnd != texture.Height)
+								text += L + "heightend - "   + texture.HeightEnd;
+							text += L + "width - "           + texture.Width;
+							if (texture.WidthEnd != texture.Width)
+								text += L + "widthend - "    + texture.WidthEnd;
+							text += L + "length - "          + texture.Length;
+							if (texture.LengthEnd != texture.Length)
+								text += L + "lengthend - "   + texture.LengthEnd;
+
+							text += L + "color - "           + texture.Color;
+							if (texture.ColorEnd != texture.Color)
+								text += L + "colorend - "    + texture.ColorEnd;
+							text += L + "blend - "           + texture.Blending;
+							text += L + "blend_source - "    + texture.SourceBlendMode;
+							text += L + "blend_dest - "      + texture.DestBlendMode;
+							text += L + "lerp - "            + texture.Lerp;
+							if (texture.Lerp)
+								text += L + "lerp_period - " + texture.LerpPeriod;
+
+							text += L + "rot - "             + texture.InitialRotation;
+							text += L + "rot_veloc - "       + texture.RotationalVelocity;
+							text += L + "rot_accel - "       + texture.RotationalAcceleration;
+							text += L + "fov - "             + texture.FOV;
+							text += L + "fovend - "          + texture.FOVEnd;
+						}
+						else if (sefevent as SEFSound != null)
+						{
+							var sound = (sefevent as SEFSound);
+							text += L + "loop - " + sound.SoundLoops;
+						}
+						else if (sefevent as SEFTrail != null)
+						{
+							var trail = (sefevent as SEFTrail);
+							text += L + "width - " + trail.TrailWidth;
+						}
+					}
+
+					if (rb_DoubleCharacter.Checked)
+					{
+						var it = Menu.MenuItems[MI_EVENTS].MenuItems.Add("event " + i, Events_click);
+						it.Tag = i;
+						it.Checked = true;
+					}
+				}
+				tb_EventData.Text = text;
+				sc2_Options.SplitterDistance = Math.Max(WidthOptions,
+														TextRenderer.MeasureText(text, Font).Width + 1
+														+ SystemInformation.VerticalScrollBarWidth);
 			}
-			tb_EventData.Text = text;
 		}
 
 		/// <summary>
-		/// 
+		/// Gets a string for a 3d-vector.
+		/// </summary>
+		/// <param name="vec"></param>
+		/// <returns></returns>
+		string GetPositionString(Vector3 vec)
+		{
+			return vec.X + "," + vec.Y + "," + vec.Z;
+		}
+
+		/// <summary>
+		/// Gets the label of a definition file for a SEFEvent if one exists.
 		/// </summary>
 		/// <param name="sefevent"></param>
-		/// <returns></returns>
+		/// <returns>null if not found</returns>
 		string GetFileLabel(ISEFEvent sefevent)
 		{
 			if (   sefevent.DefinitionFile              != null

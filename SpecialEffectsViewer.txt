@@ -6,8 +6,8 @@ panel. Click a file in the list to play or replay it.
 
 MENUS
 
-Effects
--------
+Resrep (resource repository)
+----
 list all effects - lists all available effects
 stock only       - lists stock effects only (installation data folder)
 module only      - lists module-level effects (if a module is loaded)
@@ -40,13 +40,15 @@ get that to work ...
 
 View
 ----
-stay on top        - keeps the plugin on top of the toolset when enabled
-show Options panel - shows a panel on the left that has several options and
-                     lists the currently loaded effect's events
-
-Note: The details for each event are not always comprehensive. Some types of
-events have LOTS of parameters. Do what it takes to open the effect in the stock
-VFXEditor if you want to see (and edit) parameters exhaustively.
+Double character     - see OPTIONS|Double character
+Single character     - see OPTIONS|Single character
+placed effect object - see OPTIONS|placed effect object
+show Ground          - see OPTIONS|show Ground
+show Options panel   - shows a panel on the left that has several options and
+                       lists the currently selected effect's events
+show extended info   - shows exhaustive info about the currently selected
+                       effect's events in the Options panel
+stay on top          - keeps the plugin on top of the toolset when enabled
 
 Help
 ----
@@ -65,13 +67,13 @@ Double character     - renders the scene with two NPCs. This creates source
 Single character     - renders the scene with a single NPC. This applies the
                        currently selected effect to a single creature using its
                        'AppearanceSEF' property
-Placed effect object - renders the effect on a placed-effect object
+placed effect object - renders the effect on a placed-effect object
 
 Note: Deciding which option above to use depends on the special effect file and
 the usage that you intend to put it to for NwN2 play.
 
-Ground - toggles the ground on and off. Some effect-events have textures that
-         only render on the ground
+show Ground - toggles the ground on and off. Some effect-events have textures that
+              only render on the ground
 
 The currently selected effect's events will be listed beneath those options.
 They are simply informational and can't be edited here; if you want to edit a
@@ -106,6 +108,7 @@ Note: The display panel must be focused to adjust the camera.
 KEYBOARD
 
 Enter  - plays the currently selected effect if the effects list or the scene
-         panel has focus. Searches if search is focused, toggles the list filter
-         if the filter button has focus
+         panel has focus. Searches if search is focused (Shift+Enter to search
+         in the reverse direction), toggles the list filter if the filter button
+         has focus
 Escape - closes the plugin
