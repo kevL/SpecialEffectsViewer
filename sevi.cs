@@ -67,6 +67,12 @@ namespace SpecialEffectsViewer
 		const int MI_EVENTS_ENABLE  = 3;
 		const int MI_EVENTS_DISABLE = 4;
 
+		const int MI_VIEW_DC = 0; // doublechar
+		const int MI_VIEW_SC = 1; // singlechar
+		const int MI_VIEW_PE = 2; // placedeffect
+
+		const int MI_VIEW_GROUND = 4;
+
 		const int ItemsReserved = 6;
 		#endregion Fields (static)
 
@@ -158,8 +164,25 @@ namespace SpecialEffectsViewer
 			CreateBasicEvents();
 
 // View ->
+			it = Menu.MenuItems[MI_VIEW].MenuItems.Add("Double character", mi_DoubleCharacter);
+			it.Shortcut = Shortcut.F10;
+			it.Checked = true;
+
+			it = Menu.MenuItems[MI_VIEW].MenuItems.Add("Single character", mi_SingleCharacter);
+			it.Shortcut = Shortcut.F11;
+
+			it = Menu.MenuItems[MI_VIEW].MenuItems.Add("placed effect object", mi_PlacedEffect);
+			it.Shortcut = Shortcut.F12;
+
+			Menu.MenuItems[MI_VIEW].MenuItems.Add("-");
+
+			it = Menu.MenuItems[MI_VIEW].MenuItems.Add("show Ground", mi_Ground);
+			it.Shortcut = Shortcut.CtrlG;
+
+			Menu.MenuItems[MI_VIEW].MenuItems.Add("-");
+
 			_itOptions = Menu.MenuItems[MI_VIEW].MenuItems.Add("show &Options panel", viewOptions_click);
-			_itOptions.Shortcut = Shortcut.F8;
+			_itOptions.Shortcut = Shortcut.F9;
 
 			Menu.MenuItems[MI_VIEW].MenuItems.Add("-");
 
@@ -225,17 +248,30 @@ namespace SpecialEffectsViewer
 
 			if (SpecialEffectsViewerPreferences.that.Scene != (int)Scene.doublecharacter)
 			{
-				rb_DoubleCharacter.Checked = false;
+				Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_DC].Checked =
+				(rb_DoubleCharacter.Checked = false);
 
 				switch ((Scene)SpecialEffectsViewerPreferences.that.Scene)
 				{
-					default:                    rb_DoubleCharacter.Checked = true; break;
-					case Scene.singlecharacter: rb_SingleCharacter.Checked = true; break;
-					case Scene.placedeffect:    rb_PlacedEffect   .Checked = true; break;
+					default: // safety.
+						Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_DC].Checked =
+						(rb_DoubleCharacter.Checked = true);
+						break;
+
+					case Scene.singlecharacter:
+						Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_SC].Checked =
+						(rb_SingleCharacter.Checked = true);
+						break;
+
+					case Scene.placedeffect:
+						Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_PE].Checked =
+						(rb_PlacedEffect.Checked = true);
+						break;
 				}
 			}
 
-			cb_Ground.Checked = SpecialEffectsViewerPreferences.that.Ground;
+			Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_GROUND].Checked =
+			(cb_Ground.Checked = SpecialEffectsViewerPreferences.that.Ground);
 		}
 		#endregion cTor
 
@@ -621,6 +657,59 @@ namespace SpecialEffectsViewer
 
 		#region eventhandlers (view)
 		/// <summary>
+		/// Handles a click on View|Double character.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void mi_DoubleCharacter(object sender, EventArgs e)
+		{
+			if (!Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_DC].Checked)
+			{
+				rb_DoubleCharacter.Checked = true;
+				rb_click(null, EventArgs.Empty);
+			}
+		}
+
+		/// <summary>
+		/// Handles a click on View|Single character.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void mi_SingleCharacter(object sender, EventArgs e)
+		{
+			if (!Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_SC].Checked)
+			{
+				rb_SingleCharacter.Checked = true;
+				rb_click(null, EventArgs.Empty);
+			}
+		}
+
+		/// <summary>
+		/// Handles a click on View|Placed effect.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void mi_PlacedEffect(object sender, EventArgs e)
+		{
+			if (!Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_PE].Checked)
+			{
+				rb_PlacedEffect.Checked = true;
+				rb_click(null, EventArgs.Empty);
+			}
+		}
+
+		/// <summary>
+		/// Handles a click on View|show Ground.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void mi_Ground(object sender, EventArgs e)
+		{
+			cb_Ground.Checked = !cb_Ground.Checked;
+			cb_Ground_click(null, EventArgs.Empty);
+		}
+
+		/// <summary>
 		/// Toggles display of the Options/Events sidepanel.
 		/// </summary>
 		/// <param name="sender"></param>
@@ -729,17 +818,31 @@ namespace SpecialEffectsViewer
 			if (rb_DoubleCharacter.Checked)
 			{
 				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.doublecharacter;
+				SetTarget(MI_VIEW_DC);
 			}
 			else if (rb_SingleCharacter.Checked)
 			{
 				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.singlecharacter;
+				SetTarget(MI_VIEW_SC);
 			}
 			else //if (rb_PlacedEffect.Checked)
 			{
 				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.placedeffect;
+				SetTarget(MI_VIEW_PE);
 			}
 
 			ApplyEffect();
+		}
+
+		/// <summary>
+		/// Synchs view-type checkboxes on the View menu.
+		/// </summary>
+		/// <param name="target"></param>
+		void SetTarget(int target)
+		{
+			Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_DC].Checked = (target == MI_VIEW_DC);
+			Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_SC].Checked = (target == MI_VIEW_SC);
+			Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_PE].Checked = (target == MI_VIEW_PE);
 		}
 
 		/// <summary>
@@ -750,7 +853,9 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void cb_Ground_click(object sender, EventArgs e)
 		{
-			SpecialEffectsViewerPreferences.that.Ground = cb_Ground.Checked;
+			SpecialEffectsViewerPreferences.that.Ground =
+			(Menu.MenuItems[MI_VIEW].MenuItems[MI_VIEW_GROUND].Checked = cb_Ground.Checked);
+
 			StoreCameraState();
 
 			_panel.Dispose();
@@ -1235,8 +1340,8 @@ namespace SpecialEffectsViewer
 
 			text += "[" + _sefgroup.Name + "]" + L;
 			text += _sefgroup.Position.X + "," + _sefgroup.Position.Y + "," + _sefgroup.Position.Z + L;
-			text += "1st - " + _sefgroup.FirstObject + L;
-			text += "2nd - " + _sefgroup.SecondObject + L;
+//			text += "1st - " + _sefgroup.FirstObject + L;
+//			text += "2nd - " + _sefgroup.SecondObject + L;
 			text += "fog - " + _sefgroup.FogMultiplier + L;
 			text += "dur - " + _sefgroup.HasMaximumDuration + L;
 			text += "dur - " + _sefgroup.MaximumDuration + L;
@@ -1261,6 +1366,7 @@ namespace SpecialEffectsViewer
 			ISEFEvent sefevent;
 			for (int i = 0; i != _sefgroup.Events.Count; ++i)
 			{
+				// NOTE: a line is 13 px high (+5 pad total)
 				if (text != String.Empty) text += L + L;
 
 				sefevent = _sefgroup.Events[i];
@@ -1282,9 +1388,13 @@ namespace SpecialEffectsViewer
 				text += "1st - "   + sefevent.FirstAttachment + L;
 				text += "2nd - "   + sefevent.SecondAttachmentObject + L;
 				text += "2nd - "   + sefevent.SecondAttachment + L;
+
 				text += "delay - " + sefevent.Delay + L;
-				text += "dur - "   + sefevent.HasMaximumDuration + L;
-				text += "dur - "   + sefevent.MaximumDuration;
+
+				text += "dur - "   + sefevent.HasMaximumDuration;
+				if (sefevent.HasMaximumDuration)
+					text += L + "dur - " + sefevent.MaximumDuration;
+
 
 				// NOTE: switch() possible here ->
 

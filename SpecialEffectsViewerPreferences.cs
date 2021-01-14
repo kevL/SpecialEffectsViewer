@@ -92,7 +92,7 @@ namespace SpecialEffectsViewer
 			Maximized = false;
 
 			SplitterDistanceEffects = 375;
-			SplitterDistanceEvents  = 109;
+			SplitterDistanceEvents  =  83;
 
 			StayOnTop    = true;
 			OptionsPanel = false;

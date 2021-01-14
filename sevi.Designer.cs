@@ -136,7 +136,7 @@ namespace SpecialEffectsViewer
 			this.sc3_Events.Panel2.Controls.Add(this.tb_EventData);
 			this.sc3_Events.Panel2MinSize = 0;
 			this.sc3_Events.Size = new System.Drawing.Size(266, 297);
-			this.sc3_Events.SplitterDistance = 109;
+			this.sc3_Events.SplitterDistance = 83;
 			this.sc3_Events.SplitterWidth = 2;
 			this.sc3_Events.TabIndex = 2;
 			// 
@@ -149,7 +149,7 @@ namespace SpecialEffectsViewer
 			this.tb_SefData.Multiline = true;
 			this.tb_SefData.Name = "tb_SefData";
 			this.tb_SefData.ReadOnly = true;
-			this.tb_SefData.Size = new System.Drawing.Size(266, 109);
+			this.tb_SefData.Size = new System.Drawing.Size(266, 83);
 			this.tb_SefData.TabIndex = 0;
 			this.tb_SefData.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tb_keydown);
 			// 
@@ -163,7 +163,7 @@ namespace SpecialEffectsViewer
 			this.tb_EventData.Name = "tb_EventData";
 			this.tb_EventData.ReadOnly = true;
 			this.tb_EventData.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.tb_EventData.Size = new System.Drawing.Size(266, 186);
+			this.tb_EventData.Size = new System.Drawing.Size(266, 212);
 			this.tb_EventData.TabIndex = 0;
 			this.tb_EventData.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tb_keydown);
 			// 
@@ -321,24 +321,26 @@ namespace SpecialEffectsViewer
 			// bu_Clear
 			// 
 			this.bu_Clear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.bu_Clear.Location = new System.Drawing.Point(41, 1);
+			this.bu_Clear.Location = new System.Drawing.Point(98, 1);
 			this.bu_Clear.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_Clear.Name = "bu_Clear";
 			this.bu_Clear.Size = new System.Drawing.Size(57, 24);
 			this.bu_Clear.TabIndex = 0;
 			this.bu_Clear.Text = "clear";
+			this.bu_Clear.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
 			this.bu_Clear.UseVisualStyleBackColor = true;
 			this.bu_Clear.Click += new System.EventHandler(this.bu_Clear_click);
 			// 
 			// bu_Copy
 			// 
 			this.bu_Copy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.bu_Copy.Location = new System.Drawing.Point(98, 1);
+			this.bu_Copy.Location = new System.Drawing.Point(41, 1);
 			this.bu_Copy.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_Copy.Name = "bu_Copy";
 			this.bu_Copy.Size = new System.Drawing.Size(57, 24);
 			this.bu_Copy.TabIndex = 1;
 			this.bu_Copy.Text = "copy";
+			this.bu_Copy.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
 			this.bu_Copy.UseVisualStyleBackColor = true;
 			this.bu_Copy.Click += new System.EventHandler(this.bu_Copy_click);
 			// 
@@ -351,6 +353,7 @@ namespace SpecialEffectsViewer
 			this.bu_Close.Size = new System.Drawing.Size(57, 24);
 			this.bu_Close.TabIndex = 2;
 			this.bu_Close.Text = "close";
+			this.bu_Close.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
 			this.bu_Close.UseVisualStyleBackColor = true;
 			this.bu_Close.Click += new System.EventHandler(this.bu_Close_click);
 			// 
