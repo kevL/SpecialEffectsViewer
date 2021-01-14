@@ -1,4 +1,4 @@
-The location of the currently selected effect is shown on the titlebar.
+The repository of the currently selected effect is shown on the titlebar.
 
 The special effect file (.sef) without extension is listed in the rightside
 panel. Click a file in the list to play or replay it.
@@ -36,7 +36,7 @@ Enable all events  - re-enables all events
 If and only if the DoubleCharacter option is selected does a list of events
 appear in the menu. The events can be toggled on or off with a click. Keypress
 [Shift] when clicking to play only that event. I had to sacrifice a chicken to
-get this to work ...
+get that to work ...
 
 View
 ----
