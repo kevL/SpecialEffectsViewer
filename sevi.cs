@@ -98,7 +98,7 @@ namespace SpecialEffectsViewer
 		int _isListStale;
 
 		string _filtr = String.Empty;
-		bool _bypassActivateSearchControl;
+		bool _bypassSearchFocus;
 
 		string _pfe_helpfile;
 		#endregion Fields
@@ -449,7 +449,7 @@ namespace SpecialEffectsViewer
 				lb_Effects.EndUpdate();
 			}
 
-			if (!_bypassActivateSearchControl)
+			if (!_bypassSearchFocus)
 				ActiveControl = tb_Search;
 		}
 
@@ -482,7 +482,7 @@ namespace SpecialEffectsViewer
 				lb_Effects.EndUpdate();
 			}
 
-			if (!_bypassActivateSearchControl)
+			if (!_bypassSearchFocus)
 				ActiveControl = tb_Search;
 		}
 
@@ -512,7 +512,7 @@ namespace SpecialEffectsViewer
 				lb_Effects.EndUpdate();
 			}
 
-			if (!_bypassActivateSearchControl)
+			if (!_bypassSearchFocus)
 				ActiveControl = tb_Search;
 		}
 
@@ -542,7 +542,7 @@ namespace SpecialEffectsViewer
 				lb_Effects.EndUpdate();
 			}
 
-			if (!_bypassActivateSearchControl)
+			if (!_bypassSearchFocus)
 				ActiveControl = tb_Search;
 		}
 
@@ -572,7 +572,7 @@ namespace SpecialEffectsViewer
 				lb_Effects.EndUpdate();
 			}
 
-			if (!_bypassActivateSearchControl)
+			if (!_bypassSearchFocus)
 				ActiveControl = tb_Search;
 		}
 		#endregion eventhandlers (resrep)
@@ -1033,7 +1033,7 @@ namespace SpecialEffectsViewer
 			else
 				_filtr = String.Empty;
 
-			_bypassActivateSearchControl = true;
+			_bypassSearchFocus = true;
 			if (_itFxList_all.Checked)
 			{
 				_itFxList_all.Checked = false;
@@ -1059,7 +1059,7 @@ namespace SpecialEffectsViewer
 				_itFxList_override.Checked = false;
 				mi_resrep_Override(null, EventArgs.Empty);
 			}
-			_bypassActivateSearchControl = false;
+			_bypassSearchFocus = false;
 		}
 
 		/// <summary>
