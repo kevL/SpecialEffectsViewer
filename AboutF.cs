@@ -29,7 +29,8 @@ namespace SpecialEffectsViewer
 			{
 				Info = "Special Effects Viewer"                    + L
 					 + "a toolset plugin for Neverwinter Nights 2" + L + L
-					 + "code by kevL's and codepoetz et al."       + L + L;
+					 + "code by kevL's"                            + L
+					 + "credit codepoetz et al."                   + L + L;
 
 				var ass = Assembly.GetExecutingAssembly();
 				var an = ass.GetName();
