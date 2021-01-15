@@ -34,9 +34,12 @@ namespace SpecialEffectsViewer
 		: Form
 	{
 		#region enums
+		/// <summary>
+		/// pick a Scene, any scene
+		/// </summary>
 		enum Scene
 		{
-			none,				// 0
+			none,				// 0 - not used.
 			doublecharacter,	// 1
 			singlecharacter,	// 2
 			placedeffect		// 3
@@ -57,8 +60,11 @@ namespace SpecialEffectsViewer
 		const int STALE_Module   = 0x1;
 		const int STALE_Campaign = 0x2;
 
-		const int ItemsReserved = 6; // standard its in the Events dropdown
+		const int ItemsReserved = 6; // count of standard its in the Events dropdown
 
+		/// <summary>
+		/// A default width for the Options popout.
+		/// </summary>
 		static int WidthOptions;
 		#endregion Fields (static)
 
@@ -89,12 +95,38 @@ namespace SpecialEffectsViewer
 		MenuItem _itView_ExtendedInfo;
 		MenuItem _itView_StayOnTop;
 
+		/// <summary>
+		/// A bitwise int that can repopulate the effects-list when the toolset
+		/// changes its currently loaded Module or Campaign.
+		/// </summary>
 		int _isListStale;
 
 		string _filtr = String.Empty;
+
+		/// <summary>
+		/// The search-textbox is usually focused after the effects-list is
+		/// populated; but don't do that if the filter-button is clicked. That
+		/// is keep the filter-button focused so the list can be toggled/
+		/// re-toggled.
+		/// </summary>
 		bool _bypassSearchFocus;
 
+		/// <summary>
+		/// Fullpath to the helpfile if it exists.
+		/// </summary>
 		string _pfe_helpfile;
+
+		/// <summary>
+		/// True when the RMB or MMB is down in the ElectronPanel. Is used to
+		/// deter the current cursor.
+		/// </summary>
+		bool _Right;
+
+		/// <summary>
+		/// True when the Control-key is depressed in the ElectronPanel. Is used
+		/// to deter the current cursor.
+		/// </summary>
+		bool _Ctrl;
 		#endregion Fields
 
 
@@ -211,6 +243,8 @@ namespace SpecialEffectsViewer
 			_panel.MousePanel.KeyDown   += lb_Effects_keydown;
 			_panel.MousePanel.MouseDown += panel_mousedown;
 			_panel.MousePanel.MouseUp   += panel_mouseup;
+			_panel.MousePanel.KeyDown   += panel_keydown;
+			_panel.MousePanel.KeyUp     += panel_keyup;
 
 			sc2_Options.Panel2.Controls.Add(_panel);
 		}
@@ -1097,6 +1131,8 @@ namespace SpecialEffectsViewer
 				{
 					case MouseButtons.Right:
 					case MouseButtons.Middle:
+						_Right = true;
+
 						if ((ModifierKeys & Keys.Control) != 0)
 							Cursor.Current = Cursors.Cross;
 						else
@@ -1114,7 +1150,37 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void panel_mouseup(object sender, EventArgs e)
 		{
+			_Right = false;
 			Cursor.Current = Cursors.Default;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void panel_keydown(object sender, KeyEventArgs e)
+		{
+			if (_Right && (e.KeyData & Keys.Control) != 0)
+			{
+				_Ctrl = true;
+				Cursor.Current = Cursors.Cross;
+			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void panel_keyup(object sender, KeyEventArgs e)
+		{
+			if (_Ctrl)
+			{
+				_Ctrl = false;
+				if (_Right)
+					Cursor.Current = Cursors.SizeAll;
+			}
 		}
 
 		/// <summary>
