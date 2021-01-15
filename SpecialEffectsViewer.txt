@@ -78,7 +78,7 @@ show Ground - toggles the ground on and off. Some effect-events have textures th
 The currently selected effect's events will be listed beneath those options.
 They are simply informational and can't be edited here; if you want to edit a
 special effect or any of its events, breakout the files (they are listed) and
-open them in the stock VFXEditor plugin.
+open them in the stock VFXEditor plugin or other.
 
 
 BUTTONS
@@ -91,9 +91,8 @@ Close - closes the plugin
 filtr - toggles the effects-list filter on and off. Enter a string in search and
         click the filter button to set a filter-string. A filtered list can
         still be searched by typing a different string in search. To apply a
-        different filter, enter a different string and toggle the filter button
-        on and off. Note that the filter respects the currently selected Effects
-        list
+        different filter, enter a different string and toggle the filter button.
+        The filter respects the currently selected Resrep and vice versa
 
 
 MOUSE
@@ -109,6 +108,5 @@ KEYBOARD
 
 Enter  - plays the currently selected effect if the effects list or the scene
          panel has focus. Searches if search is focused (Shift+Enter to search
-         in the reverse direction), toggles the list filter if the filter button
-         has focus
+         ascending), toggles the list filter if the filter button has focus
 Escape - closes the plugin
