@@ -1322,21 +1322,6 @@ namespace SpecialEffectsViewer
 		{
 			if (_sefgroup != null)
 			{
-				string text = String.Empty;
-				string L = Environment.NewLine;
-
-				text += "[" + _sefgroup.Name + "]" + L;
-				text += GetPositionString(_sefgroup.Position) + L;
-//				text += "1st - " + _sefgroup.FirstObject + L;
-//				text += "2nd - " + _sefgroup.SecondObject + L;
-				text += "fog - " + _sefgroup.FogMultiplier + L;
-				text += "dur - " + _sefgroup.HasMaximumDuration + L;
-				text += "dur - " + _sefgroup.MaximumDuration + L;
-				text += _sefgroup.SpecialTargetPosition;
-
-				tb_SefData.Text = text;
-
-
 				if (rb_DoubleCharacter.Checked)
 				{
 					_itEvents.MenuItems.Add("-");
@@ -1350,6 +1335,20 @@ namespace SpecialEffectsViewer
 					_itEvents.MenuItems.Add("-");
 				}
 
+				string text = String.Empty;
+				string L = Environment.NewLine;
+
+				text += "[" + _sefgroup.Name + "]"                       + L;
+				text += "pos - " + GetPositionString(_sefgroup.Position) + L;
+//				text += "1st - " + _sefgroup.FirstObject                 + L;
+//				text += "2nd - " + _sefgroup.SecondObject                + L;
+				text += "fog - " + _sefgroup.FogMultiplier               + L;
+				text += "dur - " + _sefgroup.HasMaximumDuration          + L;
+				text += "dur - " + _sefgroup.MaximumDuration             + L;
+				text += _sefgroup.SpecialTargetPosition;
+
+				tb_SefData.Text = text;
+				int width = TextRenderer.MeasureText(text, Font).Width + 4;
 
 				text = String.Empty;
 				ISEFEvent sefevent;
@@ -1368,22 +1367,26 @@ namespace SpecialEffectsViewer
 					string file = GetFileLabel(sefevent);
 					if (file != null) text += file + L;
 
-					text += BwResourceTypes.GetResourceTypeString(sefevent.ResourceType) + L;
+					int p = 6;
+					if (_itView_ExtendedInfo.Checked)
+					{
+						if      (sefevent as SEFGameModelEffect  != null) p = 7;
+						else if (sefevent as SEFLight            != null
+							  || sefevent as SEFProjectedTexture != null) p = 12;
+					}
 
-					text += sefevent.EffectType + L;
-					text += GetPositionString(sefevent.Position) + L;
-					text += "orient - " + (sefevent as SEFEvent).UseOrientedPosition + L;
-
-					text += "1st    - " + sefevent.FirstAttachmentObject + L;
-					text += "1st    - " + sefevent.FirstAttachment + L;
-					text += "2nd    - " + sefevent.SecondAttachmentObject + L;
-					text += "2nd    - " + sefevent.SecondAttachment + L;
-
-					text += "delay  - " + sefevent.Delay + L;
-
-					text += "dur    - " + sefevent.HasMaximumDuration;
+					text += BwResourceTypes.GetResourceTypeString(sefevent.ResourceType)  + L;
+					text += sefevent.EffectType                                           + L;
+					text += pad("pos",    p) + GetPositionString(sefevent.Position)       + L;
+					text += pad("orient", p) + (sefevent as SEFEvent).UseOrientedPosition + L;
+					text += pad("1st",    p) + sefevent.FirstAttachmentObject             + L;
+					text += pad("1st",    p) + sefevent.FirstAttachment                   + L;
+					text += pad("2nd",    p) + sefevent.SecondAttachmentObject            + L;
+					text += pad("2nd",    p) + sefevent.SecondAttachment                  + L;
+					text += pad("delay",  p) + sefevent.Delay                             + L;
+					text += pad("dur",    p) + sefevent.HasMaximumDuration;
 					if (sefevent.HasMaximumDuration)
-						text += L + "dur    - " + sefevent.MaximumDuration;
+						text += L + pad("dur", p) + sefevent.MaximumDuration;
 
 //					if (sefevent.Parent != null)
 //					{
@@ -1394,8 +1397,6 @@ namespace SpecialEffectsViewer
 
 					if (_itView_ExtendedInfo.Checked)
 					{
-						// NOTE: switch() possible here ->
-
 //						if (sefevent as SEFBeam != null)
 //						{
 //							// none.
@@ -1427,8 +1428,9 @@ namespace SpecialEffectsViewer
 						else if (sefevent as SEFLight != null)
 						{
 							var light = (sefevent as SEFLight);
-							text += L + "fadein       - " + light.FadeInTime;
 							text += L + "range        - " + light.LightRange;
+							text += L + "fadein       - " + light.FadeInTime;
+
 							text += L + "shadow       - " + light.CastsShadow;
 							if (light.CastsShadow)
 								text += L + "shadow       - " + light.ShadowIntensity;
@@ -1444,9 +1446,9 @@ namespace SpecialEffectsViewer
 							if (light.Lerp)
 								text += L + "lerp         - " + light.LerpPeriod;
 
-							text += L + "effect       - " + light.VisionEffect;
-							text += L + "start        - " + light.StartLighting;
-							text += L + "end          - " + light.EndLighting;
+							text += L + "vision       - " + light.VisionEffect;
+							text += L + "start        - " + SplitLip(light.StartLighting);
+							text += L + "end          - " + SplitLip(light.EndLighting);
 						}
 //						else if (sefevent as SEFLightning != null)
 //						{
@@ -1459,14 +1461,14 @@ namespace SpecialEffectsViewer
 						else if (sefevent as SEFModel != null)
 						{
 							var model = (sefevent as SEFModel);
-							text += L + "skel - " + model.SkeletonFile;
-							text += L + "ani  - " + model.AnimationToPlay;
-							text += L + "loop - " + model.Looping;
-							text += L + "tint - " + model.TintSet;
+							text += L + "skel   - " + model.SkeletonFile;
+							text += L + "ani    - " + model.AnimationToPlay;
+							text += L + "loop   - " + model.Looping;
+							text += L + "tint   - " + model.TintSet;
 
 							string sef = model.SEFToPlayOnModel.ToString();
 							if (!String.IsNullOrEmpty(sef))
-								text += L + "sef  - " + sef;
+								text += L + "sef    - " + sef;
 //								+ "." + BwResourceTypes.GetResourceTypeString(model.SEFToPlayOnModel.ResourceType); // .sef
 						}
 						else if (sefevent as SEFParticleMesh != null)
@@ -1475,12 +1477,12 @@ namespace SpecialEffectsViewer
 							string parts = String.Empty;
 							for (int j = 0; j != mesh.ModelParts.Count; ++j)
 							{
-								if (!String.IsNullOrEmpty(parts)) parts += L + "        ";
+								if (!String.IsNullOrEmpty(parts)) parts += L + "         ";
 								parts += mesh.ModelParts[j].ToString();
 							}
 
 							if (parts != String.Empty)
-								text += L + "parts - " + parts;
+								text += L + "parts  - " + parts;
 						}
 //						else if (sefevent as SEFParticleSystem != null)
 //						{
@@ -1528,12 +1530,12 @@ namespace SpecialEffectsViewer
 						else if (sefevent as SEFSound != null)
 						{
 							var sound = (sefevent as SEFSound);
-							text += L + "loop - " + sound.SoundLoops;
+							text += L + "loop   - " + sound.SoundLoops;
 						}
 						else if (sefevent as SEFTrail != null)
 						{
 							var trail = (sefevent as SEFTrail);
-							text += L + "width - " + trail.TrailWidth;
+							text += L + "width  - " + trail.TrailWidth;
 						}
 					}
 
@@ -1545,9 +1547,10 @@ namespace SpecialEffectsViewer
 					}
 				}
 				tb_EventData.Text = text;
-				sc2_Options.SplitterDistance = Math.Max(WidthOptions,
-														TextRenderer.MeasureText(text, Font).Width + 1
-														+ SystemInformation.VerticalScrollBarWidth);
+
+				width = Math.Max(width, TextRenderer.MeasureText(text, Font).Width + 4
+										+ SystemInformation.VerticalScrollBarWidth);
+				sc2_Options.SplitterDistance = Math.Max(width, WidthOptions);
 			}
 		}
 
@@ -1613,6 +1616,48 @@ namespace SpecialEffectsViewer
 				return sefevent.DefinitionFile.ResRef.Value;
 			}
 			return null;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="in"></param>
+		/// <param name="len"></param>
+		/// <returns></returns>
+		static string pad(string @in, int len)
+		{
+			while (@in.Length != len)
+				@in += " ";
+
+			return @in + " - ";
+		}
+
+		/// <summary>
+		/// Splits a LightIntensityPair.
+		/// </summary>
+		/// <param name="pair"></param>
+		/// <returns></returns>
+		static string SplitLip(object pair)
+		{
+			string diff = pair.ToString();
+
+			int pos = diff.IndexOf("Intensity");
+			string inte = diff.Substring(pos);
+
+			diff = diff.Substring(0, diff.Length - inte.Length - 2);
+			pos = diff.IndexOf("Ambient");
+			string ambi = diff.Substring(pos);
+
+			diff = diff.Substring(0, diff.Length - ambi.Length - 2);
+			pos = diff.IndexOf("Specular");
+			string spec = diff.Substring(pos);
+
+			diff = diff.Substring(0, diff.Length - spec.Length - 2);
+
+			return diff                     + Environment.NewLine
+				 + "               " + spec + Environment.NewLine
+				 + "               " + ambi + Environment.NewLine
+				 + "               " + inte;
 		}
 		#endregion Methods (static)
 	}
