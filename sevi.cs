@@ -75,11 +75,11 @@ namespace SpecialEffectsViewer
 
 		ElectronPanel _panel = new ElectronPanel(); // i hate u
 
-		MenuItem _itFxList_all;
-		MenuItem _itFxList_stock;
-		MenuItem _itFxList_module;
-		MenuItem _itFxList_campaign;
-		MenuItem _itFxList_override;
+		MenuItem _itResrepo_all;
+		MenuItem _itResrepo_stock;
+		MenuItem _itResrepo_module;
+		MenuItem _itResrepo_campaign;
+		MenuItem _itResrepo_override;
 
 		MenuItem _itEvents;
 		MenuItem _itEvents_Play;
@@ -157,7 +157,7 @@ namespace SpecialEffectsViewer
 			NWN2ToolsetMainForm.ModuleChanged                  += OnModuleChanged;
 			NWN2CampaignManager.Instance.ActiveCampaignChanged += OnActiveCampaignChanged;
 
-			mi_resrep_All(null, EventArgs.Empty);
+			mi_resrepo_All(null, EventArgs.Empty);
 
 			Show();
 		}
@@ -172,20 +172,20 @@ namespace SpecialEffectsViewer
 			MenuItem it, it0;
 
 // List ->
-			it = Menu.MenuItems.Add("&Resrep"); // 0
+			it = Menu.MenuItems.Add("&Resrepo"); // 0
 
-			_itFxList_all      = it.MenuItems.Add("list &all effects", mi_resrep_All);
-								 it.MenuItems.Add("-");
-			_itFxList_stock    = it.MenuItems.Add("&stock only",       mi_resrep_Stock);
-			_itFxList_module   = it.MenuItems.Add("&module only",      mi_resrep_Module);
-			_itFxList_campaign = it.MenuItems.Add("&campaign only",    mi_resrep_Campaign);
-			_itFxList_override = it.MenuItems.Add("&override only",    mi_resrep_Override);
+			_itResrepo_all      = it.MenuItems.Add("list &all effects", mi_resrepo_All);
+								  it.MenuItems.Add("-");
+			_itResrepo_stock    = it.MenuItems.Add("&stock only",       mi_resrepo_Stock);
+			_itResrepo_module   = it.MenuItems.Add("&module only",      mi_resrepo_Module);
+			_itResrepo_campaign = it.MenuItems.Add("&campaign only",    mi_resrepo_Campaign);
+			_itResrepo_override = it.MenuItems.Add("&override only",    mi_resrepo_Override);
 
-			_itFxList_all     .Shortcut = Shortcut.Ctrl1;
-			_itFxList_stock   .Shortcut = Shortcut.Ctrl2;
-			_itFxList_module  .Shortcut = Shortcut.Ctrl3;
-			_itFxList_campaign.Shortcut = Shortcut.Ctrl4;
-			_itFxList_override.Shortcut = Shortcut.Ctrl5;
+			_itResrepo_all     .Shortcut = Shortcut.Ctrl1;
+			_itResrepo_stock   .Shortcut = Shortcut.Ctrl2;
+			_itResrepo_module  .Shortcut = Shortcut.Ctrl3;
+			_itResrepo_campaign.Shortcut = Shortcut.Ctrl4;
+			_itResrepo_override.Shortcut = Shortcut.Ctrl5;
 
 // Events ->
 			_itEvents = Menu.MenuItems.Add("&Events"); // 1
@@ -378,25 +378,25 @@ namespace SpecialEffectsViewer
 		{
 			if (_isListStale != STALE_non)
 			{
-				if (_itFxList_all.Checked)
+				if (_itResrepo_all.Checked)
 				{
-					_itFxList_all.Checked = false;
-					mi_resrep_All(null, EventArgs.Empty);
+					_itResrepo_all.Checked = false;
+					mi_resrepo_All(null, EventArgs.Empty);
 				}
-				else if (_itFxList_module.Checked)
+				else if (_itResrepo_module.Checked)
 				{
 					if ((_isListStale & STALE_Module) != 0)
 					{
-						_itFxList_module.Checked = false;
-						mi_resrep_Module(null, EventArgs.Empty);
+						_itResrepo_module.Checked = false;
+						mi_resrepo_Module(null, EventArgs.Empty);
 					}
 				}
-				else if (_itFxList_campaign.Checked)
+				else if (_itResrepo_campaign.Checked)
 				{
 					if ((_isListStale & STALE_Campaign) != 0)
 					{
-						_itFxList_campaign.Checked = false;
-						mi_resrep_Campaign(null, EventArgs.Empty);
+						_itResrepo_campaign.Checked = false;
+						mi_resrepo_Campaign(null, EventArgs.Empty);
 					}
 				}
 				_isListStale = STALE_non;
@@ -449,14 +449,14 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void mi_resrep_All(object sender, EventArgs e)
+		void mi_resrepo_All(object sender, EventArgs e)
 		{
-			if (!_itFxList_all.Checked)
+			if (!_itResrepo_all.Checked)
 			{
 				lb_Effects.BeginUpdate();
 
 				ClearEffectsList();
-				_itFxList_all.Checked = true;
+				_itResrepo_all.Checked = true;
 
 				bool bypassFilter = (_filtr == String.Empty);
 
@@ -481,14 +481,14 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void mi_resrep_Stock(object sender, EventArgs e)
+		void mi_resrepo_Stock(object sender, EventArgs e)
 		{
-			if (!_itFxList_stock.Checked)
+			if (!_itResrepo_stock.Checked)
 			{
 				lb_Effects.BeginUpdate();
 
 				ClearEffectsList();
-				_itFxList_stock.Checked = true;
+				_itResrepo_stock.Checked = true;
 
 				bool bypassFilter = (_filtr == String.Empty);
 
@@ -519,14 +519,14 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void mi_resrep_Module(object sender, EventArgs e)
+		void mi_resrepo_Module(object sender, EventArgs e)
 		{
-			if (!_itFxList_module.Checked)
+			if (!_itResrepo_module.Checked)
 			{
 				lb_Effects.BeginUpdate();
 
 				ClearEffectsList();
-				_itFxList_module.Checked = true;
+				_itResrepo_module.Checked = true;
 
 				bool bypassFilter = (_filtr == String.Empty);
 
@@ -552,14 +552,14 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void mi_resrep_Campaign(object sender, EventArgs e)
+		void mi_resrepo_Campaign(object sender, EventArgs e)
 		{
-			if (!_itFxList_campaign.Checked)
+			if (!_itResrepo_campaign.Checked)
 			{
 				lb_Effects.BeginUpdate();
 
 				ClearEffectsList();
-				_itFxList_campaign.Checked = true;
+				_itResrepo_campaign.Checked = true;
 
 				bool bypassFilter = (_filtr == String.Empty);
 
@@ -585,14 +585,14 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void mi_resrep_Override(object sender, EventArgs e)
+		void mi_resrepo_Override(object sender, EventArgs e)
 		{
-			if (!_itFxList_override.Checked)
+			if (!_itResrepo_override.Checked)
 			{
 				lb_Effects.BeginUpdate();
 
 				ClearEffectsList();
-				_itFxList_override.Checked = true;
+				_itResrepo_override.Checked = true;
 
 				bool bypassFilter = (_filtr == String.Empty);
 
@@ -1077,30 +1077,30 @@ namespace SpecialEffectsViewer
 				_filtr = String.Empty;
 
 			_bypassSearchFocus = true;
-			if (_itFxList_all.Checked)
+			if (_itResrepo_all.Checked)
 			{
-				_itFxList_all.Checked = false;
-				mi_resrep_All(null, EventArgs.Empty);
+				_itResrepo_all.Checked = false;
+				mi_resrepo_All(null, EventArgs.Empty);
 			}
-			else if (_itFxList_stock.Checked)
+			else if (_itResrepo_stock.Checked)
 			{
-				_itFxList_stock.Checked = false;
-				mi_resrep_Stock(null, EventArgs.Empty);
+				_itResrepo_stock.Checked = false;
+				mi_resrepo_Stock(null, EventArgs.Empty);
 			}
-			else if (_itFxList_module.Checked)
+			else if (_itResrepo_module.Checked)
 			{
-				_itFxList_module.Checked = false;
-				mi_resrep_Module(null, EventArgs.Empty);
+				_itResrepo_module.Checked = false;
+				mi_resrepo_Module(null, EventArgs.Empty);
 			}
-			else if (_itFxList_campaign.Checked)
+			else if (_itResrepo_campaign.Checked)
 			{
-				_itFxList_campaign.Checked = false;
-				mi_resrep_Campaign(null, EventArgs.Empty);
+				_itResrepo_campaign.Checked = false;
+				mi_resrepo_Campaign(null, EventArgs.Empty);
 			}
 			else //if (_itFxList_override.Checked)
 			{
-				_itFxList_override.Checked = false;
-				mi_resrep_Override(null, EventArgs.Empty);
+				_itResrepo_override.Checked = false;
+				mi_resrepo_Override(null, EventArgs.Empty);
 			}
 			_bypassSearchFocus = false;
 		}
@@ -1262,11 +1262,11 @@ namespace SpecialEffectsViewer
 			lb_Effects.SelectedIndex = -1;
 			lb_Effects.Items.Clear();
 
-			_itFxList_all     .Checked =
-			_itFxList_stock   .Checked =
-			_itFxList_module  .Checked =
-			_itFxList_campaign.Checked =
-			_itFxList_override.Checked = false;
+			_itResrepo_all     .Checked =
+			_itResrepo_stock   .Checked =
+			_itResrepo_module  .Checked =
+			_itResrepo_campaign.Checked =
+			_itResrepo_override.Checked = false;
 		}
 
 		/// <summary>
