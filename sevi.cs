@@ -692,7 +692,10 @@ namespace SpecialEffectsViewer
 					var effect_alt = CommonUtils.SerializationClone(_effect) as IResourceEntry;
 
 					_altgroup = new SEFGroup();
-					_altgroup.XmlUnserialize(effect_alt.GetStream(false));
+
+					using (Stream bin = effect_alt.GetStream(false))
+						_altgroup.XmlUnserialize(bin);
+					effect_alt.Release();
 
 					if (!isSolo)
 					{
@@ -861,7 +864,10 @@ namespace SpecialEffectsViewer
 			{
 				_effect = lb_Effects.SelectedItem as IResourceEntry;
 				_sefgroup = new SEFGroup();
-				_sefgroup.XmlUnserialize(_effect.GetStream(false));
+
+				using (Stream bin = _effect.GetStream(false))
+					_sefgroup.XmlUnserialize(bin);
+				_effect.Release();
 
 				ApplyEffect();
 
