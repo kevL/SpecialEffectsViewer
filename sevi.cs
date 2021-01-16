@@ -1436,9 +1436,9 @@ namespace SpecialEffectsViewer
 					int p = 6;
 					if (_itView_ExtendedInfo.Checked)
 					{
-						if      (sefevent as SEFGameModelEffect  != null) p = 7;
-						else if (sefevent as SEFLight            != null
-							  || sefevent as SEFProjectedTexture != null) p = 12;
+						if      (sefevent as SEFGameModelEffect  != null) p =  7;
+						else if (sefevent as SEFLight            != null) p = 12;
+						else if (sefevent as SEFProjectedTexture != null) p = 11;
 					}
 
 					text += BwResourceTypes.GetResourceTypeString(sefevent.ResourceType)  + L;
@@ -1557,41 +1557,41 @@ namespace SpecialEffectsViewer
 						else if (sefevent as SEFProjectedTexture != null)
 						{
 							var texture = (sefevent as SEFProjectedTexture);
-							text += L + "texture      - " + texture.Texture;
-							text += L + "ground       - " + texture.GroundOnly;
-							text += L + "fadein       - " + texture.FadeInTime;
-							text += L + "projection   - " + texture.ProjectionType;
-							text += L + "orientation  - " + GetPositionString(texture.Orientation);
+							text += L + "texture     - " + texture.Texture;
+							text += L + "ground      - " + texture.GroundOnly;
+							text += L + "fadein      - " + texture.FadeInTime;
+							text += L + "projection  - " + texture.ProjectionType;
+							text += L + "orientation - " + GetPositionString(texture.Orientation);
 
-							text += L + "height       - " + texture.Height;
+							text += L + "height      - " + texture.Height;
 							if (texture.HeightEnd != texture.Height)
-								text += L + "heightend    - " + texture.HeightEnd;
-							text += L + "width        - " + texture.Width;
+								text += L + "heightend   - " + texture.HeightEnd;
+							text += L + "width       - " + texture.Width;
 							if (texture.WidthEnd != texture.Width)
-								text += L + "widthend     - " + texture.WidthEnd;
-							text += L + "length       - " + texture.Length;
+								text += L + "widthend    - " + texture.WidthEnd;
+							text += L + "length      - " + texture.Length;
 							if (texture.LengthEnd != texture.Length)
-								text += L + "lengthend    - " + texture.LengthEnd;
+								text += L + "lengthend   - " + texture.LengthEnd;
 
-							text += L + "color        - " + texture.Color;
+							text += L + "color       - " + texture.Color;
 							if (texture.ColorEnd != texture.Color)
-								text += L + "colorend     - " + texture.ColorEnd;
+								text += L + "colorend    - " + texture.ColorEnd;
 
-							text += L + "lerp         - " + texture.Lerp;
+							text += L + "lerp        - " + texture.Lerp;
 							if (texture.Lerp)
-								text += L + "lerp_period  - " + texture.LerpPeriod;
+								text += L + "lerp_period - " + texture.LerpPeriod;
 
-							text += L + "rot          - " + texture.InitialRotation;
-							text += L + "rot_veloc    - " + texture.RotationalVelocity;
-							text += L + "rot_accel    - " + texture.RotationalAcceleration;
+							text += L + "rot         - " + texture.InitialRotation;
+							text += L + "rot_veloc   - " + texture.RotationalVelocity;
+							text += L + "rot_accel   - " + texture.RotationalAcceleration;
 
-							text += L + "fov          - " + texture.FOV;
+							text += L + "fov         - " + texture.FOV;
 							if (texture.FOVEnd != texture.FOV)
-								text += L + "fovend       - " + texture.FOVEnd;
+								text += L + "fovend      - " + texture.FOVEnd;
 
-							text += L + "blend        - " + texture.Blending;
-							text += L + "blend_source - " + texture.SourceBlendMode;
-							text += L + "blend_dest   - " + texture.DestBlendMode;
+							text += L + "blend       - " + texture.Blending;
+							text += L + "blend_src   - " + texture.SourceBlendMode;
+							text += L + "blend_dst   - " + texture.DestBlendMode;
 						}
 						else if (sefevent as SEFSound != null)
 						{
