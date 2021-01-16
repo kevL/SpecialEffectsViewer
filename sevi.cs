@@ -458,11 +458,11 @@ namespace SpecialEffectsViewer
 				ClearEffectsList();
 				_itFxList_all.Checked = true;
 
-				var entries = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
-				foreach (IResourceEntry entry in entries)
+				var resrefs = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
+				foreach (IResourceEntry resref in resrefs)
 				{
-					if (_filtr == String.Empty || entry.ResRef.Value.ToLower().Contains(_filtr))
-						lb_Effects.Items.Add(entry);
+					if (_filtr == String.Empty || resref.ResRef.Value.ToLower().Contains(_filtr))
+						lb_Effects.Items.Add(resref);
 				}
 				lb_Effects.EndUpdate();
 			}
@@ -485,16 +485,16 @@ namespace SpecialEffectsViewer
 				ClearEffectsList();
 				_itFxList_stock.Checked = true;
 
-				var entries = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
-				foreach (IResourceEntry entry in entries)
+				var resrefs = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
+				foreach (IResourceEntry resref in resrefs)
 				{
-					string label = entry.Repository.Name.ToLower();
+					string label = resref.Repository.Name.ToLower();
 					if (   !label.Contains(MODULES) // fake it ->
 						&& !label.Contains(CAMPAIGNS)
 						&& !label.Contains(OVERRIDE)
-						&& (_filtr == String.Empty || entry.ResRef.Value.ToLower().Contains(_filtr)))
+						&& (_filtr == String.Empty || resref.ResRef.Value.ToLower().Contains(_filtr)))
 					{
-						lb_Effects.Items.Add(entry);
+						lb_Effects.Items.Add(resref);
 					}
 				}
 				lb_Effects.EndUpdate();
@@ -518,13 +518,13 @@ namespace SpecialEffectsViewer
 				ClearEffectsList();
 				_itFxList_module.Checked = true;
 
-				var entries = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
-				foreach (IResourceEntry entry in entries)
+				var resrefs = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
+				foreach (IResourceEntry resref in resrefs)
 				{
-					if (entry.Repository.Name.ToLower().Contains(MODULES) // fake it
-						&& (_filtr == String.Empty || entry.ResRef.Value.ToLower().Contains(_filtr)))
+					if (resref.Repository.Name.ToLower().Contains(MODULES) // fake it
+						&& (_filtr == String.Empty || resref.ResRef.Value.ToLower().Contains(_filtr)))
 					{
-						lb_Effects.Items.Add(entry);
+						lb_Effects.Items.Add(resref);
 					}
 				}
 				lb_Effects.EndUpdate();
@@ -548,13 +548,13 @@ namespace SpecialEffectsViewer
 				ClearEffectsList();
 				_itFxList_campaign.Checked = true;
 
-				var entries = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
-				foreach (IResourceEntry entry in entries)
+				var resrefs = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
+				foreach (IResourceEntry resref in resrefs)
 				{
-					if (entry.Repository.Name.ToLower().Contains(CAMPAIGNS) // fake it
-						&& (_filtr == String.Empty || entry.ResRef.Value.ToLower().Contains(_filtr)))
+					if (resref.Repository.Name.ToLower().Contains(CAMPAIGNS) // fake it
+						&& (_filtr == String.Empty || resref.ResRef.Value.ToLower().Contains(_filtr)))
 					{
-						lb_Effects.Items.Add(entry);
+						lb_Effects.Items.Add(resref);
 					}
 				}
 				lb_Effects.EndUpdate();
@@ -578,13 +578,13 @@ namespace SpecialEffectsViewer
 				ClearEffectsList();
 				_itFxList_override.Checked = true;
 
-				var entries = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
-				foreach (IResourceEntry entry in entries)
+				var resrefs = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
+				foreach (IResourceEntry resref in resrefs)
 				{
-					if (entry.Repository.Name.ToLower().Contains(OVERRIDE) // fake it
-						&& (_filtr == String.Empty || entry.ResRef.Value.ToLower().Contains(_filtr)))
+					if (resref.Repository.Name.ToLower().Contains(OVERRIDE) // fake it
+						&& (_filtr == String.Empty || resref.ResRef.Value.ToLower().Contains(_filtr)))
 					{
-						lb_Effects.Items.Add(entry);
+						lb_Effects.Items.Add(resref);
 					}
 				}
 				lb_Effects.EndUpdate();
