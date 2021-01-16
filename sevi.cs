@@ -39,10 +39,21 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		enum Scene
 		{
-			none,				// 0 - not used.
+			non,				// 0 - not used.
 			doublecharacter,	// 1
 			singlecharacter,	// 2
 			placedeffect		// 3
+		}
+
+		/// <summary>
+		/// Bitwise flags for use by <see cref="_isListStale"/>.
+		/// </summary>
+		[Flags]
+		enum Stale : byte
+		{
+			non      = 0x0,
+			Module   = 0x1,
+			Campaign = 0x2
 		}
 		#endregion enums
 
@@ -55,10 +66,6 @@ namespace SpecialEffectsViewer
 		const string MODULES   = "modules";
 		const string CAMPAIGNS = "campaigns";
 		const string OVERRIDE  = "override";
-
-		const int STALE_non      = 0x0;
-		const int STALE_Module   = 0x1;
-		const int STALE_Campaign = 0x2;
 
 		const int ItemsReserved = 6; // count of standard its in the Events dropdown
 
@@ -95,13 +102,13 @@ namespace SpecialEffectsViewer
 		MenuItem _itView_ExtendedInfo;
 		MenuItem _itView_StayOnTop;
 
+		string _filtr = String.Empty;
+
 		/// <summary>
-		/// A bitwise int that can repopulate the effects-list when the toolset
+		/// A bitwise var that can repopulate the effects-list when the toolset
 		/// changes its currently loaded Module or Campaign.
 		/// </summary>
-		int _isListStale;
-
-		string _filtr = String.Empty;
+		Stale _isListStale;
 
 		/// <summary>
 		/// The search-textbox is usually focused after the effects-list is
@@ -376,7 +383,7 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		protected override void OnActivated(EventArgs e)
 		{
-			if (_isListStale != STALE_non)
+			if (_isListStale != Stale.non)
 			{
 				if (_itResrepo_all.Checked)
 				{
@@ -385,7 +392,7 @@ namespace SpecialEffectsViewer
 				}
 				else if (_itResrepo_module.Checked)
 				{
-					if ((_isListStale & STALE_Module) != 0)
+					if ((_isListStale & Stale.Module) != 0)
 					{
 						_itResrepo_module.Checked = false;
 						mi_resrepo_Module(null, EventArgs.Empty);
@@ -393,13 +400,13 @@ namespace SpecialEffectsViewer
 				}
 				else if (_itResrepo_campaign.Checked)
 				{
-					if ((_isListStale & STALE_Campaign) != 0)
+					if ((_isListStale & Stale.Campaign) != 0)
 					{
 						_itResrepo_campaign.Checked = false;
 						mi_resrepo_Campaign(null, EventArgs.Empty);
 					}
 				}
-				_isListStale = STALE_non;
+				_isListStale = Stale.non;
 			}
 		}
 
@@ -428,7 +435,7 @@ namespace SpecialEffectsViewer
 		/// <param name="eArgs"></param>
 		void OnModuleChanged(object oSender, ModuleChangedEventArgs eArgs)
 		{
-			_isListStale |= STALE_Module;
+			_isListStale |= Stale.Module;
 		}
 
 		/// <summary>
@@ -438,7 +445,7 @@ namespace SpecialEffectsViewer
 		/// <param name="cNewCampaign"></param>
 		void OnActiveCampaignChanged(NWN2Campaign cOldCampaign, NWN2Campaign cNewCampaign)
 		{
-			_isListStale |= STALE_Campaign;
+			_isListStale |= Stale.Campaign;
 		}
 		#endregion eventhandlers (toolset)
 
@@ -1710,7 +1717,7 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
-		/// 
+		/// Pads text for the event-info textbox.
 		/// </summary>
 		/// <param name="in"></param>
 		/// <param name="len"></param>
