@@ -458,11 +458,16 @@ namespace SpecialEffectsViewer
 				ClearEffectsList();
 				_itFxList_all.Checked = true;
 
+				bool bypassFilter = (_filtr == String.Empty);
+
 				var resrefs = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
 				foreach (IResourceEntry resref in resrefs)
 				{
-					if (_filtr == String.Empty || resref.ResRef.Value.ToLower().Contains(_filtr))
+					if (resref != null && !(resref is MissingResourceEntry)
+						&& (bypassFilter || resref.ResRef.Value.ToLower().Contains(_filtr)))
+					{
 						lb_Effects.Items.Add(resref);
+					}
 				}
 				lb_Effects.EndUpdate();
 			}
@@ -485,16 +490,21 @@ namespace SpecialEffectsViewer
 				ClearEffectsList();
 				_itFxList_stock.Checked = true;
 
+				bool bypassFilter = (_filtr == String.Empty);
+
 				var resrefs = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
 				foreach (IResourceEntry resref in resrefs)
 				{
-					string label = resref.Repository.Name.ToLower();
-					if (   !label.Contains(MODULES) // fake it ->
-						&& !label.Contains(CAMPAIGNS)
-						&& !label.Contains(OVERRIDE)
-						&& (_filtr == String.Empty || resref.ResRef.Value.ToLower().Contains(_filtr)))
+					if (resref != null && !(resref is MissingResourceEntry))
 					{
-						lb_Effects.Items.Add(resref);
+						string label = resref.Repository.Name.ToLower();
+						if (   !label.Contains(MODULES) // fake it ->
+							&& !label.Contains(CAMPAIGNS)
+							&& !label.Contains(OVERRIDE)
+							&& (bypassFilter || resref.ResRef.Value.ToLower().Contains(_filtr)))
+						{
+							lb_Effects.Items.Add(resref);
+						}
 					}
 				}
 				lb_Effects.EndUpdate();
@@ -518,11 +528,14 @@ namespace SpecialEffectsViewer
 				ClearEffectsList();
 				_itFxList_module.Checked = true;
 
+				bool bypassFilter = (_filtr == String.Empty);
+
 				var resrefs = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
 				foreach (IResourceEntry resref in resrefs)
 				{
-					if (resref.Repository.Name.ToLower().Contains(MODULES) // fake it
-						&& (_filtr == String.Empty || resref.ResRef.Value.ToLower().Contains(_filtr)))
+					if (resref != null && !(resref is MissingResourceEntry)
+						&& resref.Repository.Name.ToLower().Contains(MODULES) // fake it
+						&& (bypassFilter || resref.ResRef.Value.ToLower().Contains(_filtr)))
 					{
 						lb_Effects.Items.Add(resref);
 					}
@@ -548,11 +561,14 @@ namespace SpecialEffectsViewer
 				ClearEffectsList();
 				_itFxList_campaign.Checked = true;
 
+				bool bypassFilter = (_filtr == String.Empty);
+
 				var resrefs = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
 				foreach (IResourceEntry resref in resrefs)
 				{
-					if (resref.Repository.Name.ToLower().Contains(CAMPAIGNS) // fake it
-						&& (_filtr == String.Empty || resref.ResRef.Value.ToLower().Contains(_filtr)))
+					if (resref != null && !(resref is MissingResourceEntry)
+						&& resref.Repository.Name.ToLower().Contains(CAMPAIGNS) // fake it
+						&& (bypassFilter || resref.ResRef.Value.ToLower().Contains(_filtr)))
 					{
 						lb_Effects.Items.Add(resref);
 					}
@@ -578,11 +594,14 @@ namespace SpecialEffectsViewer
 				ClearEffectsList();
 				_itFxList_override.Checked = true;
 
+				bool bypassFilter = (_filtr == String.Empty);
+
 				var resrefs = NWN2ResourceManager.Instance.FindEntriesByType(BWResourceTypes.GetResourceType(SEF));
 				foreach (IResourceEntry resref in resrefs)
 				{
-					if (resref.Repository.Name.ToLower().Contains(OVERRIDE) // fake it
-						&& (_filtr == String.Empty || resref.ResRef.Value.ToLower().Contains(_filtr)))
+					if (resref != null && !(resref is MissingResourceEntry)
+						&& resref.Repository.Name.ToLower().Contains(OVERRIDE) // fake it
+						&& (bypassFilter || resref.ResRef.Value.ToLower().Contains(_filtr)))
 					{
 						lb_Effects.Items.Add(resref);
 					}
