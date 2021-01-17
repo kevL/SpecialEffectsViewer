@@ -101,6 +101,7 @@ namespace SpecialEffectsViewer
 		MenuItem _itView_Options;
 		MenuItem _itView_ExtendedInfo;
 		MenuItem _itView_StayOnTop;
+		MenuItem _itView_Refocus;
 
 		string _filtr = String.Empty;
 
@@ -213,6 +214,8 @@ namespace SpecialEffectsViewer
 			_itView_ExtendedInfo    = it.MenuItems.Add("show extended &info",   mi_view_Extended);
 									  it.MenuItems.Add("-");
 			_itView_StayOnTop       = it.MenuItems.Add("stay on &top",          mi_view_StayOnTop);
+									  it.MenuItems.Add("-");
+			_itView_Refocus         = it.MenuItems.Add("&refocus",              mi_view_Refocus);
 
 			_itView_DoubleCharacter.Shortcut = Shortcut.F10;
 			_itView_SingleCharacter.Shortcut = Shortcut.F11;
@@ -221,6 +224,7 @@ namespace SpecialEffectsViewer
 			_itView_Options        .Shortcut = Shortcut.F9;
 			_itView_ExtendedInfo   .Shortcut = Shortcut.CtrlI;
 			_itView_StayOnTop      .Shortcut = Shortcut.CtrlT;
+			_itView_Refocus        .Shortcut = Shortcut.CtrlR;
 
 			_itView_DoubleCharacter.Checked =
 			_itView_StayOnTop      .Checked = true;
@@ -850,6 +854,23 @@ namespace SpecialEffectsViewer
 			}
 			else
 				Owner = null;
+		}
+
+		
+		/// <summary>
+		/// Focuses the camera onto the center of the area.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void mi_view_Refocus(object sender, EventArgs e)
+		{
+			if (_panel != null)
+			{
+				var receiver = _panel.CameraMovementReceiver as ModelViewerInputCameraReceiver; // is null on Load
+				var state = (receiver.CameraState as ModelViewerInputCameraReceiverState);
+				state.FocusPoint = new Vector3(100f, 100f, 0f);
+				receiver.UpdateCamera();
+			}
 		}
 		#endregion eventhandlers (view)
 

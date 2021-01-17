@@ -49,6 +49,7 @@ show Options panel   - shows a panel on the left that has several options and
 show extended info   - shows extended info about the currently selected effect's
                        events in the Options panel
 stay on top          - keeps the plugin on top of the toolset when enabled
+refocus              - focuses the camera to the center of the area
 
 Help
 ----
