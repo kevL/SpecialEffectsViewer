@@ -9,10 +9,10 @@ namespace SpecialEffectsViewer
 {
 	static class EventData
 	{
-		static string L = Environment.NewLine;
+		internal static string L = Environment.NewLine;
 
 		/// <summary>
-		/// 
+		/// Gets standard - and extended - event-data as a string.
 		/// </summary>
 		/// <param name="sefevent"></param>
 		/// <param name="id"></param>
@@ -252,9 +252,9 @@ namespace SpecialEffectsViewer
 
 			diff = diff.Substring(0, diff.Length - spec.Length - 2);
 
-			return diff                     + Environment.NewLine
-				 + "               " + spec + Environment.NewLine
-				 + "               " + ambi + Environment.NewLine
+			return diff                     + L
+				 + "               " + spec + L
+				 + "               " + ambi + L
 				 + "               " + inte;
 		}
 

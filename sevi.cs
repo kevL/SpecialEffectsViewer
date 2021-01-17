@@ -1454,16 +1454,13 @@ namespace SpecialEffectsViewer
 					_itEvents.MenuItems.Add("-");
 				}
 
-				string text;
-				string L = Environment.NewLine;
-
-				text = "[" + _sefgroup.Name + "]"                                  + L;
-				text += "pos - " + EventData.GetPositionString(_sefgroup.Position) + L;
-//				text += "1st - " + _sefgroup.FirstObject                           + L;
-//				text += "2nd - " + _sefgroup.SecondObject                          + L;
-				text += "fog - " + _sefgroup.FogMultiplier                         + L;
-				text += "dur - " + _sefgroup.HasMaximumDuration                    + L;
-				text += "dur - " + _sefgroup.MaximumDuration                       + L;
+				string text = "[" + _sefgroup.Name + "]"                           + EventData.L;
+				text += "pos - " + EventData.GetPositionString(_sefgroup.Position) + EventData.L;
+//				text += "1st - " + _sefgroup.FirstObject                           + EventData.L;
+//				text += "2nd - " + _sefgroup.SecondObject                          + EventData.L;
+				text += "fog - " + _sefgroup.FogMultiplier                         + EventData.L;
+				text += "dur - " + _sefgroup.HasMaximumDuration                    + EventData.L;
+				text += "dur - " + _sefgroup.MaximumDuration                       + EventData.L;
 				text += _sefgroup.SpecialTargetPosition;
 
 				tb_SefData.Text = text;
@@ -1473,7 +1470,7 @@ namespace SpecialEffectsViewer
 				for (int i = 0; i != _sefgroup.Events.Count; ++i)
 				{
 					// NOTE: a line is 13 px high (+5 pad total)
-					if (text != String.Empty) text += L + L;
+					if (text != String.Empty) text += EventData.L + EventData.L;
 
 					text += EventData.GetEventData(_sefgroup.Events[i], i, _itView_ExtendedInfo.Checked);
 
