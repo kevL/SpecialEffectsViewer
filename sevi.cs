@@ -37,7 +37,7 @@ namespace SpecialEffectsViewer
 		/// <summary>
 		/// pick a Scene, any scene
 		/// </summary>
-		enum Scene
+		internal enum Scene
 		{
 			non,				// 0 - not used.
 			doublecharacter,	// 1
@@ -400,7 +400,7 @@ namespace SpecialEffectsViewer
 
 			StoreCameraState();
 
-			base.OnFormClosing(e); // this ought close and dispose
+			base.OnFormClosing(e); // this ought dispose the plugin
 		}
 
 		/// <summary>
@@ -1354,6 +1354,9 @@ namespace SpecialEffectsViewer
 
 				NWN2NetDisplayManager.Instance.RemoveObjects(objects);
 			}
+
+			if (SceneData != null)
+				SceneData.SetDatatext(_panel.Scene);
 		}
 
 		/// <summary>
@@ -1435,6 +1438,9 @@ namespace SpecialEffectsViewer
 					LoadSefgroup(_sefgroup);
 
 				PrintEffectData();
+
+				if (SceneData != null)
+					SceneData.SetDatatext(_panel.Scene);
 
 				if (!rb_DoubleCharacter.Checked || CanPlayEvents())
 					_panel.Scene.SpecialEffectsManager.BeginUpdating();
