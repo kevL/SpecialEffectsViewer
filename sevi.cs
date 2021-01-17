@@ -100,6 +100,7 @@ namespace SpecialEffectsViewer
 		MenuItem _itView_Ground;
 		MenuItem _itView_Options;
 		MenuItem _itView_ExtendedInfo;
+		MenuItem _itView_SceneData;
 		MenuItem _itView_StayOnTop;
 		MenuItem _itView_Refocus;
 
@@ -136,6 +137,19 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		bool _Ctrl;
 		#endregion Fields
+
+
+		#region Properties
+		SceneData _sceneData;
+		internal SceneData SceneData
+		{
+			get { return _sceneData; }
+			set
+			{
+				_itView_SceneData.Checked = ((_sceneData = value) != null);
+			}
+		}
+		#endregion Properties
 
 
 		#region cTor
@@ -212,6 +226,7 @@ namespace SpecialEffectsViewer
 									  it.MenuItems.Add("-");
 			_itView_Options         = it.MenuItems.Add("show &Options panel",   mi_view_Options);
 			_itView_ExtendedInfo    = it.MenuItems.Add("show extended &info",   mi_view_Extended);
+			_itView_SceneData       = it.MenuItems.Add("sce&ne data",           mi_view_Scenedata);
 									  it.MenuItems.Add("-");
 			_itView_StayOnTop       = it.MenuItems.Add("stay on &top",          mi_view_StayOnTop);
 									  it.MenuItems.Add("-");
@@ -223,6 +238,7 @@ namespace SpecialEffectsViewer
 			_itView_Ground         .Shortcut = Shortcut.CtrlG;
 			_itView_Options        .Shortcut = Shortcut.F9;
 			_itView_ExtendedInfo   .Shortcut = Shortcut.CtrlI;
+			_itView_SceneData      .Shortcut = Shortcut.CtrlN;
 			_itView_StayOnTop      .Shortcut = Shortcut.CtrlT;
 			_itView_Refocus        .Shortcut = Shortcut.CtrlR;
 
@@ -358,6 +374,11 @@ namespace SpecialEffectsViewer
 			NWN2ToolsetMainForm.ModuleChanged                  -= OnModuleChanged;
 			NWN2CampaignManager.Instance.ActiveCampaignChanged -= OnActiveCampaignChanged;
 
+			if (SceneData != null)
+			{
+				SceneData.Close();
+				SceneData = null; // jic
+			}
 
 			if (WindowState == FormWindowState.Maximized)
 				SpecialEffectsViewerPreferences.that.Maximized = true;
@@ -378,6 +399,8 @@ namespace SpecialEffectsViewer
 				SpecialEffectsViewerPreferences.that.SplitterDistanceEvents = sc3_Events.SplitterDistance;
 
 			StoreCameraState();
+
+			base.OnFormClosing(e); // this ought close and dispose
 		}
 
 		/// <summary>
@@ -841,6 +864,24 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void mi_view_Scenedata(object sender, EventArgs e)
+		{
+			if (SceneData == null)
+			{
+				SceneData = new SceneData(this, _panel.Scene);
+			}
+			else
+			{
+				SceneData.Close();
+				SceneData = null;
+			}
+		}
+
+		/// <summary>
 		/// Toggles toolset ownership of the plugin-window.
 		/// </summary>
 		/// <param name="sender"></param>
@@ -868,7 +909,7 @@ namespace SpecialEffectsViewer
 			{
 				var receiver = _panel.CameraMovementReceiver as ModelViewerInputCameraReceiver; // is null on Load
 				var state = (receiver.CameraState as ModelViewerInputCameraReceiverState);
-				state.FocusPoint = new Vector3(100f, 100f, 0f);
+				state.FocusPoint = new Vector3(100f, 100f, 1f);
 				receiver.UpdateCamera();
 			}
 		}

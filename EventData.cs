@@ -7,6 +7,9 @@ using OEIShared.Effects;
 
 namespace SpecialEffectsViewer
 {
+	/// <summary>
+	/// Sef event data.
+	/// </summary>
 	static class EventData
 	{
 		internal static string L = Environment.NewLine;

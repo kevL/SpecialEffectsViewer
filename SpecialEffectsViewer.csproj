@@ -67,6 +67,7 @@
     <Compile Include="EventData.cs" />
     <Compile Include="logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SceneData.cs" />
     <Compile Include="sevi.cs" />
     <Compile Include="sevi.Designer.cs">
       <DependentUpon>sevi.cs</DependentUpon>
@@ -77,6 +78,9 @@
   <ItemGroup>
     <EmbeddedResource Include="AboutF.resx">
       <DependentUpon>AboutF.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SceneData.resx">
+      <DependentUpon>SceneData.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="sevi.resx">
       <DependentUpon>sevi.Designer.cs</DependentUpon>
