@@ -1089,67 +1089,9 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void bu_Search_click(object sender, EventArgs e)
 		{
-			int count = lb_Effects.Items.Count;
-			if (count != 0)
-			{
-				string text = tb_Search.Text;
-				if (!String.IsNullOrEmpty(text))
-				{
-					text = text.ToLower();
-
-					int id;
-
-					var bu = sender as Button;
-					if (bu == bu_SearchD)
-					{
-						if (lb_Effects.SelectedIndex == count - 1)
-						{
-							id = 0;
-						}
-						else
-							id = lb_Effects.SelectedIndex + 1;
-
-						while (!lb_Effects.Items[id].ToString().ToLower().Contains(text))
-						{
-							if (id == lb_Effects.SelectedIndex) // not found.
-							{
-								System.Media.SystemSounds.Beep.Play();
-								break;
-							}
-
-							if (++id == count) // wrap to first node
-							{
-								id = 0;
-							}
-						}
-					}
-					else //if (bu == bu_SearchU)
-					{
-						if (lb_Effects.SelectedIndex < 1)
-						{
-							id = count - 1;
-						}
-						else
-							id = lb_Effects.SelectedIndex - 1;
-
-						while (!lb_Effects.Items[id].ToString().ToLower().Contains(text))
-						{
-							if (id == lb_Effects.SelectedIndex) // not found.
-							{
-								System.Media.SystemSounds.Beep.Play();
-								break;
-							}
-
-							if (--id == -1) // wrap to last node
-							{
-								id = count - 1;
-							}
-						}
-					}
-
-					lb_Effects.SelectedIndex = id;
-				}
-			}
+			int id = Search.SearchEffects(lb_Effects, tb_Search.Text, sender == bu_SearchD);
+			if (id != -1)
+				lb_Effects.SelectedIndex = id;
 		}
 
 		/// <summary>
