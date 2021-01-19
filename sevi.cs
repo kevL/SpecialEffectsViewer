@@ -80,7 +80,7 @@ namespace SpecialEffectsViewer
 		IResourceEntry _effect; SEFGroup _sefgroup, _altgroup;
 		// TODO: Probably don't need both '_sefgroup' and '_altgroup'.
 
-		ElectronPanel _panel = new ElectronPanel(); // i hate u
+		ElectronPanel _panel; // i hate u
 
 		MenuItem _itResrepo_all;
 		MenuItem _itResrepo_stock;
@@ -172,7 +172,7 @@ namespace SpecialEffectsViewer
 			bu_SearchU.Text = "\u25b2"; // up triangle
 
 			CreateMainMenu();
-			ConfigureElectronPanel();
+			CreateElectronPanel();
 
 			LoadPreferences();
 
@@ -261,10 +261,12 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
-		/// Layout control for the ElectronPanel.
+		/// 
 		/// </summary>
-		void ConfigureElectronPanel()
+		void CreateElectronPanel()
 		{
+			_panel = new ElectronPanel();
+
 			_panel.Dock = DockStyle.Fill;
 			_panel.BorderStyle = BorderStyle.FixedSingle;
 			_panel.MousePanel.KeyDown   += lb_Effects_keydown;
@@ -274,6 +276,16 @@ namespace SpecialEffectsViewer
 			_panel.MousePanel.KeyUp     += panel_keyup;
 
 			sc2_Options.Panel2.Controls.Add(_panel);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		void RecreateElectronPanel()
+		{
+			_panel.Dispose();
+			CreateElectronPanel();
+			OnLoad(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -872,7 +884,8 @@ namespace SpecialEffectsViewer
 		{
 			if (SceneData == null)
 			{
-				SceneData = new SceneData(this, _panel.Scene);
+				SceneData = new SceneData(this);
+				SceneData.SetDatatext(_panel.Scene);
 			}
 			else
 			{
@@ -967,6 +980,9 @@ namespace SpecialEffectsViewer
 				_effect = null; _sefgroup = null; _altgroup = null;
 				tb_SefData.Text = tb_EventData.Text = String.Empty;
 			}
+
+			if (SceneData != null)
+				SceneData.SetDatatext(_panel.Scene);
 		}
 
 		/// <summary>
@@ -1007,6 +1023,9 @@ namespace SpecialEffectsViewer
 			}
 
 			ApplyEffect();
+
+			if (SceneData != null)
+				SceneData.SetDatatext(_panel.Scene);
 		}
 
 		/// <summary>
@@ -1025,7 +1044,7 @@ namespace SpecialEffectsViewer
 			_panel.Dispose();
 			_panel = new ElectronPanel();
 
-			ConfigureElectronPanel();
+			RecreateElectronPanel();
 			OnLoad(EventArgs.Empty);
 
 			if (rb_DoubleCharacter.Checked) // special case
@@ -1037,6 +1056,9 @@ namespace SpecialEffectsViewer
 				_altgroup = null;
 				ApplyEffect();
 			}
+
+			if (SceneData != null)
+				SceneData.SetDatatext(_panel.Scene);
 		}
 
 		/// <summary>
@@ -1325,10 +1347,8 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		void ClearEffectsList()
 		{
-			ClearScene();
-			CreateBasicEvents();
+			bu_Clear_click(null, EventArgs.Empty);
 
-			lb_Effects.SelectedIndex = -1;
 			lb_Effects.Items.Clear();
 
 			_itResrepo_all     .Checked =
@@ -1351,12 +1371,8 @@ namespace SpecialEffectsViewer
 				var objects = new NetDisplayObjectCollection();
 				foreach (NetDisplayObject @object in _panel.Scene.Objects)
 					objects.Add(@object);
-
 				NWN2NetDisplayManager.Instance.RemoveObjects(objects);
 			}
-
-			if (SceneData != null)
-				SceneData.SetDatatext(_panel.Scene);
 		}
 
 		/// <summary>
@@ -1438,9 +1454,6 @@ namespace SpecialEffectsViewer
 					LoadSefgroup(_sefgroup);
 
 				PrintEffectData();
-
-				if (SceneData != null)
-					SceneData.SetDatatext(_panel.Scene);
 
 				if (!rb_DoubleCharacter.Checked || CanPlayEvents())
 					_panel.Scene.SpecialEffectsManager.BeginUpdating();
@@ -1561,7 +1574,7 @@ namespace SpecialEffectsViewer
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <returns></returns>
-		static bool checklocation(int x, int y)
+		internal static bool checklocation(int x, int y)
 		{
 			x += 100; y += 50;
 
