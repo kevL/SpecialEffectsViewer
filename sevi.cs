@@ -141,6 +141,10 @@ namespace SpecialEffectsViewer
 
 		#region Properties
 		SceneData _sceneData;
+		/// <summary>
+		/// A dialog to print scene-data to.
+		/// TODO: It currently has issues.
+		/// </summary>
 		internal SceneData SceneData
 		{
 			get { return _sceneData; }
@@ -276,16 +280,6 @@ namespace SpecialEffectsViewer
 			_panel.MousePanel.KeyUp     += panel_keyup;
 
 			sc2_Options.Panel2.Controls.Add(_panel);
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		void RecreateElectronPanel()
-		{
-			_panel.Dispose();
-			CreateElectronPanel();
-			OnLoad(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -1042,12 +1036,10 @@ namespace SpecialEffectsViewer
 			StoreCameraState();
 
 			_panel.Dispose();
-			_panel = new ElectronPanel();
-
-			RecreateElectronPanel();
+			CreateElectronPanel();
 			OnLoad(EventArgs.Empty);
 
-			if (rb_DoubleCharacter.Checked) // special case
+			if (rb_DoubleCharacter.Checked)
 			{
 				mi_events_Event(null, EventArgs.Empty);
 			}
@@ -1310,10 +1302,8 @@ namespace SpecialEffectsViewer
 				_panel.Scene.SpecialEffectsManager.EndUpdating();
 				_panel.Scene.SpecialEffectsManager.Groups.Clear();
 
-				var objects = new NetDisplayObjectCollection();
-				foreach (NetDisplayObject @object in _panel.Scene.Objects)
-					objects.Add(@object);
-				NWN2NetDisplayManager.Instance.RemoveObjects(objects);
+				for (int i = _panel.Scene.Objects.Count - 1; i != -1; --i)
+					NWN2NetDisplayManager.Instance.RemoveObject(_panel.Scene.Objects[i]);
 			}
 		}
 
@@ -1371,26 +1361,25 @@ namespace SpecialEffectsViewer
 			{
 				if (rb_PlacedEffect.Checked)
 				{
-					var blueprint = new NWN2PlacedEffectBlueprint();
-					var iinstance = NWN2GlobalBlueprintManager.CreateInstanceFromBlueprint(blueprint);
-					(iinstance as NWN2PlacedEffectTemplate).Active = true;
-					(iinstance as NWN2PlacedEffectTemplate).Effect = _effect;
+					var iPlacedEffect = new NWN2PlacedEffectInstance();
+					iPlacedEffect.Active = true;
+					iPlacedEffect.Effect = _effect;
 
-					NetDisplayObject oPlacedEffect = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iinstance, _panel.Scene, 0);
+					NetDisplayObject oPlacedEffect = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iPlacedEffect, _panel.Scene, 0);
 
 					oPlacedEffect.Position = new Vector3(100f,100f,0f);
 					NWN2NetDisplayManager.Instance.MoveObjects(new NetDisplayObjectCollection(oPlacedEffect), ChangeType.Absolute, false, oPlacedEffect.Position);
 				}
 				else if (rb_SingleCharacter.Checked)
 				{
-					var iIdiot1 = new NWN2CreatureInstance();
-					iIdiot1.AppearanceType.Row = 4; // half-elf source/target
-					iIdiot1.AppearanceSEF = _effect;
+					var iIdiot = new NWN2CreatureInstance();
+					iIdiot.AppearanceType.Row = 4; // half-elf source/target
+					iIdiot.AppearanceSEF = _effect;
 
-					NetDisplayObject oIdiot1 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot1, _panel.Scene, 0);
+					NetDisplayObject oIdiot = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot, _panel.Scene, 0);
 
-					oIdiot1.Position = new Vector3(100f,100f,0f);
-					NWN2NetDisplayManager.Instance.MoveObjects(new NetDisplayObjectCollection(oIdiot1), ChangeType.Absolute, false, oIdiot1.Position);
+					oIdiot.Position = new Vector3(100f,100f,0f);
+					NWN2NetDisplayManager.Instance.MoveObjects(new NetDisplayObjectCollection(oIdiot), ChangeType.Absolute, false, oIdiot.Position);
 				}
 				else //if (rb_DoubleCharacter.Checked)
 					LoadSefgroup(_sefgroup);
