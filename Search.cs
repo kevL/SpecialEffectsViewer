@@ -6,12 +6,12 @@ using System.Windows.Forms;
 namespace SpecialEffectsViewer
 {
 	/// <summary>
-	/// 
+	/// Static class for searching the effects-list.
 	/// </summary>
 	static class Search
 	{
 		/// <summary>
-		/// 
+		/// Searches through the effects-list descending or ascending.
 		/// </summary>
 		/// <param name="effects"></param>
 		/// <param name="text"></param>
@@ -46,9 +46,7 @@ namespace SpecialEffectsViewer
 							}
 
 							if (++id == its) // wrap to first node
-							{
 								id = 0;
-							}
 						}
 					}
 					else //if (bu == bu_SearchU)
@@ -69,9 +67,7 @@ namespace SpecialEffectsViewer
 							}
 
 							if (--id == -1) // wrap to last node
-							{
 								id = its - 1;
-							}
 						}
 					}
 
