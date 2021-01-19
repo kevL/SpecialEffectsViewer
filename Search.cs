@@ -49,7 +49,7 @@ namespace SpecialEffectsViewer
 								id = 0;
 						}
 					}
-					else //if (bu == bu_SearchU)
+					else
 					{
 						if (effects.SelectedIndex < 1)
 						{
@@ -70,8 +70,6 @@ namespace SpecialEffectsViewer
 								id = its - 1;
 						}
 					}
-
-					effects.SelectedIndex = id;
 				}
 			}
 			return id;
