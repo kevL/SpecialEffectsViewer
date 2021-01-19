@@ -131,3 +131,8 @@ SPECIALEFFECT_TYPE_SOUND
 SPECIALEFFECT_TYPE_TRAIL
 
 Lightning doesn't appear to work too well and perhaps should be avoided.
+
+
+Preferences
+-----------
+%localappdata%\NWN2 Toolset\Plugins\SpecialEffectsViewer.xml
