@@ -158,18 +158,24 @@ SceneDataDelay. Its default value is 350 milliseconds.
 
 It should be set as fast as possible without throwing an
 InvalidOperationException (see the description of the SceneDataDelay property).
-I have my own set at 233 milliseconds and it's been working okay - I believe it
-depends on how slow or fast your CPU is: faster CPUs can handle a shorter delay.
-I believe that there is an underlying issue with multi-threading in the toolset
-libraries (ie, a race condition). The very minimum value is 15 milliseconds,
-which is a limitation of the .NET libraries (a standard Timer can't tick faster
-than about that).
+I believe it depends on how slow or fast your CPU is: faster CPUs can handle a
+shorter delay. I believe that there is an underlying issue with multi-threading
+in the toolset libraries (ie, a race condition). The very minimum value is 15
+milliseconds, which is a limitation of the .NET libraries (a standard Timer
+can't tick faster than about that).
+
+The most troublesome specialeffect I've found is fx_item_blood (SoZ) w/ 41
+objects. You can test your system by selecting it with the SceneData dialog
+open.
 
 Note that you can manually update the SceneData dialog by pressing [F5] when the
-dialog has focus. Otherwise it updates auto (after the above delay) when the
-SpecialEffectsViewer updates the current specialeffect in its display-panel. The
-dialog will always open initially without showing any information since I
-couldn't get it to work reliably.
+dialog has focus. Otherwise it updates auto (after the above described delay)
+when the SpecialEffectsViewer updates the current specialeffect in its display-
+panel. The dialog will always open initially without showing any information
+since I couldn't get that to work reliably.
+
+Note also that not all events in a specialeffect are actually instantiated as
+objects in the display-panel.
 
 
 Preferences
