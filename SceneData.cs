@@ -78,10 +78,10 @@ namespace SpecialEffectsViewer
 		{
 			SpecialEffectsViewerPreferences.that.SceneData_x = DesktopLocation.X;
 			SpecialEffectsViewerPreferences.that.SceneData_y = DesktopLocation.Y;
-
 			SpecialEffectsViewerPreferences.that.SceneData_w = ClientSize.Width;
 			SpecialEffectsViewerPreferences.that.SceneData_h = ClientSize.Height;
 
+			_t1.Dispose();
 			_f.SceneData = null;
 			base.OnFormClosing(e);
 		}

@@ -397,7 +397,6 @@ namespace SpecialEffectsViewer
 
 			SpecialEffectsViewerPreferences.that.x = DesktopLocation.X;
 			SpecialEffectsViewerPreferences.that.y = DesktopLocation.Y;
-
 			SpecialEffectsViewerPreferences.that.w = ClientSize.Width;
 			SpecialEffectsViewerPreferences.that.h = ClientSize.Height;
 
@@ -408,7 +407,7 @@ namespace SpecialEffectsViewer
 
 			StoreCameraState();
 
-			base.OnFormClosing(e); // this ought dispose the plugin
+			base.OnFormClosing(e);
 		}
 
 		/// <summary>
