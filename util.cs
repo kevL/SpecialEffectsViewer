@@ -10,6 +10,8 @@ namespace SpecialEffectsViewer
 {
 	static class util
 	{
+		internal static string L = Environment.NewLine;
+
 		/// <summary>
 		/// Gets a string for a 2d-vector.
 		/// </summary>
@@ -43,6 +45,34 @@ namespace SpecialEffectsViewer
 		internal static string GetColorString(Color color)
 		{
 			return "a" + color.A + " r" + color.R + " g" + color.G + " b" + color.B;
+		}
+
+		/// <summary>
+		/// Splits a LightIntensityPair.
+		/// </summary>
+		/// <param name="pair"></param>
+		/// <returns></returns>
+		internal static string SplitLip(object pair)
+		{
+			string diff = pair.ToString();
+
+			int pos = diff.IndexOf("Intensity", StringComparison.Ordinal);
+			string inte = diff.Substring(pos);
+
+			diff = diff.Substring(0, diff.Length - inte.Length - 2);
+			pos = diff.IndexOf("Ambient", StringComparison.Ordinal);
+			string ambi = diff.Substring(pos);
+
+			diff = diff.Substring(0, diff.Length - ambi.Length - 2);
+			pos = diff.IndexOf("Specular", StringComparison.Ordinal);
+			string spec = diff.Substring(pos);
+
+			diff = diff.Substring(0, diff.Length - spec.Length - 2);
+
+			return diff                     + L
+				 + "               " + spec + L
+				 + "               " + ambi + L
+				 + "               " + inte;
 		}
 	}
 }

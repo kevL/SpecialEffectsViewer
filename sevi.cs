@@ -1445,13 +1445,13 @@ namespace SpecialEffectsViewer
 
 				var sb = new StringBuilder();
 
-				sb.Append("[" + _sefgroup.Name + "]"                      + EventData.L);
-				sb.Append("pos - " + util.Get3dString(_sefgroup.Position) + EventData.L);
-//				sb.Append("1st - " + _sefgroup.FirstObject                + EventData.L);
-//				sb.Append("2nd - " + _sefgroup.SecondObject               + EventData.L);
-				sb.Append("fog - " + _sefgroup.FogMultiplier              + EventData.L);
-				sb.Append("dur - " + _sefgroup.HasMaximumDuration         + EventData.L);
-				sb.Append("dur - " + _sefgroup.MaximumDuration            + EventData.L);
+				sb.Append("[" + _sefgroup.Name + "]"                      + util.L);
+				sb.Append("pos - " + util.Get3dString(_sefgroup.Position) + util.L);
+//				sb.Append("1st - " + _sefgroup.FirstObject                + util.L);
+//				sb.Append("2nd - " + _sefgroup.SecondObject               + util.L);
+				sb.Append("fog - " + _sefgroup.FogMultiplier              + util.L);
+				sb.Append("dur - " + _sefgroup.HasMaximumDuration         + util.L);
+				sb.Append("dur - " + _sefgroup.MaximumDuration            + util.L);
 				sb.Append(_sefgroup.SpecialTargetPosition);
 
 				tb_SefData.Text = sb.ToString();
@@ -1461,7 +1461,7 @@ namespace SpecialEffectsViewer
 				for (int i = 0; i != _sefgroup.Events.Count; ++i)
 				{
 					// NOTE: a line is 13 px high (+5 pad total)
-					if (sb.Length != 0) sb.Append(EventData.L + EventData.L);
+					if (sb.Length != 0) sb.Append(util.L + util.L);
 
 					sb.Append(EventData.GetEventData(_sefgroup.Events[i], i, _itView_ExtendedInfo.Checked));
 

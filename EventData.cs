@@ -11,8 +11,6 @@ namespace SpecialEffectsViewer
 	/// </summary>
 	static class EventData
 	{
-		internal static string L = Environment.NewLine;
-
 		/// <summary>
 		/// Gets standard - and extended - event-data as a string.
 		/// </summary>
@@ -27,10 +25,10 @@ namespace SpecialEffectsViewer
 			sb.Append(id.ToString());
 			if (!String.IsNullOrEmpty(sefevent.Name))
 				sb.Append(" [" + sefevent.Name + "]");
-			sb.Append(L);
+			sb.Append(util.L);
 
 			string file = GetFileLabel(sefevent);
-			if (file != null) sb.Append(file + L);
+			if (file != null) sb.Append(file + util.L);
 
 			int p = 6;
 			if (extendinfo)
@@ -40,23 +38,23 @@ namespace SpecialEffectsViewer
 				else if (sefevent as SEFProjectedTexture != null) p = 11;
 			}
 
-			sb.Append(BwResourceTypes.GetResourceTypeString(sefevent.ResourceType)  + L);
-			sb.Append(sefevent.EffectType                                           + L);
-			sb.Append(pad("pos",    p) + util.Get3dString(sefevent.Position)        + L);
-			sb.Append(pad("orient", p) + (sefevent as SEFEvent).UseOrientedPosition + L);
-			sb.Append(pad("1st",    p) + sefevent.FirstAttachmentObject             + L);
-			sb.Append(pad("1st",    p) + sefevent.FirstAttachment                   + L);
-			sb.Append(pad("2nd",    p) + sefevent.SecondAttachmentObject            + L);
-			sb.Append(pad("2nd",    p) + sefevent.SecondAttachment                  + L);
-			sb.Append(pad("delay",  p) + sefevent.Delay                             + L);
+			sb.Append(BwResourceTypes.GetResourceTypeString(sefevent.ResourceType)  + util.L);
+			sb.Append(sefevent.EffectType                                           + util.L);
+			sb.Append(pad("pos",    p) + util.Get3dString(sefevent.Position)        + util.L);
+			sb.Append(pad("orient", p) + (sefevent as SEFEvent).UseOrientedPosition + util.L);
+			sb.Append(pad("1st",    p) + sefevent.FirstAttachmentObject             + util.L);
+			sb.Append(pad("1st",    p) + sefevent.FirstAttachment                   + util.L);
+			sb.Append(pad("2nd",    p) + sefevent.SecondAttachmentObject            + util.L);
+			sb.Append(pad("2nd",    p) + sefevent.SecondAttachment                  + util.L);
+			sb.Append(pad("delay",  p) + sefevent.Delay                             + util.L);
 			sb.Append(pad("dur",    p) + sefevent.HasMaximumDuration);
 			if (sefevent.HasMaximumDuration)
-				sb.Append(L + pad("dur", p) + sefevent.MaximumDuration);
+				sb.Append(util.L + pad("dur", p) + sefevent.MaximumDuration);
 
 //			if (sefevent.Parent != null)
 //			{
-//				sb.Append(L + "parent - " + sefevent.Parent);
-//				sb.Append(L + "parent - " + GetPositionString(sefevent.ParentPosition));
+//				sb.Append(util.L + "parent - " + sefevent.Parent);
+//				sb.Append(util.L + "parent - " + GetPositionString(sefevent.ParentPosition));
 //			}
 
 
@@ -79,41 +77,41 @@ namespace SpecialEffectsViewer
 				if (sefevent as SEFGameModelEffect != null)
 				{
 					var modeleffect = sefevent as SEFGameModelEffect;
-					sb.Append(L + "type    - " + modeleffect.GameModelEffectType);
+					sb.Append(util.L + "type    - " + modeleffect.GameModelEffectType);
 
 					string texture = modeleffect.TextureName;
 					if (!String.IsNullOrEmpty(texture))
-						sb.Append(L + "texture - " + texture);
+						sb.Append(util.L + "texture - " + texture);
 
-					sb.Append(L + "alpha   - " + modeleffect.Alpha);
-					sb.Append(L + "tint    - " + util.GetColorString(modeleffect.SkinTintColor));
-					sb.Append(L + "lerpin  - " + modeleffect.LerpInTime);
-					sb.Append(L + "lerpout - " + modeleffect.LerpOutTime);
+					sb.Append(util.L + "alpha   - " + modeleffect.Alpha);
+					sb.Append(util.L + "tint    - " + util.GetColorString(modeleffect.SkinTintColor));
+					sb.Append(util.L + "lerpin  - " + modeleffect.LerpInTime);
+					sb.Append(util.L + "lerpout - " + modeleffect.LerpOutTime);
 				}
 				else if (sefevent as SEFLight != null)
 				{
 					var light = sefevent as SEFLight;
-					sb.Append(L + "range        - " + light.LightRange);
-					sb.Append(L + "fadein       - " + light.FadeInTime);
+					sb.Append(util.L + "range        - " + light.LightRange);
+					sb.Append(util.L + "fadein       - " + light.FadeInTime);
 
-					sb.Append(L + "shadow       - " + light.CastsShadow);
+					sb.Append(util.L + "shadow       - " + light.CastsShadow);
 					if (light.CastsShadow)
-						sb.Append(L + "shadow       - " + light.ShadowIntensity);
+						sb.Append(util.L + "shadow       - " + light.ShadowIntensity);
 
-					sb.Append(L + "flicker      - " + light.Flicker);
+					sb.Append(util.L + "flicker      - " + light.Flicker);
 					if (light.Flicker)
 					{
-						sb.Append(L + "flicker      - " + light.FlickerType);
-						sb.Append(L + "flicker_rate - " + light.FlickerRate);
-						sb.Append(L + "flicker_vari - " + light.FlickerVariance);
+						sb.Append(util.L + "flicker      - " + light.FlickerType);
+						sb.Append(util.L + "flicker_rate - " + light.FlickerRate);
+						sb.Append(util.L + "flicker_vari - " + light.FlickerVariance);
 					}
-					sb.Append(L + "lerp         - " + light.Lerp);
+					sb.Append(util.L + "lerp         - " + light.Lerp);
 					if (light.Lerp)
-						sb.Append(L + "lerp         - " + light.LerpPeriod);
+						sb.Append(util.L + "lerp         - " + light.LerpPeriod);
 
-					sb.Append(L + "vision       - " + light.VisionEffect);
-					sb.Append(L + "start        - " + SplitLip(light.StartLighting));
-					sb.Append(L + "end          - " + SplitLip(light.EndLighting));
+					sb.Append(util.L + "vision       - " + light.VisionEffect);
+					sb.Append(util.L + "start        - " + util.SplitLip(light.StartLighting));
+					sb.Append(util.L + "end          - " + util.SplitLip(light.EndLighting));
 				}
 //				else if (sefevent as SEFLightning != null)
 //				{
@@ -126,14 +124,14 @@ namespace SpecialEffectsViewer
 				else if (sefevent as SEFModel != null)
 				{
 					var model = sefevent as SEFModel;
-					sb.Append(L + "skel   - " + model.SkeletonFile);
-					sb.Append(L + "ani    - " + model.AnimationToPlay);
-					sb.Append(L + "loop   - " + model.Looping);
-					sb.Append(L + "tint   - " + model.TintSet);
+					sb.Append(util.L + "skel   - " + model.SkeletonFile);
+					sb.Append(util.L + "ani    - " + model.AnimationToPlay);
+					sb.Append(util.L + "loop   - " + model.Looping);
+					sb.Append(util.L + "tint   - " + model.TintSet);
 
 					string sef = model.SEFToPlayOnModel.ToString();
 					if (!String.IsNullOrEmpty(sef))
-						sb.Append(L + "sef    - " + sef);
+						sb.Append(util.L + "sef    - " + sef);
 //						+ "." + BwResourceTypes.GetResourceTypeString(model.SEFToPlayOnModel.ResourceType); // .sef
 				}
 				else if (sefevent as SEFParticleMesh != null)
@@ -142,12 +140,12 @@ namespace SpecialEffectsViewer
 					var parts = new StringBuilder();
 					for (int j = 0; j != mesh.ModelParts.Count; ++j)
 					{
-						if (parts.Length != 0) parts.Append(L + "         ");
+						if (parts.Length != 0) parts.Append(util.L + "         ");
 						parts.Append(mesh.ModelParts[j].ToString());
 					}
 
 					if (parts.Length != 0)
-						sb.Append(L + "parts  - " + parts);
+						sb.Append(util.L + "parts  - " + parts);
 				}
 //				else if (sefevent as SEFParticleSystem != null)
 //				{
@@ -156,50 +154,50 @@ namespace SpecialEffectsViewer
 				else if (sefevent as SEFProjectedTexture != null)
 				{
 					var texture = sefevent as SEFProjectedTexture;
-					sb.Append(L + "texture     - " + texture.Texture);
-					sb.Append(L + "ground      - " + texture.GroundOnly);
-					sb.Append(L + "fadein      - " + texture.FadeInTime);
-					sb.Append(L + "projection  - " + texture.ProjectionType);
-					sb.Append(L + "orientation - " + util.Get3dString(texture.Orientation));
+					sb.Append(util.L + "texture     - " + texture.Texture);
+					sb.Append(util.L + "ground      - " + texture.GroundOnly);
+					sb.Append(util.L + "fadein      - " + texture.FadeInTime);
+					sb.Append(util.L + "projection  - " + texture.ProjectionType);
+					sb.Append(util.L + "orientation - " + util.Get3dString(texture.Orientation));
 
-					sb.Append(L + "height      - " + texture.Height);
+					sb.Append(util.L + "height      - " + texture.Height);
 					if (!FloatsEqual(texture.HeightEnd, texture.Height))
-						sb.Append(L + "heightend   - " + texture.HeightEnd);
-					sb.Append(L + "width       - " + texture.Width);
+						sb.Append(util.L + "heightend   - " + texture.HeightEnd);
+					sb.Append(util.L + "width       - " + texture.Width);
 					if (!FloatsEqual(texture.WidthEnd, texture.Width))
-						sb.Append(L + "widthend    - " + texture.WidthEnd);
-					sb.Append(L + "length      - " + texture.Length);
+						sb.Append(util.L + "widthend    - " + texture.WidthEnd);
+					sb.Append(util.L + "length      - " + texture.Length);
 					if (!FloatsEqual(texture.LengthEnd, texture.Length))
-						sb.Append(L + "lengthend   - " + texture.LengthEnd);
+						sb.Append(util.L + "lengthend   - " + texture.LengthEnd);
 
-					sb.Append(L + "lerp        - " + texture.Lerp);
+					sb.Append(util.L + "lerp        - " + texture.Lerp);
 					if (texture.Lerp)
-						sb.Append(L + "lerp_period - " + texture.LerpPeriod);
-					sb.Append(L + "color       - " + util.GetColorString(texture.Color));
+						sb.Append(util.L + "lerp_period - " + texture.LerpPeriod);
+					sb.Append(util.L + "color       - " + util.GetColorString(texture.Color));
 					if (texture.ColorEnd != texture.Color)
-						sb.Append(L + "colorend    - " + util.GetColorString(texture.ColorEnd));
+						sb.Append(util.L + "colorend    - " + util.GetColorString(texture.ColorEnd));
 
-					sb.Append(L + "rot         - " + texture.InitialRotation);
-					sb.Append(L + "rot_veloc   - " + texture.RotationalVelocity);
-					sb.Append(L + "rot_accel   - " + texture.RotationalAcceleration);
+					sb.Append(util.L + "rot         - " + texture.InitialRotation);
+					sb.Append(util.L + "rot_veloc   - " + texture.RotationalVelocity);
+					sb.Append(util.L + "rot_accel   - " + texture.RotationalAcceleration);
 
-					sb.Append(L + "fov         - " + texture.FOV);
+					sb.Append(util.L + "fov         - " + texture.FOV);
 					if (!FloatsEqual(texture.FOVEnd, texture.FOV))
-						sb.Append(L + "fovend      - " + texture.FOVEnd);
+						sb.Append(util.L + "fovend      - " + texture.FOVEnd);
 
-					sb.Append(L + "blend       - " + texture.Blending);
-					sb.Append(L + "blend_src   - " + texture.SourceBlendMode);
-					sb.Append(L + "blend_dst   - " + texture.DestBlendMode);
+					sb.Append(util.L + "blend       - " + texture.Blending);
+					sb.Append(util.L + "blend_src   - " + texture.SourceBlendMode);
+					sb.Append(util.L + "blend_dst   - " + texture.DestBlendMode);
 				}
 				else if (sefevent as SEFSound != null)
 				{
 					var sound = sefevent as SEFSound;
-					sb.Append(L + "loop   - " + sound.SoundLoops);
+					sb.Append(util.L + "loop   - " + sound.SoundLoops);
 				}
 				else if (sefevent as SEFTrail != null)
 				{
 					var trail = sefevent as SEFTrail;
-					sb.Append(L + "width  - " + trail.TrailWidth);
+					sb.Append(util.L + "width  - " + trail.TrailWidth);
 				}
 			}
 
@@ -220,34 +218,6 @@ namespace SpecialEffectsViewer
 				return sefevent.DefinitionFile.ResRef.Value;
 			}
 			return null;
-		}
-
-		/// <summary>
-		/// Splits a LightIntensityPair.
-		/// </summary>
-		/// <param name="pair"></param>
-		/// <returns></returns>
-		static string SplitLip(object pair)
-		{
-			string diff = pair.ToString();
-
-			int pos = diff.IndexOf("Intensity", StringComparison.Ordinal);
-			string inte = diff.Substring(pos);
-
-			diff = diff.Substring(0, diff.Length - inte.Length - 2);
-			pos = diff.IndexOf("Ambient", StringComparison.Ordinal);
-			string ambi = diff.Substring(pos);
-
-			diff = diff.Substring(0, diff.Length - ambi.Length - 2);
-			pos = diff.IndexOf("Specular", StringComparison.Ordinal);
-			string spec = diff.Substring(pos);
-
-			diff = diff.Substring(0, diff.Length - spec.Length - 2);
-
-			return diff                     + L
-				 + "               " + spec + L
-				 + "               " + ambi + L
-				 + "               " + inte;
 		}
 
 		/// <summary>
