@@ -225,8 +225,8 @@ namespace SpecialEffectsViewer
 		{
 			if (x != Int32.MinValue && x < 0) x = 0;
 			if (y != Int32.MinValue && y < 0) y = 0;
-			if (w != Int32.MinValue && w < 0) w = 0;
-			if (h != Int32.MinValue && h < 0) h = 0;
+			if (w != Int32.MinValue && w < 0) w = 800;
+			if (h != Int32.MinValue && h < 0) h = 600;
 
 			if (SplitterDistanceEffects < 0) SplitterDistanceEffects = 0;
 			if (SplitterDistanceEvents  < 0) SplitterDistanceEvents  = 0;
@@ -248,10 +248,10 @@ namespace SpecialEffectsViewer
 
 			if (SceneDataDelay < 15) SceneDataDelay = 15;
 
-			if (SceneData_x != Int32.MinValue && SceneData_x < 0) SceneData_x = 0;
-			if (SceneData_y != Int32.MinValue && SceneData_y < 0) SceneData_y = 0;
-			if (SceneData_w != Int32.MinValue && SceneData_w < 0) SceneData_w = 0;
-			if (SceneData_h != Int32.MinValue && SceneData_h < 0) SceneData_h = 0;
+			if (SceneData_x != Int32.MinValue && SceneData_x < 0) SceneData_x =   0;
+			if (SceneData_y != Int32.MinValue && SceneData_y < 0) SceneData_y =   0;
+			if (SceneData_w != Int32.MinValue && SceneData_w < 0) SceneData_w = 400;
+			if (SceneData_h != Int32.MinValue && SceneData_h < 0) SceneData_h = 600;
 		}
 		#endregion Methods
 	}
