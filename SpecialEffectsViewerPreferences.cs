@@ -146,10 +146,11 @@ namespace SpecialEffectsViewer
 				   + " showing information about the scene in the SceneData dialog."
 				   + " If you get an InvalidOperationException when using the SceneData"
 				   + " dialog \"Collection was modified; enumeration operation may not"
-				   + " execute\" try increasing this delay. The default is 350. This is"
-				   + " the only property of the SpecialEffectsViewer that is not"
-				   + " tracked auto; its value can be increased or decreased here only"
-				   + " (or directly in the Viewer's XML preferences file).")]
+				   + " execute\" try increasing this delay. The default is 350 but you"
+				   + " want it fast without throwing an exception. This is the only"
+				   + " property of the SpecialEffectsViewer that is not tracked auto;"
+				   + " its value can be increased or decreased here only (or directly"
+				   + " in the Viewer's XML preferences file).")]
 		[DefaultValue(350)]
 		public int SceneDataDelay
 		{ get; set; }
