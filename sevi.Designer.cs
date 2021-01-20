@@ -129,7 +129,7 @@ namespace SpecialEffectsViewer
 			// sc3_Events.Panel1
 			// 
 			this.sc3_Events.Panel1.Controls.Add(this.tb_SefData);
-			this.sc3_Events.Panel1MinSize = 17;
+			this.sc3_Events.Panel1MinSize = 0;
 			// 
 			// sc3_Events.Panel2
 			// 

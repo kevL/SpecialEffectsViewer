@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 
 using OEIShared.NetDisplay;
-using OEIShared.OEIMath;
 
 
 namespace SpecialEffectsViewer
@@ -155,189 +155,284 @@ namespace SpecialEffectsViewer
 
 			if (scene != null && scene.Objects.Count != 0)
 			{
+				var sb = new StringBuilder();
+
 				NetDisplayObjectCollection objects = scene.Objects;
 
-				text += "objects.Count= " + objects.Count + EventData.L;
+				sb.Append("objects.Count= " + objects.Count + EventData.L);
 
 				foreach (NetDisplayObject @object in objects)
 				{
-					text += EventData.L;
+					sb.Append(EventData.L);
 
-					text += @object + EventData.L;
+					sb.Append(@object + EventData.L);
 
-//					text += "DisplayName = " + @object.DisplayName + EventData.L;
-//					text += "Scene       = " + @object.Scene       + EventData.L;
-					text += "ID          = " + @object.ID          + EventData.L;
-					text += "HookedToID  = " + @object.HookedToID  + EventData.L;
-					text += "UserIndex   = " + @object.UserIndex   + EventData.L;
-					text += "Position    = " + EventData.GetPositionString(@object.Position) + EventData.L;
-					text += "Orientation = " + GetOrientationString(@object.Orientation)     + EventData.L;
-					text += "Scale       = " + EventData.GetPositionString(@object.Scale)    + EventData.L;
-					text += "Selectable  = " + @object.Selectable  + EventData.L;
-					text += "Visible     = " + @object.Visible     + EventData.L;
-					text += "Tag         = " + @object.Tag         + EventData.L;
+//					sb.Append("DisplayName = " + @object.DisplayName                   + EventData.L);
+//					sb.Append("Scene       = " + @object.Scene                         + EventData.L);
+					sb.Append("ID          = " + @object.ID                            + EventData.L);
+					sb.Append("HookedToID  = " + @object.HookedToID                    + EventData.L);
+					sb.Append("UserIndex   = " + @object.UserIndex                     + EventData.L);
+					sb.Append("Position    = " + util.Get3dString(@object.Position)    + EventData.L);
+					sb.Append("Orientation = " + util.Get4dString(@object.Orientation) + EventData.L);
+					sb.Append("Scale       = " + util.Get3dString(@object.Scale)       + EventData.L);
+					sb.Append("Selectable  = " + @object.Selectable                    + EventData.L);
+					sb.Append("Visible     = " + @object.Visible                       + EventData.L);
+					sb.Append("Tag         = " + @object.Tag                           + EventData.L);
 
-					if ((@object as NetDisplayModel) != null)
+					if (@object as NetDisplayModel != null)
 					{
-						text += "is NetDisplayModel" + EventData.L;
+						sb.Append("is NetDisplayModel" + EventData.L);
 
 						var model = @object as NetDisplayModel;
-						text += "  Stance = "                 + model.Stance             + EventData.L;
-						text += "  DisplayType = "            + model.GetDisplayType()   + EventData.L;
-						text += "  AffectsWalkmesh = "        + model.AffectsWalkmesh    + EventData.L;
+						sb.Append("  Stance             = " + model.Stance                 + EventData.L);
+						sb.Append("  DisplayType        = " + model.GetDisplayType()       + EventData.L);
+						sb.Append("  AffectsWalkmesh    = " + model.AffectsWalkmesh        + EventData.L);
 						if (model.Attachments != null)
-							text += "  Attachments.Length = " + model.Attachments.Length + EventData.L;
+							sb.Append("  Attachments.Length = " + model.Attachments.Length + EventData.L);
 						else
-							text += "  Attachments = NULL"                               + EventData.L;
+							sb.Append("  Attachments        = NULL"                        + EventData.L);
 						if (model.Models != null)
-							text += "  Models.Length = "      + model.Models.Length      + EventData.L;
+							sb.Append("  Models.Length      = " + model.Models.Length      + EventData.L);
 						else
-							text += "  Models = NULL"                                    + EventData.L;
+							sb.Append("  Models             = NULL"                        + EventData.L);
 
-//						text += "  BaseSkeleton = "  + model.GetBaseSkeletonName()  + EventData.L;
-//						text += "  Skeleton = "      + model.GetSkeletonName()      + EventData.L;
-//						text += "  ModelSlotFile = " + model.GetModelSlotFilename() + EventData.L;
-//						text += "  ModelSlotPart = " + model.GetModelSlotPartName() + EventData.L;
+//						sb.Append("  BaseSkeleton = "  + model.GetBaseSkeletonName()  + EventData.L);
+//						sb.Append("  Skeleton = "      + model.GetSkeletonName()      + EventData.L);
+//						sb.Append("  ModelSlotFile = " + model.GetModelSlotFilename() + EventData.L);
+//						sb.Append("  ModelSlotPart = " + model.GetModelSlotPartName() + EventData.L);
 					}
-					else if ((@object as NetDisplaySEF) != null)
+					else if (@object as NetDisplaySEF != null)
 					{
-						text += "is NetDisplaySEF" + EventData.L;
+						sb.Append("is NetDisplaySEF" + EventData.L);
 
 						var sef = @object as NetDisplaySEF;
 						if (sef.SEF != null)
 						{
-							text += "  SEFGroup = " + sef.SEF      + EventData.L;
-//							text += "    Name = "   + sef.SEF.Name + EventData.L;
+							sb.Append("  SEFGroup = " + sef.SEF      + EventData.L);
+//							sb.Append("    Name = "   + sef.SEF.Name + EventData.L);
 							// etc.
 						}
 						else
-							text += "  SEFGroup= NULL" + EventData.L;
+							sb.Append("  SEFGroup = NULL" + EventData.L);
 					}
-					else if ((@object as NetDisplayVisualEffect) != null) // is 'INetDisplayVisualEffect'
+					else if (@object as INetDisplayVisualEffect != null)
 					{
-						text += "is NetDisplayVisualEffect" + EventData.L;
+						sb.Append("is INetDisplayVisualEffect" + EventData.L);
 
-						var visualeffect = @object as NetDisplayVisualEffect;
-						text += "  DestinationBlend = "             + visualeffect.DestinationBlend             + EventData.L;
-						text += "  SourceBlend = "                  + visualeffect.SourceBlend                  + EventData.L;
-						text += "  FrameBufferEffect = "            + visualeffect.FrameBufferEffect            + EventData.L;
-						text += "  FrameBufferPixelDisplacement = " + visualeffect.FrameBufferPixelDisplacement + EventData.L;
-						text += "  Texture = "                      + visualeffect.Texture                      + EventData.L;
-						text += "  TextureAnimationSpeed = "        + visualeffect.TextureAnimationSpeed        + EventData.L;
-						text += "  TextureType = "                  + visualeffect.TextureType                  + EventData.L;
-
-						if ((@object as NetDisplayTrail) != null)
+						if (@object as NetDisplayVisualEffect != null)
 						{
-							text += "is NetDisplayTrail" + EventData.L;
+							sb.Append("is NetDisplayVisualEffect" + EventData.L);
 
-							var trail = @object as NetDisplayTrail;
-							text += "  ModelToFollow = "           + trail.ModelToFollow           + EventData.L;
-							text += "  AttachmentPointToFollow = " + trail.AttachmentPointToFollow + EventData.L;
-							text += "  InstanceToFollow = "        + trail.InstanceToFollow        + EventData.L;
-							text += "  FadeoutTime = "             + trail.FadeoutTime             + EventData.L;
-							text += "  PointTrail = "              + trail.PointTrail              + EventData.L;
-							text += "  TrailColor = "              + trail.TrailColor              + EventData.L;
-							text += "  TrailWidth = "              + trail.TrailWidth              + EventData.L;
-							text += "  UpdateFrequency = "         + trail.UpdateFrequency         + EventData.L;
+							var visualeffect = @object as NetDisplayVisualEffect;
+							sb.Append("  DestinationBlend             = " + visualeffect.DestinationBlend             + EventData.L);
+							sb.Append("  FrameBufferEffect            = " + visualeffect.FrameBufferEffect            + EventData.L);
+							sb.Append("  FrameBufferPixelDisplacement = " + visualeffect.FrameBufferPixelDisplacement + EventData.L);
+							sb.Append("  SourceBlend                  = " + visualeffect.SourceBlend                  + EventData.L);
+							sb.Append("  Texture                      = " + visualeffect.Texture                      + EventData.L);
+							sb.Append("  TextureAnimationSpeed        = " + visualeffect.TextureAnimationSpeed        + EventData.L);
+							sb.Append("  TextureType                  = " + visualeffect.TextureType                  + EventData.L);
+
+							if (@object as NetDisplayBeam != null)
+							{
+								sb.Append("is NetDisplayBeam" + EventData.L);
+
+								var beam = @object as NetDisplayBeam;
+								sb.Append("  Amplitude      = " + beam.Amplitude                       + EventData.L);
+								sb.Append("  BeginColor     = " + util.GetColorString(beam.BeginColor) + EventData.L);
+								sb.Append("  BeginPosition  = " + util.Get3dString(beam.BeginPosition) + EventData.L);
+								sb.Append("  BeginWidth     = " + beam.BeginWidth                      + EventData.L);
+								sb.Append("  EndColor       = " + util.GetColorString(beam.EndColor)   + EventData.L);
+								sb.Append("  EndPosition    = " + util.Get3dString(beam.EndPosition)   + EventData.L);
+								sb.Append("  EndWidth       = " + beam.EndWidth                        + EventData.L);
+								sb.Append("  Frequency      = " + beam.Frequency                       + EventData.L);
+								sb.Append("  RateOfFlow     = " + beam.RateOfFlow                      + EventData.L);
+								sb.Append("  Repeat         = " + beam.Repeat                          + EventData.L);
+								sb.Append("  RepeatDistance = " + beam.RepeatDistance                  + EventData.L);
+							}
+							else if (@object as NetDisplayBillboard != null)
+							{
+								sb.Append("is NetDisplayBillboard" + EventData.L);
+
+								var billboard = @object as NetDisplayBillboard;
+								sb.Append("  AngularVelocity            = " + billboard.AngularVelocity                              + EventData.L);
+								sb.Append("  BeginSize                  = " + util.Get2dString(billboard.BeginSize)                  + EventData.L);
+								sb.Append("  BillboardOrientationVector = " + util.Get3dString(billboard.BillboardOrientationVector) + EventData.L);
+								sb.Append("  EndColor                   = " + util.GetColorString(billboard.EndColor)                + EventData.L);
+								sb.Append("  EndSize                    = " + util.Get2dString(billboard.EndSize)                    + EventData.L);
+								sb.Append("  Lerp                       = " + billboard.Lerp                                         + EventData.L);
+								sb.Append("  LerpPeriod                 = " + billboard.LerpPeriod                                   + EventData.L);
+								sb.Append("  OrientationExplicitMode    = " + billboard.OrientationExplicitMode                      + EventData.L);
+								sb.Append("  OrientationType            = " + billboard.OrientationType                              + EventData.L);
+								sb.Append("  OrientPerpendicular        = " + billboard.OrientPerpendicular                          + EventData.L);
+								sb.Append("  StartColor                 = " + util.GetColorString(billboard.StartColor)              + EventData.L);
+							}
+							else if (@object as NetDisplayLightning != null)
+							{
+								sb.Append("is NetDisplayLightning" + EventData.L);
+
+								var lightning = @object as NetDisplayLightning;
+								sb.Append("  BeginBranch       = " + lightning.BeginBranch                     + EventData.L);
+								sb.Append("  BeginColor        = " + util.GetColorString(lightning.BeginColor) + EventData.L);
+								sb.Append("  BeginPosition     = " + util.Get3dString(lightning.BeginPosition) + EventData.L);
+								sb.Append("  BeginWidth        = " + lightning.BeginWidth                      + EventData.L);
+								sb.Append("  BranchProbability = " + lightning.BranchProbability               + EventData.L);
+								sb.Append("  EndBranch         = " + lightning.EndBranch                       + EventData.L);
+								sb.Append("  EndColor          = " + util.GetColorString(lightning.EndColor)   + EventData.L);
+								sb.Append("  EndPosition       = " + util.Get3dString(lightning.EndPosition)   + EventData.L);
+								sb.Append("  EndWidth          = " + lightning.EndWidth                        + EventData.L);
+								sb.Append("  Jaggedness        = " + lightning.Jaggedness                      + EventData.L);
+								sb.Append("  Jumpiness         = " + lightning.Jumpiness                       + EventData.L);
+								sb.Append("  Spread            = " + lightning.Spread                          + EventData.L);
+								sb.Append("  UpdateFrequency   = " + lightning.UpdateFrequency                 + EventData.L);
+							}
+							else if (@object as NetDisplayLineParticleSystem != null)
+							{
+								sb.Append("is NetDisplayLineParticleSystem" + EventData.L);
+
+								var system = @object as NetDisplayLineParticleSystem;
+								sb.Append("  Acceleration           = " + util.Get3dString(system.Acceleration)            + EventData.L);
+								sb.Append("  AngularVelocity        = " + system.AngularVelocity                           + EventData.L);
+								sb.Append("  BeginPointBeginColor   = " + util.GetColorString(system.BeginPointBeginColor) + EventData.L);
+								sb.Append("  BeginPointEndColor     = " + util.GetColorString(system.BeginPointEndColor)   + EventData.L);
+								sb.Append("  BeginSize              = " + system.BeginSize                                 + EventData.L);
+								sb.Append("  ConeHalfAngle          = " + system.ConeHalfAngle                             + EventData.L);
+								sb.Append("  ControlType            = " + system.ControlType                               + EventData.L);
+								sb.Append("  EmissionRadius         = " + system.EmissionRadius                            + EventData.L);
+								sb.Append("  EmissionRadiusVariance = " + system.EmissionRadiusVariance                    + EventData.L);
+								sb.Append("  EndPointBeginColor     = " + util.GetColorString(system.EndPointBeginColor)   + EventData.L);
+								sb.Append("  EndPointEndColor       = " + util.GetColorString(system.EndPointEndColor)     + EventData.L);
+								sb.Append("  EndSize                = " + system.EndSize                                   + EventData.L);
+								sb.Append("  FlowType               = " + system.FlowType                                  + EventData.L);
+								sb.Append("  LifetimeVariance       = " + system.LifetimeVariance                          + EventData.L);
+								sb.Append("  ParticleLifetime       = " + system.ParticleLifetime                          + EventData.L);
+								sb.Append("  SizeVariance           = " + system.SizeVariance                              + EventData.L);
+								sb.Append("  SpawnRate              = " + system.SpawnRate                                 + EventData.L);
+								sb.Append("  StartPhi               = " + system.StartPhi                                  + EventData.L);
+								sb.Append("  StartTheta             = " + system.StartTheta                                + EventData.L);
+								sb.Append("  SystemRelative         = " + system.SystemRelative                            + EventData.L);
+								sb.Append("  Velocity               = " + util.Get3dString(system.Velocity)                + EventData.L);
+								sb.Append("  VelocityVariance       = " + system.VelocityVariance                          + EventData.L);
+							}
+							else if (@object as NetDisplayParticleSystem != null)
+							{
+								sb.Append("is NetDisplayParticleSystem" + EventData.L);
+
+								var system = @object as NetDisplayParticleSystem;
+								sb.Append("  Acceleration           = " + util.Get3dString(system.Acceleration)  + EventData.L);
+								sb.Append("  AngularVelocity        = " + system.AngularVelocity                 + EventData.L);
+								sb.Append("  BeginSize              = " + util.Get2dString(system.BeginSize)     + EventData.L);
+								sb.Append("  ConeHalfAngle          = " + system.ConeHalfAngle                   + EventData.L);
+								sb.Append("  ControlType            = " + system.ControlType                     + EventData.L);
+								sb.Append("  Disk                   = " + system.Disk                            + EventData.L);
+								sb.Append("  EmissionRadius         = " + system.EmissionRadius                  + EventData.L);
+								sb.Append("  EmissionRadiusVariance = " + system.EmissionRadiusVariance          + EventData.L);
+								sb.Append("  EmissionSlot           = " + system.EmissionSlot                    + EventData.L);
+								sb.Append("  EmitFromMesh           = " + system.EmitFromMesh                    + EventData.L);
+								sb.Append("  EndColor               = " + util.GetColorString(system.EndColor)   + EventData.L);
+								sb.Append("  EndSize                = " + util.Get2dString(system.EndSize)       + EventData.L);
+								sb.Append("  FlowType               = " + system.FlowType                        + EventData.L);
+								sb.Append("  GravitateTowardsCenter = " + system.GravitateTowardsCenter          + EventData.L);
+								sb.Append("  LifetimeVariance       = " + system.LifetimeVariance                + EventData.L);
+								sb.Append("  ModelForEmission       = " + system.ModelForEmission                + EventData.L);
+								sb.Append("  OrientationType        = " + system.OrientationType                 + EventData.L);
+								sb.Append("  ParticleLifetime       = " + system.ParticleLifetime                + EventData.L);
+								sb.Append("  SizeVariance           = " + system.SizeVariance                    + EventData.L);
+								sb.Append("  SpawnRate              = " + system.SpawnRate                       + EventData.L);
+								sb.Append("  StartAngleVariance     = " + system.StartAngleVariance              + EventData.L);
+								sb.Append("  StartColor             = " + util.GetColorString(system.StartColor) + EventData.L);
+								sb.Append("  StartPhi               = " + system.StartPhi                        + EventData.L);
+								sb.Append("  StartTheta             = " + system.StartTheta                      + EventData.L);
+								sb.Append("  SystemRelative         = " + system.SystemRelative                  + EventData.L);
+								sb.Append("  Velocity               = " + util.Get3dString(system.Velocity)      + EventData.L);
+								sb.Append("  VelocityVariance       = " + system.VelocityVariance                + EventData.L);
+							}
+							else if (@object as NetDisplayTrail != null)
+							{
+								sb.Append("is NetDisplayTrail" + EventData.L);
+
+								var trail = @object as NetDisplayTrail;
+								sb.Append("  ModelToFollow           = " + trail.ModelToFollow                   + EventData.L);
+								sb.Append("  AttachmentPointToFollow = " + trail.AttachmentPointToFollow         + EventData.L);
+								sb.Append("  InstanceToFollow        = " + trail.InstanceToFollow                + EventData.L);
+								sb.Append("  FadeoutTime             = " + trail.FadeoutTime                     + EventData.L);
+								sb.Append("  PointTrail              = " + trail.PointTrail                      + EventData.L);
+								sb.Append("  TrailColor              = " + util.GetColorString(trail.TrailColor) + EventData.L);
+								sb.Append("  TrailWidth              = " + trail.TrailWidth                      + EventData.L);
+								sb.Append("  UpdateFrequency         = " + trail.UpdateFrequency                 + EventData.L);
+							}
+						}
+						else if (@object as NetDisplayProjectedTexture != null) // is NOT 'NetDisplayVisualEffect'
+						{
+							sb.Append("is NetDisplayProjectedTexture" + EventData.L);
+
+							var texture = @object as NetDisplayProjectedTexture;
+							sb.Append("  Color                  = " + util.GetColorString(texture.Color)    + EventData.L);
+							sb.Append("  ColorEnd               = " + util.GetColorString(texture.ColorEnd) + EventData.L);
+							sb.Append("  DestBlendMode          = " + texture.DestBlendMode                 + EventData.L);
+							sb.Append("  FadeInTime             = " + texture.FadeInTime                    + EventData.L);
+							sb.Append("  FOV                    = " + texture.FOV                           + EventData.L);
+							sb.Append("  FOVEnd                 = " + texture.FOVEnd                        + EventData.L);
+							sb.Append("  GroundOnly             = " + texture.GroundOnly                    + EventData.L);
+							sb.Append("  Height                 = " + texture.Height                        + EventData.L);
+							sb.Append("  HeightEnd              = " + texture.HeightEnd                     + EventData.L);
+							sb.Append("  InitialRotation        = " + texture.InitialRotation               + EventData.L);
+							sb.Append("  Length                 = " + texture.Length                        + EventData.L);
+							sb.Append("  LengthEnd              = " + texture.LengthEnd                     + EventData.L);
+							sb.Append("  Lerp                   = " + texture.Lerp                          + EventData.L);
+							sb.Append("  LerpPeriod             = " + texture.LerpPeriod                    + EventData.L);
+							sb.Append("  ProjectionType         = " + texture.ProjectionType                + EventData.L);
+							sb.Append("  RotationalAcceleration = " + texture.RotationalAcceleration        + EventData.L);
+							sb.Append("  RotationalVelocity     = " + texture.RotationalVelocity            + EventData.L);
+							sb.Append("  SourceBlendMode        = " + texture.SourceBlendMode               + EventData.L);
+							sb.Append("  Texture                = " + texture.Texture                       + EventData.L);
+							sb.Append("  Width                  = " + texture.Width                         + EventData.L);
+							sb.Append("  WidthEnd               = " + texture.WidthEnd                      + EventData.L);
 						}
 					}
-
-
-					if (@object is INetDisplayScene)
+					else if (@object is NetDisplayConnector)
 					{
-						text += "is INetDisplayScene" + EventData.L;
+						sb.Append("is NetDisplayConnector" + EventData.L);
 					}
-
-					if (@object is NetDisplayBeam)
+					else if (@object is NetDisplayLight)
 					{
-						text += "is NetDisplayBeam" + EventData.L;
+						sb.Append("is NetDisplayLight" + EventData.L);
+
+						if (@object is NetDisplayLightDirectional)
+						{
+							sb.Append("is NetDisplayLightDirectional" + EventData.L);
+						}
+						else if (@object is NetDisplayLightPoint)
+						{
+							sb.Append("is NetDisplayLightPoint" + EventData.L);
+						}
 					}
-
-					if (@object is NetDisplayBillboard)
+					else if (@object is NetDisplayOrientationModel)
 					{
-						text += "is NetDisplayBillboard" + EventData.L;
+						sb.Append("is NetDisplayOrientationModel" + EventData.L);
 					}
-
-					if (@object is NetDisplayConnector)
+					else if (@object is NetDisplayPolygon)
 					{
-						text += "is NetDisplayConnector" + EventData.L;
+						sb.Append("is NetDisplayPolygon" + EventData.L);
 					}
-
-					if (@object is NetDisplayLight)
+					else if (@object is NetDisplaySound)
 					{
-						text += "is NetDisplayLight" + EventData.L;
+						sb.Append("is NetDisplaySound" + EventData.L);
 					}
-
-					if (@object is NetDisplayLightDirectional)
+					else if (@object is NetDisplaySphere)
 					{
-						text += "is NetDisplayLightDirectional" + EventData.L;
+						sb.Append("is NetDisplaySphere" + EventData.L);
 					}
-
-					if (@object is NetDisplayLightning)
+					else if (@object is NetDisplayTile)
 					{
-						text += "is NetDisplayLightning" + EventData.L;
-					}
-
-					if (@object is NetDisplayLightPoint)
-					{
-						text += "is NetDisplayLightPoint" + EventData.L;
-					}
-
-					if (@object is NetDisplayLineParticleSystem)
-					{
-						text += "is NetDisplayLineParticleSystem" + EventData.L;
-					}
-
-					if (@object is NetDisplayOrientationModel)
-					{
-						text += "is NetDisplayOrientationModel" + EventData.L;
-					}
-
-					if (@object is NetDisplayParticleSystem)
-					{
-						text += "is NetDisplayParticleSystem" + EventData.L;
-					}
-
-					if (@object is NetDisplayPolygon)
-					{
-						text += "is NetDisplayPolygon" + EventData.L;
-					}
-
-					if (@object is NetDisplayProjectedTexture)
-					{
-						text += "is NetDisplayProjectedTexture" + EventData.L;
-					}
-
-					if (@object is NetDisplaySound)
-					{
-						text += "is NetDisplaySound" + EventData.L;
-					}
-
-					if (@object is NetDisplaySphere)
-					{
-						text += "is NetDisplaySphere" + EventData.L;
-					}
-
-					if (@object is NetDisplayTile)
-					{
-						text += "is NetDisplayTile" + EventData.L;
+						sb.Append("is NetDisplayTile" + EventData.L);
 					}
 				}
+				text = sb.ToString();
 			}
 			tb_Scenedata.Text = text;
 
 			tb_Scenedata.SelectionStart  =
 			tb_Scenedata.SelectionLength = 0;
-		}
-
-		/// <summary>
-		/// Gets a string for a quaternion.
-		/// </summary>
-		/// <param name="q"></param>
-		/// <returns></returns>
-		internal static string GetOrientationString(RHQuaternion q)
-		{
-			return q.X + "," + q.Y + "," + q.Z + "," + q.W;
 		}
 		#endregion Methods
 

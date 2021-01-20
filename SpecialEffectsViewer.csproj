@@ -75,6 +75,7 @@
     </Compile>
     <Compile Include="SpecialEffectsViewer.cs" />
     <Compile Include="SpecialEffectsViewerPreferences.cs" />
+    <Compile Include="util.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AboutF.resx">

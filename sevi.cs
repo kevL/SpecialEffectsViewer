@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 
 using Microsoft.DirectX;
@@ -1442,25 +1443,27 @@ namespace SpecialEffectsViewer
 					_itEvents.MenuItems.Add("-");
 				}
 
-				string text = "[" + _sefgroup.Name + "]"                           + EventData.L;
-				text += "pos - " + EventData.GetPositionString(_sefgroup.Position) + EventData.L;
-//				text += "1st - " + _sefgroup.FirstObject                           + EventData.L;
-//				text += "2nd - " + _sefgroup.SecondObject                          + EventData.L;
-				text += "fog - " + _sefgroup.FogMultiplier                         + EventData.L;
-				text += "dur - " + _sefgroup.HasMaximumDuration                    + EventData.L;
-				text += "dur - " + _sefgroup.MaximumDuration                       + EventData.L;
-				text += _sefgroup.SpecialTargetPosition;
+				var sb = new StringBuilder();
 
-				tb_SefData.Text = text;
-				int width = TextRenderer.MeasureText(text, Font).Width + 4;
+				sb.Append("[" + _sefgroup.Name + "]"                      + EventData.L);
+				sb.Append("pos - " + util.Get3dString(_sefgroup.Position) + EventData.L);
+//				sb.Append("1st - " + _sefgroup.FirstObject                + EventData.L);
+//				sb.Append("2nd - " + _sefgroup.SecondObject               + EventData.L);
+				sb.Append("fog - " + _sefgroup.FogMultiplier              + EventData.L);
+				sb.Append("dur - " + _sefgroup.HasMaximumDuration         + EventData.L);
+				sb.Append("dur - " + _sefgroup.MaximumDuration            + EventData.L);
+				sb.Append(_sefgroup.SpecialTargetPosition);
 
-				text = String.Empty;
+				tb_SefData.Text = sb.ToString();
+				int width = TextRenderer.MeasureText(tb_SefData.Text, Font).Width + 4;
+
+				sb.Length = 0;
 				for (int i = 0; i != _sefgroup.Events.Count; ++i)
 				{
 					// NOTE: a line is 13 px high (+5 pad total)
-					if (text != String.Empty) text += EventData.L + EventData.L;
+					if (sb.Length != 0) sb.Append(EventData.L + EventData.L);
 
-					text += EventData.GetEventData(_sefgroup.Events[i], i, _itView_ExtendedInfo.Checked);
+					sb.Append(EventData.GetEventData(_sefgroup.Events[i], i, _itView_ExtendedInfo.Checked));
 
 					if (rb_DoubleCharacter.Checked)
 					{
@@ -1469,9 +1472,9 @@ namespace SpecialEffectsViewer
 						it.Checked = true;
 					}
 				}
-				tb_EventData.Text = text;
+				tb_EventData.Text = sb.ToString();
 
-				width = Math.Max(width, TextRenderer.MeasureText(text, Font).Width + 4
+				width = Math.Max(width, TextRenderer.MeasureText(tb_EventData.Text, Font).Width + 4
 										+ SystemInformation.VerticalScrollBarWidth);
 				sc2_Options.SplitterDistance = Math.Max(width, WidthOptions);
 			}
