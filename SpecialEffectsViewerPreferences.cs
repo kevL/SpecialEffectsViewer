@@ -67,7 +67,7 @@ namespace SpecialEffectsViewer
 
 		[Category("Options")]
 		[Description("The distance of event-data in the Options panel from the top of its split-container.")]
-		[DefaultValue(83)]
+//		[DefaultValue(83)]
 		public int SplitterDistanceEvents
 		{ get; set; }
 
@@ -91,7 +91,7 @@ namespace SpecialEffectsViewer
 		{ get; set; }
 
 		[Category("Options")]
-		[Description("If true the scene will render with ground.")]
+		[Description("If true the scene will render with ground tiles.")]
 		[DefaultValue(true)]
 		public bool Ground
 		{ get; set; }
@@ -104,7 +104,7 @@ namespace SpecialEffectsViewer
 
 		[Category("Camera")]
 		[Description("The degree in radians that the camera will start on the"
-				   + " x/y-plane clockwise from behind the orc (east).")]
+				   + " x/y-plane, clockwise from behind the Orc (ie, facing east).")]
 //		[DefaultValue((float)Math.PI * 3f / 2f)]
 		public float FocusTheta
 		{ get; set; }
@@ -150,7 +150,7 @@ namespace SpecialEffectsViewer
 				   + " want it fast without throwing an exception. This is the only"
 				   + " property of the SpecialEffectsViewer that is not tracked auto;"
 				   + " its value can be increased or decreased here only (or directly"
-				   + " in the Viewer's XML preferences file).")]
+				   + " in the Viewer's XML preferences file). Minimum value is 15.")]
 		[DefaultValue(350)]
 		public int SceneDataDelay
 		{ get; set; }
