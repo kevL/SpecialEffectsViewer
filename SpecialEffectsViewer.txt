@@ -48,6 +48,7 @@ show Options panel   - shows a panel on the left that has several options and
                        lists the currently selected effect's events
 show extended info   - shows extended info about the currently selected effect's
                        events in the Options panel
+scene data           - shows the SceneData dialog (see below)
 stay on top          - keeps the plugin on top of the toolset when enabled
 refocus              - focuses the camera to the center of the area
 
@@ -130,7 +131,45 @@ SPECIALEFFECT_TYPE_PROJECTED_TEXTURE
 SPECIALEFFECT_TYPE_SOUND
 SPECIALEFFECT_TYPE_TRAIL
 
-Lightning doesn't appear to work too well and perhaps should be avoided.
+
+the SceneData dialog
+--------------------
+The SceneData dialog can be opened under View|scene data [Ctrl+n]. It's a
+readonly dialog that's intended to show information about objects in the scene.
+For the SpecialEffectsViewer, the objects are models and specialeffects. The
+options DoubleCharacter, SingleCharacter, and PlacedEffectObject handle
+specialeffects differently: the DoubleCharacter option leverages toolset-code
+[SEFGroup] which creates source and target creatures and can therefore handle
+specialeffects that require a target-creature; the SingleCharacter option
+creates only 1 creature and applies a specialeffect only to its AppearanceSEF
+property; the PlacedEffectOption merely creates a generic PlacedEffect and
+applies a specialeffect to it.
+
+See OPTIONS above.
+
+This gets tricky because specialeffects are objects in the display-panel also -
+but only while they are being actively updated by the panel. If information
+about them is gathered too quickly, it will be incomplete since it takes a
+fraction of a second for the panel to instantiate them; if too slowly, the
+objects will have disappeared from the panel. So, to get complete information
+about the scene including its specialeffects, there is an option in the toolset
+under View|Options|Plugins|Special Effects Viewer|SceneData dialog:
+SceneDataDelay. Its default value is 350 milliseconds.
+
+It should be set as fast as possible without throwing an
+InvalidOperationException (see the description of the SceneDataDelay property).
+I have my own set at 233 milliseconds and it's been working okay - I believe it
+depends on how slow or fast your CPU is: faster CPUs can handle a shorter delay.
+I believe that there is an underlying issue with multi-threading in the toolset
+libraries (ie, a race condition). The very minimum value is 15 milliseconds,
+which is a limitation of the .NET libraries (a standard Timer can't tick faster
+than about that).
+
+Note that you can manually update the SceneData dialog by pressing [F5] when the
+dialog has focus. Otherwise it updates auto (after the above delay) when the
+SpecialEffectsViewer updates the current specialeffect in its display-panel. The
+dialog will always open initially without showing any information since I
+couldn't get it to work reliably.
 
 
 Preferences
