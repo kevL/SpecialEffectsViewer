@@ -16,20 +16,26 @@ namespace SpecialEffectsViewer
 	{
 		#region Fields (static)
 		const string TITLE = "Scene data";
-
-		static int x = Int32.MinValue;
-		static int y,w,h;
 		#endregion Fields (static)
 
 
 		#region Fields
+		/// <summary>
+		/// This dialog's parent.
+		/// </summary>
 		sevi _f;
+
+		/// <summary>
+		/// A timer that delays inspecting the scene for data until after the
+		/// toolset DLLs get their shit together.
+		/// </summary>
+		Timer _t1 = new Timer();
 		#endregion Fields
 
 
 		#region cTor
 		/// <summary>
-		/// 
+		/// cTor.
 		/// </summary>
 		/// <param name="f"></param>
 		internal SceneData(sevi f)
@@ -37,43 +43,51 @@ namespace SpecialEffectsViewer
 			InitializeComponent();
 			_f = f;
 
+			_t1.Interval = SpecialEffectsViewerPreferences.that.SceneDataDelay;
+			_t1.Tick += OnTick;
+
 			bool locset = false;
-			if (x != Int32.MinValue)
+			int x = SpecialEffectsViewerPreferences.that.SceneData_x;
+			if (x > -1)
 			{
-				if (sevi.checklocation(x,y))
+				int y = SpecialEffectsViewerPreferences.that.SceneData_y;
+				if (y > -1 && sevi.checklocation(x,y))
 				{
 					locset = true;
 					SetDesktopLocation(x,y);
 				}
-				ClientSize = new Size(w,h);
+				ClientSize = new Size(SpecialEffectsViewerPreferences.that.SceneData_w,
+									  SpecialEffectsViewerPreferences.that.SceneData_h);
 			}
 
 			if (!locset)
 				SetDesktopLocation(_f.Left + 20, _f.Top + 20);
 
 			Show(_f);
-		}
+//			ClearDatatext();	// -> don't do that, the data is incomplete. Press [F5] if you want to
+		}						// see scene-data that's still available after the effect finishes rendering.
 		#endregion cTor
 
 
 		#region eventhandlers (override)
 		/// <summary>
-		/// 
+		/// Registers this dialog's telemetry and nulls the pointer in 'sevi'.
 		/// </summary>
 		/// <param name="e"></param>
 		protected override void OnFormClosing(FormClosingEventArgs e)
 		{
-			x = Left;
-			y = Top;
-			w = ClientSize.Width;
-			h = ClientSize.Height;
+			SpecialEffectsViewerPreferences.that.SceneData_x = DesktopLocation.X;
+			SpecialEffectsViewerPreferences.that.SceneData_y = DesktopLocation.Y;
+
+			SpecialEffectsViewerPreferences.that.SceneData_w = ClientSize.Width;
+			SpecialEffectsViewerPreferences.that.SceneData_h = ClientSize.Height;
 
 			_f.SceneData = null;
 			base.OnFormClosing(e);
 		}
 
 		/// <summary>
-		/// Closes this dialog on [Esc] [Enter] or [Ctrl+n].
+		/// Closes this dialog on [Esc] [Enter] or [Ctrl+n]. Refresh on [F5].
 		/// @note Requires 'KeyPreview' true.
 		/// </summary>
 		/// <param name="e"></param>
@@ -87,18 +101,45 @@ namespace SpecialEffectsViewer
 					e.Handled = e.SuppressKeyPress = true;
 					Close();
 					break;
+
+				case Keys.F5:
+					e.Handled = e.SuppressKeyPress = true;
+					SetDatatext();
+					break;
 			}
 			base.OnKeyDown(e);
 		}
 		#endregion eventhandlers (override)
 
 
+		#region eventhanlders
+		/// <summary>
+		/// Stops the timer and displays the text.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void OnTick(object sender, EventArgs e)
+		{
+			_t1.Stop();
+			SetDatatext();
+		}
+		#endregion eventhanlders
+
+
 		#region Methods
 		/// <summary>
-		/// 
+		/// Clears the text and starts the timer.
 		/// </summary>
-		/// <param name="scene"></param>
-		internal void SetDatatext(INetDisplayScene scene)
+		internal void ClearDatatext()
+		{
+			tb_Scenedata.Text = String.Empty;
+			_t1.Start();
+		}
+
+		/// <summary>
+		/// Conflates a bunch of data about the current scene to text.
+		/// </summary>
+		internal void SetDatatext()
 		{
 			switch ((sevi.Scene)SpecialEffectsViewerPreferences.that.Scene)
 			{
@@ -108,54 +149,55 @@ namespace SpecialEffectsViewer
 				case sevi.Scene.placedeffect:    Text = TITLE + " - Placed effect object"; break;
 			}
 
+			var scene = _f._panel.Scene;
+
 			string text = String.Empty;
 
 			if (scene != null && scene.Objects.Count != 0)
 			{
-				NetDisplayObjectCollection  objects = scene.Objects;
+				NetDisplayObjectCollection objects = scene.Objects;
 
 				text += "objects.Count= " + objects.Count + EventData.L;
 
 				foreach (NetDisplayObject @object in objects)
 				{
-//					if (text != String.Empty) text += EventData.L;
 					text += EventData.L;
 
 					text += @object + EventData.L;
 
-					text += "DisplayName= " + @object.DisplayName + EventData.L;
-//					text += "Scene      = " + @object.Scene       + EventData.L;
-					text += "ID         = " + @object.ID          + EventData.L;
-					text += "HookedToID = " + @object.HookedToID  + EventData.L;
-					text += "UserIndex  = " + @object.UserIndex   + EventData.L;
-					text += "Position   = " + EventData.GetPositionString(@object.Position) + EventData.L;
-					text += "Orientation= " + GetOrientationString(@object.Orientation)     + EventData.L;
-					text += "Scale      = " + EventData.GetPositionString(@object.Scale)    + EventData.L;
-					text += "Selectable = " + @object.Selectable  + EventData.L;
-					text += "Visible    = " + @object.Visible     + EventData.L;
-					text += "Tag        = " + @object.Tag         + EventData.L;
+//					text += "DisplayName = " + @object.DisplayName + EventData.L;
+//					text += "Scene       = " + @object.Scene       + EventData.L;
+					text += "ID          = " + @object.ID          + EventData.L;
+					text += "HookedToID  = " + @object.HookedToID  + EventData.L;
+					text += "UserIndex   = " + @object.UserIndex   + EventData.L;
+					text += "Position    = " + EventData.GetPositionString(@object.Position) + EventData.L;
+					text += "Orientation = " + GetOrientationString(@object.Orientation)     + EventData.L;
+					text += "Scale       = " + EventData.GetPositionString(@object.Scale)    + EventData.L;
+					text += "Selectable  = " + @object.Selectable  + EventData.L;
+					text += "Visible     = " + @object.Visible     + EventData.L;
+					text += "Tag         = " + @object.Tag         + EventData.L;
 
 					if ((@object as NetDisplayModel) != null)
 					{
 						text += "is NetDisplayModel" + EventData.L;
 
 						var model = @object as NetDisplayModel;
-						text += "  Stance= "                 + model.Stance             + EventData.L;
-						text += "  DisplayType= "            + model.GetDisplayType()   + EventData.L;
-						text += "  AffectsWalkmesh= "        + model.AffectsWalkmesh    + EventData.L;
+						text += "  Stance = "                 + model.Stance             + EventData.L;
+						text += "  DisplayType = "            + model.GetDisplayType()   + EventData.L;
+						text += "  AffectsWalkmesh = "        + model.AffectsWalkmesh    + EventData.L;
 						if (model.Attachments != null)
-							text += "  Attachments.Length= " + model.Attachments.Length + EventData.L;
+							text += "  Attachments.Length = " + model.Attachments.Length + EventData.L;
 						else
-							text += "  Attachments= NULL"                               + EventData.L;
+							text += "  Attachments = NULL"                               + EventData.L;
 						if (model.Models != null)
-							text += "  Models.Length= "      + model.Models.Length      + EventData.L;
+							text += "  Models.Length = "      + model.Models.Length      + EventData.L;
 						else
-							text += "  Models= NULL"                                    + EventData.L;
+							text += "  Models = NULL"                                    + EventData.L;
 
-//						text += "  BaseSkeleton= "  + model.GetBaseSkeletonName()  + EventData.L;
-//						text += "  Skeleton= "      + model.GetSkeletonName()      + EventData.L;
-//						text += "  ModelSlotFile= " + model.GetModelSlotFilename() + EventData.L;
-//						text += "  ModelSlotPart= " + model.GetModelSlotPartName() + EventData.L;
+//						text += "  BaseSkeleton = "  + model.GetBaseSkeletonName()  + EventData.L;
+//						text += "  Skeleton = "      + model.GetSkeletonName()      + EventData.L;
+//						text += "  ModelSlotFile = " + model.GetModelSlotFilename() + EventData.L;
+//						text += "  ModelSlotPart = " + model.GetModelSlotPartName() + EventData.L;
 					}
 					else if ((@object as NetDisplaySEF) != null)
 					{
@@ -164,39 +206,39 @@ namespace SpecialEffectsViewer
 						var sef = @object as NetDisplaySEF;
 						if (sef.SEF != null)
 						{
-							text += "  SEFGroup= " + sef.SEF      + EventData.L;
-							text += "    Name"     + sef.SEF.Name + EventData.L;
+							text += "  SEFGroup = " + sef.SEF      + EventData.L;
+//							text += "    Name = "   + sef.SEF.Name + EventData.L;
 							// etc.
 						}
 						else
 							text += "  SEFGroup= NULL" + EventData.L;
 					}
-					else if ((@object as NetDisplayVisualEffect) != null) // INetDisplayVisualEffect
+					else if ((@object as NetDisplayVisualEffect) != null) // is 'INetDisplayVisualEffect'
 					{
 						text += "is NetDisplayVisualEffect" + EventData.L;
 
 						var visualeffect = @object as NetDisplayVisualEffect;
-						text += "  DestinationBlend= "             + visualeffect.DestinationBlend             + EventData.L;
-						text += "  SourceBlend= "                  + visualeffect.SourceBlend                  + EventData.L;
-						text += "  FrameBufferEffect= "            + visualeffect.FrameBufferEffect            + EventData.L;
-						text += "  FrameBufferPixelDisplacement= " + visualeffect.FrameBufferPixelDisplacement + EventData.L;
-						text += "  Texture= "                      + visualeffect.Texture                      + EventData.L;
-						text += "  TextureAnimationSpeed= "        + visualeffect.TextureAnimationSpeed        + EventData.L;
-						text += "  TextureType= "                  + visualeffect.TextureType                  + EventData.L;
+						text += "  DestinationBlend = "             + visualeffect.DestinationBlend             + EventData.L;
+						text += "  SourceBlend = "                  + visualeffect.SourceBlend                  + EventData.L;
+						text += "  FrameBufferEffect = "            + visualeffect.FrameBufferEffect            + EventData.L;
+						text += "  FrameBufferPixelDisplacement = " + visualeffect.FrameBufferPixelDisplacement + EventData.L;
+						text += "  Texture = "                      + visualeffect.Texture                      + EventData.L;
+						text += "  TextureAnimationSpeed = "        + visualeffect.TextureAnimationSpeed        + EventData.L;
+						text += "  TextureType = "                  + visualeffect.TextureType                  + EventData.L;
 
 						if ((@object as NetDisplayTrail) != null)
 						{
 							text += "is NetDisplayTrail" + EventData.L;
 
 							var trail = @object as NetDisplayTrail;
-							text += "  ModelToFollow= "           + trail.ModelToFollow           + EventData.L;
-							text += "  AttachmentPointToFollow= " + trail.AttachmentPointToFollow + EventData.L;
-							text += "  InstanceToFollow= "        + trail.InstanceToFollow        + EventData.L;
-							text += "  FadeoutTime= "             + trail.FadeoutTime             + EventData.L;
-							text += "  PointTrail= "              + trail.PointTrail              + EventData.L;
-							text += "  TrailColor= "              + trail.TrailColor              + EventData.L;
-							text += "  TrailWidth= "              + trail.TrailWidth              + EventData.L;
-							text += "  UpdateFrequency= "         + trail.UpdateFrequency         + EventData.L;
+							text += "  ModelToFollow = "           + trail.ModelToFollow           + EventData.L;
+							text += "  AttachmentPointToFollow = " + trail.AttachmentPointToFollow + EventData.L;
+							text += "  InstanceToFollow = "        + trail.InstanceToFollow        + EventData.L;
+							text += "  FadeoutTime = "             + trail.FadeoutTime             + EventData.L;
+							text += "  PointTrail = "              + trail.PointTrail              + EventData.L;
+							text += "  TrailColor = "              + trail.TrailColor              + EventData.L;
+							text += "  TrailWidth = "              + trail.TrailWidth              + EventData.L;
+							text += "  UpdateFrequency = "         + trail.UpdateFrequency         + EventData.L;
 						}
 					}
 

@@ -80,7 +80,7 @@ namespace SpecialEffectsViewer
 		IResourceEntry _effect; SEFGroup _sefgroup, _altgroup;
 		// TODO: Probably don't need both '_sefgroup' and '_altgroup'.
 
-		ElectronPanel _panel; // i hate u
+		internal ElectronPanel _panel; // i hate u
 
 		MenuItem _itResrepo_all;
 		MenuItem _itResrepo_stock;
@@ -287,6 +287,8 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		void LoadPreferences()
 		{
+			SpecialEffectsViewerPreferences.that.ValidatePreferences();
+
 			int x = SpecialEffectsViewerPreferences.that.x;
 			if (x > -1)
 			{
@@ -879,13 +881,9 @@ namespace SpecialEffectsViewer
 			if (SceneData == null)
 			{
 				SceneData = new SceneData(this);
-				SceneData.SetDatatext(_panel.Scene);
 			}
 			else
-			{
 				SceneData.Close();
-				SceneData = null;
-			}
 		}
 
 		/// <summary>
@@ -976,7 +974,7 @@ namespace SpecialEffectsViewer
 			}
 
 			if (SceneData != null)
-				SceneData.SetDatatext(_panel.Scene);
+				SceneData.ClearDatatext();
 		}
 
 		/// <summary>
@@ -1019,7 +1017,7 @@ namespace SpecialEffectsViewer
 			ApplyEffect();
 
 			if (SceneData != null)
-				SceneData.SetDatatext(_panel.Scene);
+				SceneData.ClearDatatext();
 		}
 
 		/// <summary>
@@ -1050,7 +1048,7 @@ namespace SpecialEffectsViewer
 			}
 
 			if (SceneData != null)
-				SceneData.SetDatatext(_panel.Scene);
+				SceneData.ClearDatatext();
 		}
 
 		/// <summary>
