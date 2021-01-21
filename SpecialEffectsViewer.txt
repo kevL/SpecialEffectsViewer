@@ -175,7 +175,8 @@ panel. The dialog will always open initially without showing any information
 since I couldn't get that to work reliably.
 
 Note also that not all events in a specialeffect are actually instantiated as
-objects in the display-panel.
+objects in the display-panel, and that conversely an event can instantiate into
+several objects. The relation is not necessarily 1:1 ...
 
 
 Preferences
