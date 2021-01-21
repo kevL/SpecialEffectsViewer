@@ -4,6 +4,7 @@ using System.Drawing;
 using Microsoft.DirectX;
 
 using OEIShared.OEIMath;
+using OEIShared.Utils;
 
 
 namespace SpecialEffectsViewer
@@ -44,7 +45,7 @@ namespace SpecialEffectsViewer
 
 		internal static string GetColorString(Color color)
 		{
-			return "a" + color.A + " r" + color.R + " g" + color.G + " b" + color.B;
+			return "[" + color.A + "] " + color.R + "," + color.G + "," + color.B;
 		}
 
 		/// <summary>
@@ -53,27 +54,12 @@ namespace SpecialEffectsViewer
 		/// <param name="pair"></param>
 		/// <param name="pad"></param>
 		/// <returns></returns>
-		internal static string SplitLip(object pair, string pad)
+		internal static string SplitLip(LightIntensityPair pair, string pad)
 		{
-			string diff = pair.ToString();
-
-			int pos = diff.IndexOf("Intensity", StringComparison.Ordinal);
-			string inte = diff.Substring(pos);
-
-			diff = diff.Substring(0, diff.Length - inte.Length - 2);
-			pos = diff.IndexOf("Ambient", StringComparison.Ordinal);
-			string ambi = diff.Substring(pos);
-
-			diff = diff.Substring(0, diff.Length - ambi.Length - 2);
-			pos = diff.IndexOf("Specular", StringComparison.Ordinal);
-			string spec = diff.Substring(pos);
-
-			diff = diff.Substring(0, diff.Length - spec.Length - 2);
-
-			return diff       + L
-				 + pad + spec + L
-				 + pad + ambi + L
-				 + pad + inte;
+			return      "Diffuse   " + GetColorString(pair.DiffuseColor)  + L
+				+ pad + "Specular  " + GetColorString(pair.SpecularColor) + L
+				+ pad + "Ambient   " + GetColorString(pair.AmbientColor)  + L
+				+ pad + "Intensity " + pair.Intensity;
 		}
 	}
 }
