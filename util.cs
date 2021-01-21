@@ -51,8 +51,9 @@ namespace SpecialEffectsViewer
 		/// Splits a LightIntensityPair.
 		/// </summary>
 		/// <param name="pair"></param>
+		/// <param name="pad"></param>
 		/// <returns></returns>
-		internal static string SplitLip(object pair)
+		internal static string SplitLip(object pair, string pad)
 		{
 			string diff = pair.ToString();
 
@@ -69,10 +70,10 @@ namespace SpecialEffectsViewer
 
 			diff = diff.Substring(0, diff.Length - spec.Length - 2);
 
-			return diff                     + L
-				 + "               " + spec + L
-				 + "               " + ambi + L
-				 + "               " + inte;
+			return diff       + L
+				 + pad + spec + L
+				 + pad + ambi + L
+				 + pad + inte;
 		}
 	}
 }

@@ -109,9 +109,11 @@ namespace SpecialEffectsViewer
 					if (light.Lerp)
 						sb.Append(util.L + "lerp         - " + light.LerpPeriod);
 
+					const string paddin = "               ";
+
 					sb.Append(util.L + "vision       - " + light.VisionEffect);
-					sb.Append(util.L + "start        - " + util.SplitLip(light.StartLighting));
-					sb.Append(util.L + "end          - " + util.SplitLip(light.EndLighting));
+					sb.Append(util.L + "start        - " + util.SplitLip(light.StartLighting, paddin));
+					sb.Append(util.L + "end          - " + util.SplitLip(light.EndLighting,   paddin));
 				}
 //				else if (sefevent as SEFLightning != null)
 //				{

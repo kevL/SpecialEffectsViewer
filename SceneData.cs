@@ -397,18 +397,20 @@ namespace SpecialEffectsViewer
 					{
 						sb.Append("is NetDisplayLight" + util.L);
 
+						const string pad = "                    ";
+
 						var light = @object as NetDisplayLight;
-						sb.Append("  CastsShadow     = " + light.CastsShadow                    + util.L);
-						sb.Append("  Color           = " + util.SplitLip(light.Color)           + util.L);
-						sb.Append("  Flicker         = " + light.Flicker                        + util.L);
-						sb.Append("  FlickerRate     = " + light.FlickerRate                    + util.L);
-						sb.Append("  FlickerType     = " + light.FlickerType                    + util.L);
-						sb.Append("  FlickerVariance = " + light.FlickerVariance                + util.L);
-						sb.Append("  Lerp            = " + light.Lerp                           + util.L);
-						sb.Append("  LerpPeriod      = " + light.LerpPeriod                     + util.L);
-						sb.Append("  LerpTargetColor = " + util.SplitLip(light.LerpTargetColor) + util.L);
-						sb.Append("  ShadowIntensity = " + light.ShadowIntensity                + util.L);
-						sb.Append("  SwitchOn        = " + light.SwitchOn                       + util.L);
+						sb.Append("  CastsShadow     = " + light.CastsShadow                         + util.L);
+						sb.Append("  Color           = " + util.SplitLip(light.Color, pad)           + util.L);
+						sb.Append("  Flicker         = " + light.Flicker                             + util.L);
+						sb.Append("  FlickerRate     = " + light.FlickerRate                         + util.L);
+						sb.Append("  FlickerType     = " + light.FlickerType                         + util.L);
+						sb.Append("  FlickerVariance = " + light.FlickerVariance                     + util.L);
+						sb.Append("  Lerp            = " + light.Lerp                                + util.L);
+						sb.Append("  LerpPeriod      = " + light.LerpPeriod                          + util.L);
+						sb.Append("  LerpTargetColor = " + util.SplitLip(light.LerpTargetColor, pad) + util.L);
+						sb.Append("  ShadowIntensity = " + light.ShadowIntensity                     + util.L);
+						sb.Append("  SwitchOn        = " + light.SwitchOn                            + util.L);
 
 						if (@object as NetDisplayLightDirectional != null)
 						{
