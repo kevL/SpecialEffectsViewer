@@ -181,7 +181,7 @@ namespace SpecialEffectsViewer
 
 					if (@object as NetDisplayModel != null)
 					{
-						sb.Append("is NetDisplayModel" + util.L);
+						sb.Append("NetDisplayModel" + util.L);
 
 						var model = @object as NetDisplayModel;
 						sb.Append("  Stance             = " + model.Stance                 + util.L);
@@ -203,7 +203,7 @@ namespace SpecialEffectsViewer
 					}
 					else if (@object as NetDisplaySEF != null)
 					{
-						sb.Append("is NetDisplaySEF" + util.L);
+						sb.Append("NetDisplaySEF" + util.L);
 
 						var sef = @object as NetDisplaySEF;
 						if (sef.SEF != null)
@@ -217,11 +217,11 @@ namespace SpecialEffectsViewer
 					}
 					else if (@object as INetDisplayVisualEffect != null)
 					{
-						sb.Append("is INetDisplayVisualEffect" + util.L);
+						sb.Append("INetDisplayVisualEffect" + util.L);
 
 						if (@object as NetDisplayVisualEffect != null)
 						{
-							sb.Append("is NetDisplayVisualEffect" + util.L);
+							sb.Append("NetDisplayVisualEffect" + util.L);
 
 							var visualeffect = @object as NetDisplayVisualEffect;
 							sb.Append("  DestinationBlend             = " + visualeffect.DestinationBlend             + util.L);
@@ -234,7 +234,7 @@ namespace SpecialEffectsViewer
 
 							if (@object as NetDisplayBeam != null)
 							{
-								sb.Append("is NetDisplayBeam" + util.L);
+								sb.Append("NetDisplayBeam" + util.L);
 
 								var beam = @object as NetDisplayBeam;
 								sb.Append("  Amplitude      = " + beam.Amplitude                       + util.L);
@@ -251,7 +251,7 @@ namespace SpecialEffectsViewer
 							}
 							else if (@object as NetDisplayBillboard != null)
 							{
-								sb.Append("is NetDisplayBillboard" + util.L);
+								sb.Append("NetDisplayBillboard" + util.L);
 
 								var billboard = @object as NetDisplayBillboard;
 								sb.Append("  AngularVelocity            = " + billboard.AngularVelocity                              + util.L);
@@ -268,7 +268,7 @@ namespace SpecialEffectsViewer
 							}
 							else if (@object as NetDisplayLightning != null)
 							{
-								sb.Append("is NetDisplayLightning" + util.L);
+								sb.Append("NetDisplayLightning" + util.L);
 
 								var lightning = @object as NetDisplayLightning;
 								sb.Append("  BeginBranch       = " + lightning.BeginBranch                     + util.L);
@@ -287,7 +287,7 @@ namespace SpecialEffectsViewer
 							}
 							else if (@object as NetDisplayLineParticleSystem != null)
 							{
-								sb.Append("is NetDisplayLineParticleSystem" + util.L);
+								sb.Append("NetDisplayLineParticleSystem" + util.L);
 
 								var system = @object as NetDisplayLineParticleSystem;
 								sb.Append("  Acceleration           = " + util.Get3dString(system.Acceleration)            + util.L);
@@ -315,7 +315,7 @@ namespace SpecialEffectsViewer
 							}
 							else if (@object as NetDisplayParticleSystem != null)
 							{
-								sb.Append("is NetDisplayParticleSystem" + util.L);
+								sb.Append("NetDisplayParticleSystem" + util.L);
 
 								var system = @object as NetDisplayParticleSystem;
 								sb.Append("  Acceleration           = " + util.Get3dString(system.Acceleration)  + util.L);
@@ -348,7 +348,7 @@ namespace SpecialEffectsViewer
 							}
 							else if (@object as NetDisplayTrail != null)
 							{
-								sb.Append("is NetDisplayTrail" + util.L);
+								sb.Append("NetDisplayTrail" + util.L);
 
 								var trail = @object as NetDisplayTrail;
 								sb.Append("  ModelToFollow           = " + trail.ModelToFollow                   + util.L);
@@ -363,7 +363,7 @@ namespace SpecialEffectsViewer
 						}
 						else if (@object as NetDisplayProjectedTexture != null) // is NOT 'NetDisplayVisualEffect'
 						{
-							sb.Append("is NetDisplayProjectedTexture" + util.L);
+							sb.Append("NetDisplayProjectedTexture" + util.L);
 
 							var texture = @object as NetDisplayProjectedTexture;
 							sb.Append("  Color                  = " + util.GetColorString(texture.Color)    + util.L);
@@ -391,11 +391,11 @@ namespace SpecialEffectsViewer
 					}
 					else if (@object is NetDisplayConnector)
 					{
-						sb.Append("is NetDisplayConnector" + util.L);
+						sb.Append("NetDisplayConnector" + util.L);
 					}
 					else if (@object as NetDisplayLight != null)
 					{
-						sb.Append("is NetDisplayLight" + util.L);
+						sb.Append("NetDisplayLight" + util.L);
 
 						const string pad = "                    ";
 
@@ -414,7 +414,7 @@ namespace SpecialEffectsViewer
 
 						if (@object as NetDisplayLightDirectional != null)
 						{
-							sb.Append("is NetDisplayLightDirectional" + util.L);
+							sb.Append("NetDisplayLightDirectional" + util.L);
 
 							var directional = @object as NetDisplayLightDirectional;
 							sb.Append("  DirectionX = " + directional.DirectionX + util.L);
@@ -423,7 +423,7 @@ namespace SpecialEffectsViewer
 						}
 						else if (@object as NetDisplayLightPoint != null)
 						{
-							sb.Append("is NetDisplayLightPoint" + util.L);
+							sb.Append("NetDisplayLightPoint" + util.L);
 
 							var point = @object as NetDisplayLightPoint;
 							sb.Append("  Range = " + point.Range + util.L);
@@ -431,23 +431,23 @@ namespace SpecialEffectsViewer
 					}
 					else if (@object is NetDisplayOrientationModel)
 					{
-						sb.Append("is NetDisplayOrientationModel" + util.L);
+						sb.Append("NetDisplayOrientationModel" + util.L);
 					}
 					else if (@object is NetDisplayPolygon)
 					{
-						sb.Append("is NetDisplayPolygon" + util.L);
+						sb.Append("NetDisplayPolygon" + util.L);
 					}
 					else if (@object is NetDisplaySound)
 					{
-						sb.Append("is NetDisplaySound" + util.L);
+						sb.Append("NetDisplaySound" + util.L);
 					}
 					else if (@object is NetDisplaySphere)
 					{
-						sb.Append("is NetDisplaySphere" + util.L);
+						sb.Append("NetDisplaySphere" + util.L);
 					}
 					else if (@object is NetDisplayTile)
 					{
-						sb.Append("is NetDisplayTile" + util.L);
+						sb.Append("NetDisplayTile" + util.L);
 					}
 				}
 				text = sb.ToString();
