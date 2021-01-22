@@ -1342,7 +1342,7 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
-		/// Toggles view-type checkboxes on the View menu and keeps them
+		/// Toggles scene-type checkboxes on the View menu and keeps them
 		/// synchronized.
 		/// </summary>
 		/// <param name="scene"></param>
