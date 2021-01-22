@@ -38,6 +38,13 @@ appear in the menu. The events can be toggled on or off with a click. Keypress
 [Shift] when clicking to play only that event. I had to sacrifice a chicken to
 get that to work ...
 
+Note: The toolset is a difficult environment to code for - visualeffects on
+weapons, for instance, do not appear to render at all and the events of various
+specialeffects render at a corner of the area-tiles instead of where they're
+expected to be, in the center. SPECIALEFFECT_TYPE_LIGHTNING events are notably
+positioned incorrectly at 0,0 and SPECIALEFFECT_TYPE_PARTICLE_MESH can appear at
+200,200 if not using DoubleCharacter. etc
+
 View
 ----
 Double character     - see OPTIONS|Double character
@@ -176,7 +183,7 @@ since I couldn't get that to work reliably.
 
 Note also that not all events in a specialeffect are actually instantiated as
 objects in the display-panel, and that conversely an event can instantiate into
-several objects. The relation is not necessarily 1:1 ...
+several objects. That is the relation is not necessarily 1:1 ...
 
 
 Preferences
