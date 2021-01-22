@@ -51,7 +51,7 @@ namespace SpecialEffectsViewer
 			if (x > -1)
 			{
 				int y = SpecialEffectsViewerPreferences.that.SceneData_y;
-				if (y > -1 && sevi.checklocation(x,y))
+				if (y > -1 && util.checklocation(x,y))
 				{
 					locset = true;
 					SetDesktopLocation(x,y);

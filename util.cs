@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Windows.Forms;
 
 using Microsoft.DirectX;
 
@@ -9,10 +10,20 @@ using OEIShared.Utils;
 
 namespace SpecialEffectsViewer
 {
+	/// <summary>
+	/// Static class of general utilities.
+	/// </summary>
 	static class util
 	{
-		internal static string L = Environment.NewLine;
+		#region Fields (static)
+		internal const float pi2  = (float)Math.PI * 2f;
+		internal const float pi_2 = (float)Math.PI / 2f;
 
+		internal static string L = Environment.NewLine;
+		#endregion Fields (static)
+
+
+		#region Methods (static)
 		/// <summary>
 		/// Gets a string for a 2d-vector.
 		/// </summary>
@@ -61,5 +72,25 @@ namespace SpecialEffectsViewer
 				+ pad + "Ambient   " + GetColorString(pair.AmbientColor)  + L
 				+ pad + "Intensity " + pair.Intensity;
 		}
+
+		/// <summary>
+		/// Checks if an x/y location is onscreen.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		internal static bool checklocation(int x, int y)
+		{
+			x += 100; y += 50;
+
+			Screen[] screens = Screen.AllScreens;
+			foreach (var screen in screens)
+			{
+				if (screen.WorkingArea.Contains(x,y))
+					return true;
+			}
+			return false;
+		}
+		#endregion Methods (static)
 	}
 }

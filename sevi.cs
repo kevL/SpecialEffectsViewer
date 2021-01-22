@@ -74,6 +74,12 @@ namespace SpecialEffectsViewer
 		/// A default width for the Options popout.
 		/// </summary>
 		static int WidthOptions;
+
+		/// <summary>
+		/// Static pointer to this. Is used by
+		/// <see cref="SpecialEffectsViewerPreferences.ValidatePreferences"/>.
+		/// </summary>
+		internal static sevi that;
 		#endregion Fields (static)
 
 
@@ -148,7 +154,7 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		internal SceneData SceneData
 		{
-			get { return _sceneData; }
+			private get { return _sceneData; }
 			set
 			{
 				_itView_SceneData.Checked = ((_sceneData = value) != null);
@@ -164,6 +170,7 @@ namespace SpecialEffectsViewer
 		internal sevi()
 		{
 			Owner = NWN2ToolsetMainForm.App;
+			that = this;
 
 			InitializeComponent();
 
@@ -294,7 +301,7 @@ namespace SpecialEffectsViewer
 			if (x > -1)
 			{
 				int y = SpecialEffectsViewerPreferences.that.y;
-				if (y > -1 && checklocation(x,y))
+				if (y > -1 && util.checklocation(x,y))
 				{
 					StartPosition = FormStartPosition.Manual;
 					SetDesktopLocation(x,y);
@@ -1407,8 +1414,8 @@ namespace SpecialEffectsViewer
 
 			oIdiot1.Position = new Vector3(103f,100f,0f);
 			oIdiot2.Position = new Vector3( 97f,100f,0f);
-			oIdiot1.Orientation = RHQuaternion.RotationZ(-(float)Math.PI / 2f);
-			oIdiot2.Orientation = RHQuaternion.RotationZ( (float)Math.PI / 2f);
+			oIdiot1.Orientation = RHQuaternion.RotationZ(-util.pi_2);
+			oIdiot2.Orientation = RHQuaternion.RotationZ( util.pi_2);
 
 			var col1 = new NetDisplayObjectCollection(oIdiot1);
 			var col2 = new NetDisplayObjectCollection(oIdiot2);
@@ -1495,28 +1502,15 @@ namespace SpecialEffectsViewer
 			SpecialEffectsViewerPreferences.that.FocusPoint_y = state.FocusPoint.Y;
 			SpecialEffectsViewerPreferences.that.FocusPoint_z = state.FocusPoint.Z;
 		}
-		#endregion Methods
 
-
-		#region Methods (static)
 		/// <summary>
-		/// Checks if the plugin's initial location is onscreen.
+		/// Gets the height of the splitcontainer that contains the event-info.
 		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
 		/// <returns></returns>
-		internal static bool checklocation(int x, int y)
+		internal int GetInfoContainerHeight()
 		{
-			x += 100; y += 50;
-
-			Screen[] screens = Screen.AllScreens;
-			foreach (var screen in screens)
-			{
-				if (screen.WorkingArea.Contains(x,y))
-					return true;
-			}
-			return false;
+			return sc3_Events.Height;
 		}
-		#endregion Methods (static)
+		#endregion Methods
 	}
 }

@@ -60,13 +60,15 @@ namespace SpecialEffectsViewer
 		{ get; set; }
 
 		[Category("Window")]
-		[Description("The distance of the effects-list from the left border of the window.")]
+		[Description("The distance of the effects-list from the left border of"
+				   + " the window. Min 0, Max w")]
 		[DefaultValue(375)]
 		public int SplitterDistanceEffects
 		{ get; set; }
 
 		[Category("Options")]
-		[Description("The distance of event-data in the Options panel from the top of its split-container.")]
+		[Description("The distance of event-data in the Options panel from the"
+				   + " top of its split-container. Min 0 Max variable")]
 //		[DefaultValue(83)]
 		public int SplitterDistanceEvents
 		{ get; set; }
@@ -84,8 +86,8 @@ namespace SpecialEffectsViewer
 		{ get; set; }
 
 		[Category("Options")]
-		[Description("The scene that the plugin defaults to: 1 DoubleCharacter,"
-				   + " 2 SingleCharacter, 3 PlacedEffectObject. The default is 1.")]
+		[Description("The scene that the plugin starts with: 1 DoubleCharacter,"
+				   + " 2 SingleCharacter, 3 PlacedEffectObject. Default 1")]
 		[DefaultValue(1)]
 		public int Scene
 		{ get; set; }
@@ -104,7 +106,7 @@ namespace SpecialEffectsViewer
 
 		[Category("Camera")]
 		[Description("The degree in radians that the camera will start on the"
-				   + " x/y-plane, clockwise from behind the Orc (ie, facing east).")]
+				   + " x/y-plane clockwise from behind the Orc (ie, facing east).")]
 //		[DefaultValue((float)Math.PI * 3f / 2f)]
 		public float FocusTheta
 		{ get; set; }
@@ -122,21 +124,21 @@ namespace SpecialEffectsViewer
 		{ get; set; }
 
 		[Category("Camera")]
-		[Description("The camera's focal point on the x-axis. The default is 100; the"
-				   + " area is 200x200.")]
+		[Description("The camera's focal point on the x-axis. Default 100 - the"
+				   + " area is 200x200")]
 		[DefaultValue(100f)]
 		public float FocusPoint_x
 		{ get; set; }
 
 		[Category("Camera")]
-		[Description("The camera's focal point on the y-axis. The default is 100; the"
-				   + " area is 200x200.")]
+		[Description("The camera's focal point on the y-axis. Default 100 - the"
+				   + " area is 200x200")]
 		[DefaultValue(100f)]
 		public float FocusPoint_y
 		{ get; set; }
 
 		[Category("Camera")]
-		[Description("The camera's focal point on the z-axis. The default is 1.")]
+		[Description("The camera's focal point on the z-axis. Default 1")]
 		[DefaultValue(1f)]
 		public float FocusPoint_z
 		{ get; set; }
@@ -150,7 +152,7 @@ namespace SpecialEffectsViewer
 				   + " want it fast without throwing an exception. This is the only"
 				   + " property of the SpecialEffectsViewer that is not tracked auto;"
 				   + " its value can be increased or decreased here only (or directly"
-				   + " in the Viewer's XML preferences file). Minimum value is 15.")]
+				   + " in the Viewer's XML preferences file). Min 15")]
 		[DefaultValue(350)]
 		public int SceneDataDelay
 		{ get; set; }
@@ -202,7 +204,7 @@ namespace SpecialEffectsViewer
 
 			Scene = 1;
 
-			FocusTheta   = -(float)Math.PI / 2f;
+			FocusTheta   = -util.pi_2;
 			FocusPhi     = 0f;
 			Distance     = 10f;
 			FocusPoint_x = 100f;
@@ -221,23 +223,30 @@ namespace SpecialEffectsViewer
 
 
 		#region Methods
+		/// <summary>
+		/// Validates the preferences.
+		/// </summary>
 		internal void ValidatePreferences()
 		{
 			if (x != Int32.MinValue && x < 0) x = 0;
 			if (y != Int32.MinValue && y < 0) y = 0;
 			if (w != Int32.MinValue && w < 0) w = 800;
-			if (h != Int32.MinValue && h < 0) h = 600;
+			if (h != Int32.MinValue && h < 0) h = 480;
 
-			if (SplitterDistanceEffects < 0) SplitterDistanceEffects = 0;
-			if (SplitterDistanceEvents  < 0) SplitterDistanceEvents  = 0;
+			if      (SplitterDistanceEffects < 0) SplitterDistanceEffects = 0;
+			else if (SplitterDistanceEffects > w) SplitterDistanceEffects = w;
+
+			if (SplitterDistanceEvents < 0) SplitterDistanceEvents = 0;
+			if (SplitterDistanceEvents > sevi.that.GetInfoContainerHeight())
+				SplitterDistanceEvents = sevi.that.GetInfoContainerHeight();
 
 			if (Scene < 1 || Scene > 3) Scene = 1;
 
-			while (FocusTheta < -(float)Math.PI * 2f) FocusTheta += (float)Math.PI * 2f;
-			while (FocusTheta >  (float)Math.PI * 2f) FocusTheta -= (float)Math.PI * 2f;
+			while (FocusTheta < -util.pi2) FocusTheta += util.pi2;
+			while (FocusTheta >  util.pi2) FocusTheta -= util.pi2;
 
-			if      (FocusPhi <  0f)                 FocusPhi =  0f;
-			else if (FocusPhi > (float)Math.PI / 2f) FocusPhi = (float)Math.PI / 2f;
+			if      (FocusPhi < 0f)        FocusPhi = 0f;
+			else if (FocusPhi > util.pi_2) FocusPhi = util.pi_2;
 
 			if      (Distance <   1f) Distance =   1f;
 			else if (Distance > 100f) Distance = 100f;
@@ -250,8 +259,8 @@ namespace SpecialEffectsViewer
 
 			if (SceneData_x != Int32.MinValue && SceneData_x < 0) SceneData_x =   0;
 			if (SceneData_y != Int32.MinValue && SceneData_y < 0) SceneData_y =   0;
-			if (SceneData_w != Int32.MinValue && SceneData_w < 0) SceneData_w = 400;
-			if (SceneData_h != Int32.MinValue && SceneData_h < 0) SceneData_h = 600;
+			if (SceneData_w != Int32.MinValue && SceneData_w < 0) SceneData_w = 455;
+			if (SceneData_h != Int32.MinValue && SceneData_h < 0) SceneData_h = 725;
 		}
 		#endregion Methods
 	}
