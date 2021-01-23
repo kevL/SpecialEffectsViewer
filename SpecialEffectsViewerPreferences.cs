@@ -62,14 +62,14 @@ namespace SpecialEffectsViewer
 		[Category("Window")]
 		[Description("The distance of the effects-list from the left border of"
 				   + " the window. Min 0, Max w")]
-		[DefaultValue(375)]
+		[DefaultValue(575)]
 		public int SplitterDistanceEffects
 		{ get; set; }
 
 		[Category("Options")]
 		[Description("The distance of event-data in the Options panel from the"
 				   + " top of its split-container. Min 0 Max variable")]
-//		[DefaultValue(83)]
+		[DefaultValue(83)]
 		public int SplitterDistanceEvents
 		{ get; set; }
 
@@ -107,13 +107,13 @@ namespace SpecialEffectsViewer
 		[Category("Camera")]
 		[Description("The degree in radians that the camera will start on the"
 				   + " x/y-plane clockwise from behind the Orc (ie, facing east).")]
-//		[DefaultValue((float)Math.PI * 3f / 2f)]
+		[DefaultValue(-util.pi_2)]
 		public float FocusTheta
 		{ get; set; }
 
 		[Category("Camera")]
 		[Description("The degree of elevation in radians that the camera will start.")]
-//		[DefaultValue(0f)]
+		[DefaultValue(0f)]
 		public float FocusPhi
 		{ get; set; }
 
@@ -196,7 +196,7 @@ namespace SpecialEffectsViewer
 
 			Maximized = false;
 
-			SplitterDistanceEffects = 375;
+			SplitterDistanceEffects = 575;
 			SplitterDistanceEvents  =  83;
 
 			StayOnTop    = true;
@@ -234,7 +234,10 @@ namespace SpecialEffectsViewer
 			if (h != Int32.MinValue && h < 0) h = 480;
 
 			if      (SplitterDistanceEffects < 0) SplitterDistanceEffects = 0;
-			else if (SplitterDistanceEffects > w) SplitterDistanceEffects = w;
+			else if (SplitterDistanceEffects > w && w > 0)
+			{
+				SplitterDistanceEffects = w;
+			}
 
 			if (SplitterDistanceEvents < 0) SplitterDistanceEvents = 0;
 			if (SplitterDistanceEvents > sevi.that.GetInfoContainerHeight())
