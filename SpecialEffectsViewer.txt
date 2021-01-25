@@ -81,8 +81,8 @@ placed effect object - renders the effect on a placed-effect object
 Note: Deciding which option above to use depends on the special effect file and
 the usage that you intend to put it to for NwN2 play.
 
-show Ground - toggles the ground on and off. Some effect-events have textures that
-              only render on the ground
+show Ground - toggles the ground on and off. Some effect-events have textures
+              that only render on the ground
 
 The currently selected effect's events will be listed beneath those options.
 They are simply informational and can't be edited here; if you want to edit a
@@ -101,7 +101,7 @@ filtr - toggles the effects-list filter on and off. Enter a string in search and
         click the filter button to set a filter-string. A filtered list can
         still be searched by typing a different string in search. To apply a
         different filter, enter a different string and toggle the filter button.
-        The filter respects the currently selected Resrep and vice versa
+        The filter respects the currently selected Resrepo and vice versa
 
 
 MOUSE

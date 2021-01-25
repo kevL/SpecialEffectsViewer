@@ -234,10 +234,8 @@ namespace SpecialEffectsViewer
 			if (h != Int32.MinValue && h < 0) h = 480;
 
 			if      (SplitterDistanceEffects < 0) SplitterDistanceEffects = 0;
-			else if (SplitterDistanceEffects > w && w > 0)
-			{
-				SplitterDistanceEffects = w;
-			}
+			else if (SplitterDistanceEffects > w && w != Int32.MinValue)
+					 SplitterDistanceEffects = w;
 
 			if (SplitterDistanceEvents < 0) SplitterDistanceEvents = 0;
 			if (SplitterDistanceEvents > sevi.that.GetInfoContainerHeight())
