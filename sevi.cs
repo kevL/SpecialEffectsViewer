@@ -1373,7 +1373,10 @@ namespace SpecialEffectsViewer
 					NetDisplayObject oPlacedEffect = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iPlacedEffect, _panel.Scene, 0);
 
 					oPlacedEffect.Position = new Vector3(100f,100f,0f);
-					NWN2NetDisplayManager.Instance.MoveObjects(new NetDisplayObjectCollection(oPlacedEffect), ChangeType.Absolute, false, oPlacedEffect.Position);
+					NWN2NetDisplayManager.Instance.MoveObjects(new NetDisplayObjectCollection(oPlacedEffect),
+															   ChangeType.Absolute,
+															   false,
+															   oPlacedEffect.Position);
 				}
 				else if (rb_SingleCharacter.Checked)
 				{
@@ -1384,7 +1387,10 @@ namespace SpecialEffectsViewer
 					NetDisplayObject oIdiot = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot, _panel.Scene, 0);
 
 					oIdiot.Position = new Vector3(100f,100f,0f);
-					NWN2NetDisplayManager.Instance.MoveObjects(new NetDisplayObjectCollection(oIdiot), ChangeType.Absolute, false, oIdiot.Position);
+					NWN2NetDisplayManager.Instance.MoveObjects(new NetDisplayObjectCollection(oIdiot),
+															   ChangeType.Absolute,
+															   false,
+															   oIdiot.Position);
 				}
 				else //if (rb_DoubleCharacter.Checked)
 					LoadSefgroup(_sefgroup);
