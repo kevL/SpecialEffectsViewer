@@ -351,9 +351,9 @@ namespace SpecialEffectsViewer
 		#region eventhandlers (override)
 		/// <summary>
 		/// Prepares the ElectronPanel.
-		/// @note The camera-receiver goes borky if this is done in the cTor.
 		/// </summary>
 		/// <param name="e"></param>
+		/// <remarks>The camera-receiver goes borky if this is done in the cTor.</remarks>
 		protected override void OnLoad(EventArgs e)
 		{
 			if (_panel.Scene.DayNightCycleStages[(int)DayNightStageType.Default] != null)
@@ -391,10 +391,7 @@ namespace SpecialEffectsViewer
 			NWN2CampaignManager.Instance.ActiveCampaignChanged -= OnActiveCampaignChanged;
 
 			if (SceneData != null)
-			{
 				SceneData.Close();
-				SceneData = null; // jic
-			}
 
 			if (WindowState == FormWindowState.Maximized)
 				SpecialEffectsViewerPreferences.that.Maximized = true;
@@ -467,9 +464,9 @@ namespace SpecialEffectsViewer
 
 		/// <summary>
 		/// [Esc] closes the plugin.
-		/// @note Requires 'KeyPreview' true.
 		/// </summary>
 		/// <param name="e"></param>
+		/// <remarks>Requires 'KeyPreview' true.</remarks>
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			if (e.KeyData == Keys.Escape)
@@ -505,7 +502,7 @@ namespace SpecialEffectsViewer
 		#endregion eventhandlers (toolset)
 
 
-		#region eventhandlers (resrep)
+		#region eventhandlers (resrepo)
 		/// <summary>
 		/// Populates the effects-list with everything it can find.
 		/// </summary>
@@ -674,7 +671,7 @@ namespace SpecialEffectsViewer
 			if (!_bypassSearchFocus)
 				ActiveControl = tb_Search;
 		}
-		#endregion eventhandlers (resrep)
+		#endregion eventhandlers (resrepo)
 
 
 		#region eventhandlers (events)
@@ -878,7 +875,7 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
-		/// 
+		/// Toggles extended event-info in the Options panel.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
@@ -892,7 +889,7 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
-		/// 
+		/// Toggles the SceneData dialog.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
@@ -1105,7 +1102,7 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
-		/// 
+		/// Applies the search-filter to the effects list.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
@@ -1223,7 +1220,7 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
-		/// 
+		/// Deters the current state of the cursor.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
@@ -1237,7 +1234,7 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
-		/// 
+		/// Deters the current state of the cursor.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
@@ -1267,7 +1264,7 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
-		/// 
+		/// Clears the ElectronPanel scene and deselects the current effect.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
@@ -1449,7 +1446,7 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
-		/// Prints the currently loaded effect-events to the left panel. Also
+		/// Prints the currently loaded effect-events to the Options panel. Also
 		/// adds items to the Events menu iff scene is DoubleCharacter.
 		/// </summary>
 		void PrintEffectData()
@@ -1508,8 +1505,8 @@ namespace SpecialEffectsViewer
 
 		/// <summary>
 		/// Stores the current camera-state in Preferences.
-		/// @note Ensure that the ElectronPanel (etc) is valid before call.
 		/// </summary>
+		/// <remarks>Ensure that the ElectronPanel (etc) is valid before call.</remarks>
 		void StoreCameraState()
 		{
 			var receiver = (_panel.CameraMovementReceiver as ModelViewerInputCameraReceiver);
@@ -1525,7 +1522,7 @@ namespace SpecialEffectsViewer
 		/// <summary>
 		/// Gets the height of the splitcontainer that contains the event-info.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>height of event-info container</returns>
 		internal int GetInfoContainerHeight()
 		{
 			return sc3_Events.Height;
