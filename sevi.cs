@@ -415,6 +415,17 @@ namespace SpecialEffectsViewer
 
 			StoreCameraState();
 
+
+			while (Menu.MenuItems.Count != 0) // not sure as usual ->
+			{
+				while (Menu.MenuItems[0].MenuItems.Count != 0)
+					Menu.MenuItems[0].MenuItems[0].Dispose();
+
+				Menu.MenuItems[0].Dispose();
+			}
+			Menu.Dispose();
+
+
 			base.OnFormClosing(e);
 		}
 
