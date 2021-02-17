@@ -92,9 +92,9 @@ open them in the stock VFXEditor plugin or other.
 
 BUTTONS
 
-Clear - clears the scene
 Copy  - copies the label of the currently selected special effect file to the
         Windows clipboard
+Clear - clears the scene
 Close - closes the plugin
 
 filtr - toggles the effects-list filter on and off. Enter a string in search and
@@ -177,13 +177,14 @@ open.
 
 Note that you can manually update the SceneData dialog by pressing [F5] when the
 dialog has focus. Otherwise it updates auto (after the above described delay)
-when the SpecialEffectsViewer updates the current specialeffect in its display-
-panel. The dialog will always open initially without showing any information
-since I couldn't get that to work reliably.
+when the SpecialEffectsViewer updates the current effect in its display-panel.
+The dialog will always open initially without showing any information since I
+couldn't get that to work reliably.
 
 Note also that not all events in a specialeffect are actually instantiated as
 objects in the display-panel, and that conversely an event can instantiate into
-several objects. That is the relation is not necessarily 1:1 ...
+several objects. That is the relation of events to objects is not necessarily
+1:1 ...
 
 
 Preferences
