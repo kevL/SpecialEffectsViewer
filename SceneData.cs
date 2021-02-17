@@ -112,7 +112,7 @@ namespace SpecialEffectsViewer
 		#endregion eventhandlers (override)
 
 
-		#region eventhanlders
+		#region eventhandlers
 		/// <summary>
 		/// Stops the timer and displays the text.
 		/// </summary>
@@ -123,7 +123,7 @@ namespace SpecialEffectsViewer
 			_t1.Stop();
 			SetDatatext();
 		}
-		#endregion eventhanlders
+		#endregion eventhandlers
 
 
 		#region Methods
