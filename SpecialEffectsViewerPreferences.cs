@@ -66,6 +66,7 @@ namespace SpecialEffectsViewer
 		public int SplitterDistanceEffects
 		{ get; set; }
 
+
 		[Category("Options")]
 		[Description("The distance of event-data in the Options panel from the"
 				   + " top of its split-container. Min 0 Max variable")]
@@ -103,6 +104,22 @@ namespace SpecialEffectsViewer
 		[DefaultValue(false)]
 		public bool ExtendedInfo
 		{ get; set; }
+
+		[Category("Options")]
+		[Description("The row ID in Appearance.2da for a Source creature if"
+				   + " DoubleCharacter is selected or for a single creature"
+				   + " if SingleCharacter is selected.")]
+		[DefaultValue(0)]
+		public int AppearanceSource
+		{ get; set; }
+
+		[Category("Options")]
+		[Description("The row ID in Appearance.2da for a Target creature if"
+				   + " DoubleCharacter is selected.")]
+		[DefaultValue(0)]
+		public int AppearanceTarget
+		{ get; set; }
+
 
 		[Category("Camera")]
 		[Description("The degree in radians that the camera will start on the"
@@ -142,6 +159,7 @@ namespace SpecialEffectsViewer
 		[DefaultValue(1f)]
 		public float FocusPoint_z
 		{ get; set; }
+
 
 		[Category("SceneData dialog")]
 		[Description("The delay in milliseconds between selecting an effect and"
@@ -218,6 +236,9 @@ namespace SpecialEffectsViewer
 
 			SceneData_x = SceneData_y =
 			SceneData_w = SceneData_h = Int32.MinValue;
+
+			AppearanceSource =
+			AppearanceTarget = 0;
 		}
 		#endregion cTor
 
@@ -262,6 +283,9 @@ namespace SpecialEffectsViewer
 			if (SceneData_y != Int32.MinValue && SceneData_y < 0) SceneData_y =   0;
 			if (SceneData_w != Int32.MinValue && SceneData_w < 0) SceneData_w = 455;
 			if (SceneData_h != Int32.MinValue && SceneData_h < 0) SceneData_h = 725;
+
+			if (AppearanceSource < 0) AppearanceSource = 0;
+			if (AppearanceTarget < 0) AppearanceTarget = 0;
 		}
 		#endregion Methods
 	}

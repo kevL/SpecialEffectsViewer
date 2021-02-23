@@ -18,6 +18,7 @@ using NWN2Toolset.NWN2.NetDisplay;
 
 using OEIShared.Effects;
 using OEIShared.IO;
+using OEIShared.IO.TwoDA;
 using OEIShared.NetDisplay;
 using OEIShared.OEIMath;
 using OEIShared.UI;
@@ -186,6 +187,8 @@ namespace SpecialEffectsViewer
 			CreateMainMenu();
 			CreateElectronPanel();
 
+			PopulateAppearanceDropdowns();
+
 			LoadPreferences();
 
 			NWN2ToolsetMainForm.ModuleChanged                  += OnModuleChanged;
@@ -291,6 +294,79 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
+		/// Populates the Source and Target dropdowns in the Options panel.
+		/// </summary>
+		private void PopulateAppearanceDropdowns()
+		{
+			TwoDAFile appearances = TwoDAManager.Instance.Get("appearance");
+			if (appearances != null)
+			{
+				TwoDAColumn labels = appearances.Columns["LABEL"];
+				TwoDAColumn skels  = appearances.Columns["NWN2_Skeleton_File"];
+				TwoDAColumn bodies = appearances.Columns["NWN2_Model_Body"]; // etc ...
+
+				IResourceEntry resent;
+				string skel, body;
+
+				apr it;
+				for (int i = 0; i != labels.Count; ++i)
+				{
+					skel = skels[i];
+					if (!String.IsNullOrEmpty(skel))
+					{
+						if (skel.Contains("?"))
+						{
+							resent = NWN2ResourceManager.Instance.GetEntry(new OEIResRef(GetMale(skel)), 4003); // .gr2 - use the Male skel
+						}
+						else
+							resent = NWN2ResourceManager.Instance.GetEntry(new OEIResRef(skel), 4003); // .gr2
+
+						if (resent != null && !(resent is MissingResourceEntry)) // check that the skeleton-file exists
+						{
+							body = bodies[i];
+							if (!String.IsNullOrEmpty(body))
+							{
+								if (body.Contains("?"))
+								{
+									resent = NWN2ResourceManager.Instance.GetEntry(new OEIResRef(GetBody(GetMale(body))), 4000); // .mdb - use the Male body
+								}
+								else
+									resent = NWN2ResourceManager.Instance.GetEntry(new OEIResRef(GetBody(body)), 4000); // .mdb
+
+								if (resent != null && !(resent is MissingResourceEntry)) // check that the body-file exists
+								{
+									it = new apr(labels[i], i);
+									co_Source.Items.Add(it);
+									co_Target.Items.Add(it);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets the male resref.
+		/// </summary>
+		/// <param name="resref"></param>
+		/// <returns></returns>
+		private string GetMale(string resref)
+		{
+			return resref.Replace('?', 'M');
+		}
+
+		/// <summary>
+		/// Gets the body resref.
+		/// </summary>
+		/// <param name="resref"></param>
+		/// <returns></returns>
+		private string GetBody(string resref)
+		{
+			return resref + "_cl_body01";
+		}
+
+		/// <summary>
 		/// Loads preferences.
 		/// </summary>
 		void LoadPreferences()
@@ -344,6 +420,39 @@ namespace SpecialEffectsViewer
 
 			_itView_Ground      .Checked = (cb_Ground.Checked = SpecialEffectsViewerPreferences.that.Ground);
 			_itView_ExtendedInfo.Checked = SpecialEffectsViewerPreferences.that.ExtendedInfo;
+
+
+			apr it;
+
+			int id = SpecialEffectsViewerPreferences.that.AppearanceSource; // select Source ->
+			for (int i = 0; i != co_Source.Items.Count; ++i)
+			if ((it = co_Source.Items[i] as apr).Id == id)
+			{
+				co_Source.SelectedItem = it; // init
+				break;
+			}
+
+			if (co_Source.SelectedIndex == -1) // failed ->
+			{
+				SpecialEffectsViewerPreferences.that.AppearanceSource = 0;
+				if (co_Source.Items.Count != 0)
+					co_Source.SelectedIndex = 0;
+			}
+
+			id = SpecialEffectsViewerPreferences.that.AppearanceTarget; // select Target ->
+			for (int i = 0; i != co_Target.Items.Count; ++i)
+			if ((it = co_Target.Items[i] as apr).Id == id)
+			{
+				co_Target.SelectedItem = it; // init
+				break;
+			}
+
+			if (co_Target.SelectedIndex == -1) // failed ->
+			{
+				SpecialEffectsViewerPreferences.that.AppearanceTarget = 0;
+				if (co_Target.Items.Count != 0)
+					co_Target.SelectedIndex = 0;
+			}
 		}
 		#endregion cTor
 
@@ -676,7 +785,7 @@ namespace SpecialEffectsViewer
 
 		#region eventhandlers (events)
 		/// <summary>
-		/// Disables Play if there is not a selected effect.
+		/// Disables Play and Stop if there is not a selected effect.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
@@ -1038,6 +1147,24 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
+		/// Handles changing Source and Target appearance-types.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void co_Appearance_selectedindexchanged(object sender, EventArgs e)
+		{
+			var co = sender as ComboBox;
+			if (co == co_Source)
+			{
+				SpecialEffectsViewerPreferences.that.AppearanceSource = (co_Source.SelectedItem as apr).Id;
+			}
+			else //if (co == co_Target)
+			{
+				SpecialEffectsViewerPreferences.that.AppearanceTarget = (co_Target.SelectedItem as apr).Id;
+			}
+		}
+
+		/// <summary>
 		/// Reloads the ElectronPanel w/ or w/out ground as detered by the
 		/// checkstate.
 		/// </summary>
@@ -1391,7 +1518,14 @@ namespace SpecialEffectsViewer
 				else if (rb_SingleCharacter.Checked)
 				{
 					var iIdiot = new NWN2CreatureInstance();
-					iIdiot.AppearanceType.Row = 4; // half-elf source/target
+
+					int id;
+					if (co_Source.SelectedIndex != -1)
+						id = (co_Source.SelectedItem as apr).Id;
+					else
+						id = 4; // half-elf character
+
+					iIdiot.AppearanceType.Row = id;
 					iIdiot.AppearanceSEF = _effect;
 
 					NetDisplayObject oIdiot = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot, _panel.Scene, 0);
@@ -1422,8 +1556,23 @@ namespace SpecialEffectsViewer
 		{
 			var iIdiot1 = new NWN2CreatureInstance();
 			var iIdiot2 = new NWN2CreatureInstance();
-			iIdiot1.AppearanceType.Row = 5; // half-orc source
-			iIdiot2.AppearanceType.Row = 2; // gnome target
+
+			int id;
+			if (co_Source.SelectedIndex != -1)
+				id = (co_Source.SelectedItem as apr).Id;
+			else
+				id = 5; // half-orc source
+
+			iIdiot1.AppearanceType.Row = id;
+			iIdiot1.AppearanceSEF = null;
+
+			if (co_Target.SelectedIndex != -1)
+				id = (co_Target.SelectedItem as apr).Id;
+			else
+				id = 2; // gnome target
+
+			iIdiot2.AppearanceType.Row = id;
+			iIdiot2.AppearanceSEF = null;
 
 			NetDisplayObject oIdiot1 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot1, _panel.Scene, 0);
 			NetDisplayObject oIdiot2 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot2, _panel.Scene, 0);
@@ -1528,5 +1677,32 @@ namespace SpecialEffectsViewer
 			return sc3_Events.Height;
 		}
 		#endregion Methods
+	}
+
+
+
+	/// <summary>
+	/// Appearance Row.
+	/// An object for parsing out a label to show in the Source/Target dropdowns
+	/// while retaining a reference to its row-id.
+	/// </summary>
+	internal sealed class apr
+	{
+		internal string Label
+		{ get; private set; }
+
+		internal int Id
+		{ get; private set; }
+
+		internal apr(string label, int id)
+		{
+			Label = label;
+			Id = id;
+		}
+
+		public override string ToString()
+		{
+			return Id + " - " + Label;
+		}
 	}
 }

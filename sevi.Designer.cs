@@ -28,6 +28,16 @@ namespace SpecialEffectsViewer
 		TextBox tb_SefData;
 		SplitContainer sc3_Events;
 
+		TabControl tc_Options;
+		TabPage tp_Options;
+		TabPage tp_Events;
+		Label la_Target;
+		Label la_Source;
+		ComboBox co_Source;
+		ComboBox co_Target;
+		GroupBox gb_Ground;
+		GroupBox gb_Appearance;
+
 		/// <summary>
 		/// This method is required for Windows Forms designer support. Do not
 		/// change the method contents inside the source code editor. The Forms
@@ -38,14 +48,23 @@ namespace SpecialEffectsViewer
 		{
 			this.sc1_Effects = new System.Windows.Forms.SplitContainer();
 			this.sc2_Options = new System.Windows.Forms.SplitContainer();
-			this.sc3_Events = new System.Windows.Forms.SplitContainer();
-			this.tb_SefData = new System.Windows.Forms.TextBox();
-			this.tb_EventData = new System.Windows.Forms.TextBox();
+			this.tc_Options = new System.Windows.Forms.TabControl();
+			this.tp_Options = new System.Windows.Forms.TabPage();
+			this.gb_Ground = new System.Windows.Forms.GroupBox();
 			this.cb_Ground = new System.Windows.Forms.CheckBox();
+			this.gb_Appearance = new System.Windows.Forms.GroupBox();
+			this.la_Source = new System.Windows.Forms.Label();
+			this.co_Target = new System.Windows.Forms.ComboBox();
+			this.co_Source = new System.Windows.Forms.ComboBox();
+			this.la_Target = new System.Windows.Forms.Label();
 			this.gb_Scene = new System.Windows.Forms.GroupBox();
 			this.rb_PlacedEffect = new System.Windows.Forms.RadioButton();
 			this.rb_SingleCharacter = new System.Windows.Forms.RadioButton();
 			this.rb_DoubleCharacter = new System.Windows.Forms.RadioButton();
+			this.tp_Events = new System.Windows.Forms.TabPage();
+			this.sc3_Events = new System.Windows.Forms.SplitContainer();
+			this.tb_SefData = new System.Windows.Forms.TextBox();
+			this.tb_EventData = new System.Windows.Forms.TextBox();
 			this.lb_Effects = new System.Windows.Forms.ListBox();
 			this.pa_Search = new System.Windows.Forms.Panel();
 			this.tb_Search = new System.Windows.Forms.TextBox();
@@ -61,10 +80,15 @@ namespace SpecialEffectsViewer
 			this.sc1_Effects.SuspendLayout();
 			this.sc2_Options.Panel1.SuspendLayout();
 			this.sc2_Options.SuspendLayout();
+			this.tc_Options.SuspendLayout();
+			this.tp_Options.SuspendLayout();
+			this.gb_Ground.SuspendLayout();
+			this.gb_Appearance.SuspendLayout();
+			this.gb_Scene.SuspendLayout();
+			this.tp_Events.SuspendLayout();
 			this.sc3_Events.Panel1.SuspendLayout();
 			this.sc3_Events.Panel2.SuspendLayout();
 			this.sc3_Events.SuspendLayout();
-			this.gb_Scene.SuspendLayout();
 			this.pa_Search.SuspendLayout();
 			this.pa_bot.SuspendLayout();
 			this.SuspendLayout();
@@ -103,9 +127,7 @@ namespace SpecialEffectsViewer
 			// 
 			// sc2_Options.Panel1
 			// 
-			this.sc2_Options.Panel1.Controls.Add(this.sc3_Events);
-			this.sc2_Options.Panel1.Controls.Add(this.cb_Ground);
-			this.sc2_Options.Panel1.Controls.Add(this.gb_Scene);
+			this.sc2_Options.Panel1.Controls.Add(this.tc_Options);
 			this.sc2_Options.Panel1MinSize = 0;
 			// 
 			// sc2_Options.Panel2
@@ -117,70 +139,115 @@ namespace SpecialEffectsViewer
 			this.sc2_Options.SplitterWidth = 1;
 			this.sc2_Options.TabIndex = 0;
 			// 
-			// sc3_Events
+			// tc_Options
 			// 
-			this.sc3_Events.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.sc3_Events.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-			this.sc3_Events.Location = new System.Drawing.Point(0, 77);
-			this.sc3_Events.Margin = new System.Windows.Forms.Padding(0);
-			this.sc3_Events.Name = "sc3_Events";
-			this.sc3_Events.Orientation = System.Windows.Forms.Orientation.Horizontal;
+			this.tc_Options.Controls.Add(this.tp_Options);
+			this.tc_Options.Controls.Add(this.tp_Events);
+			this.tc_Options.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tc_Options.Location = new System.Drawing.Point(0, 0);
+			this.tc_Options.Margin = new System.Windows.Forms.Padding(0);
+			this.tc_Options.Name = "tc_Options";
+			this.tc_Options.SelectedIndex = 0;
+			this.tc_Options.Size = new System.Drawing.Size(255, 454);
+			this.tc_Options.TabIndex = 3;
 			// 
-			// sc3_Events.Panel1
+			// tp_Options
 			// 
-			this.sc3_Events.Panel1.Controls.Add(this.tb_SefData);
-			this.sc3_Events.Panel1MinSize = 0;
+			this.tp_Options.Controls.Add(this.gb_Ground);
+			this.tp_Options.Controls.Add(this.gb_Appearance);
+			this.tp_Options.Controls.Add(this.gb_Scene);
+			this.tp_Options.Location = new System.Drawing.Point(4, 22);
+			this.tp_Options.Name = "tp_Options";
+			this.tp_Options.Padding = new System.Windows.Forms.Padding(3);
+			this.tp_Options.Size = new System.Drawing.Size(247, 428);
+			this.tp_Options.TabIndex = 0;
+			this.tp_Options.Text = "Options";
+			this.tp_Options.UseVisualStyleBackColor = true;
 			// 
-			// sc3_Events.Panel2
+			// gb_Ground
 			// 
-			this.sc3_Events.Panel2.Controls.Add(this.tb_EventData);
-			this.sc3_Events.Panel2MinSize = 0;
-			this.sc3_Events.Size = new System.Drawing.Size(255, 377);
-			this.sc3_Events.SplitterDistance = 83;
-			this.sc3_Events.SplitterWidth = 2;
-			this.sc3_Events.TabIndex = 2;
-			// 
-			// tb_SefData
-			// 
-			this.tb_SefData.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.tb_SefData.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tb_SefData.Location = new System.Drawing.Point(0, 0);
-			this.tb_SefData.Margin = new System.Windows.Forms.Padding(0);
-			this.tb_SefData.Multiline = true;
-			this.tb_SefData.Name = "tb_SefData";
-			this.tb_SefData.ReadOnly = true;
-			this.tb_SefData.Size = new System.Drawing.Size(255, 83);
-			this.tb_SefData.TabIndex = 0;
-			this.tb_SefData.WordWrap = false;
-			this.tb_SefData.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tb_keydown);
-			// 
-			// tb_EventData
-			// 
-			this.tb_EventData.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.tb_EventData.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tb_EventData.Location = new System.Drawing.Point(0, 0);
-			this.tb_EventData.Margin = new System.Windows.Forms.Padding(0);
-			this.tb_EventData.Multiline = true;
-			this.tb_EventData.Name = "tb_EventData";
-			this.tb_EventData.ReadOnly = true;
-			this.tb_EventData.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.tb_EventData.Size = new System.Drawing.Size(255, 292);
-			this.tb_EventData.TabIndex = 0;
-			this.tb_EventData.WordWrap = false;
-			this.tb_EventData.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tb_keydown);
+			this.gb_Ground.Controls.Add(this.cb_Ground);
+			this.gb_Ground.Dock = System.Windows.Forms.DockStyle.Top;
+			this.gb_Ground.Location = new System.Drawing.Point(3, 135);
+			this.gb_Ground.Margin = new System.Windows.Forms.Padding(0);
+			this.gb_Ground.Name = "gb_Ground";
+			this.gb_Ground.Padding = new System.Windows.Forms.Padding(0);
+			this.gb_Ground.Size = new System.Drawing.Size(241, 35);
+			this.gb_Ground.TabIndex = 7;
+			this.gb_Ground.TabStop = false;
 			// 
 			// cb_Ground
 			// 
-			this.cb_Ground.Dock = System.Windows.Forms.DockStyle.Top;
-			this.cb_Ground.Location = new System.Drawing.Point(0, 61);
+			this.cb_Ground.Location = new System.Drawing.Point(5, 11);
 			this.cb_Ground.Margin = new System.Windows.Forms.Padding(0);
 			this.cb_Ground.Name = "cb_Ground";
 			this.cb_Ground.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
-			this.cb_Ground.Size = new System.Drawing.Size(255, 16);
+			this.cb_Ground.Size = new System.Drawing.Size(100, 20);
 			this.cb_Ground.TabIndex = 1;
 			this.cb_Ground.Text = "show Ground";
 			this.cb_Ground.UseVisualStyleBackColor = false;
 			this.cb_Ground.Click += new System.EventHandler(this.cb_Ground_click);
+			// 
+			// gb_Appearance
+			// 
+			this.gb_Appearance.Controls.Add(this.la_Source);
+			this.gb_Appearance.Controls.Add(this.co_Target);
+			this.gb_Appearance.Controls.Add(this.co_Source);
+			this.gb_Appearance.Controls.Add(this.la_Target);
+			this.gb_Appearance.Dock = System.Windows.Forms.DockStyle.Top;
+			this.gb_Appearance.Location = new System.Drawing.Point(3, 65);
+			this.gb_Appearance.Margin = new System.Windows.Forms.Padding(0);
+			this.gb_Appearance.Name = "gb_Appearance";
+			this.gb_Appearance.Padding = new System.Windows.Forms.Padding(0);
+			this.gb_Appearance.Size = new System.Drawing.Size(241, 70);
+			this.gb_Appearance.TabIndex = 6;
+			this.gb_Appearance.TabStop = false;
+			// 
+			// la_Source
+			// 
+			this.la_Source.Location = new System.Drawing.Point(2, 15);
+			this.la_Source.Margin = new System.Windows.Forms.Padding(0);
+			this.la_Source.Name = "la_Source";
+			this.la_Source.Size = new System.Drawing.Size(48, 20);
+			this.la_Source.TabIndex = 3;
+			this.la_Source.Text = "Source";
+			this.la_Source.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// co_Target
+			// 
+			this.co_Target.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
+			this.co_Target.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.co_Target.FormattingEnabled = true;
+			this.co_Target.Location = new System.Drawing.Point(50, 40);
+			this.co_Target.Margin = new System.Windows.Forms.Padding(0);
+			this.co_Target.Name = "co_Target";
+			this.co_Target.Size = new System.Drawing.Size(186, 21);
+			this.co_Target.TabIndex = 5;
+			this.co_Target.SelectedIndexChanged += new System.EventHandler(this.co_Appearance_selectedindexchanged);
+			// 
+			// co_Source
+			// 
+			this.co_Source.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
+			this.co_Source.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.co_Source.FormattingEnabled = true;
+			this.co_Source.Location = new System.Drawing.Point(50, 15);
+			this.co_Source.Margin = new System.Windows.Forms.Padding(0);
+			this.co_Source.Name = "co_Source";
+			this.co_Source.Size = new System.Drawing.Size(186, 21);
+			this.co_Source.TabIndex = 2;
+			this.co_Source.SelectedIndexChanged += new System.EventHandler(this.co_Appearance_selectedindexchanged);
+			// 
+			// la_Target
+			// 
+			this.la_Target.Location = new System.Drawing.Point(2, 40);
+			this.la_Target.Margin = new System.Windows.Forms.Padding(0);
+			this.la_Target.Name = "la_Target";
+			this.la_Target.Size = new System.Drawing.Size(48, 20);
+			this.la_Target.TabIndex = 4;
+			this.la_Target.Text = "Target";
+			this.la_Target.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// gb_Scene
 			// 
@@ -188,11 +255,11 @@ namespace SpecialEffectsViewer
 			this.gb_Scene.Controls.Add(this.rb_SingleCharacter);
 			this.gb_Scene.Controls.Add(this.rb_DoubleCharacter);
 			this.gb_Scene.Dock = System.Windows.Forms.DockStyle.Top;
-			this.gb_Scene.Location = new System.Drawing.Point(0, 0);
+			this.gb_Scene.Location = new System.Drawing.Point(3, 3);
 			this.gb_Scene.Margin = new System.Windows.Forms.Padding(0);
 			this.gb_Scene.Name = "gb_Scene";
 			this.gb_Scene.Padding = new System.Windows.Forms.Padding(0);
-			this.gb_Scene.Size = new System.Drawing.Size(255, 61);
+			this.gb_Scene.Size = new System.Drawing.Size(241, 62);
 			this.gb_Scene.TabIndex = 0;
 			this.gb_Scene.TabStop = false;
 			// 
@@ -230,6 +297,69 @@ namespace SpecialEffectsViewer
 			this.rb_DoubleCharacter.Text = "Double character [source+target]";
 			this.rb_DoubleCharacter.UseVisualStyleBackColor = true;
 			this.rb_DoubleCharacter.Click += new System.EventHandler(this.rb_click);
+			// 
+			// tp_Events
+			// 
+			this.tp_Events.Controls.Add(this.sc3_Events);
+			this.tp_Events.Location = new System.Drawing.Point(4, 22);
+			this.tp_Events.Name = "tp_Events";
+			this.tp_Events.Padding = new System.Windows.Forms.Padding(3);
+			this.tp_Events.Size = new System.Drawing.Size(247, 428);
+			this.tp_Events.TabIndex = 1;
+			this.tp_Events.Text = "Events";
+			this.tp_Events.UseVisualStyleBackColor = true;
+			// 
+			// sc3_Events
+			// 
+			this.sc3_Events.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.sc3_Events.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+			this.sc3_Events.Location = new System.Drawing.Point(3, 3);
+			this.sc3_Events.Margin = new System.Windows.Forms.Padding(0);
+			this.sc3_Events.Name = "sc3_Events";
+			this.sc3_Events.Orientation = System.Windows.Forms.Orientation.Horizontal;
+			// 
+			// sc3_Events.Panel1
+			// 
+			this.sc3_Events.Panel1.Controls.Add(this.tb_SefData);
+			this.sc3_Events.Panel1MinSize = 0;
+			// 
+			// sc3_Events.Panel2
+			// 
+			this.sc3_Events.Panel2.Controls.Add(this.tb_EventData);
+			this.sc3_Events.Panel2MinSize = 0;
+			this.sc3_Events.Size = new System.Drawing.Size(241, 422);
+			this.sc3_Events.SplitterDistance = 83;
+			this.sc3_Events.SplitterWidth = 2;
+			this.sc3_Events.TabIndex = 2;
+			// 
+			// tb_SefData
+			// 
+			this.tb_SefData.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.tb_SefData.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tb_SefData.Location = new System.Drawing.Point(0, 0);
+			this.tb_SefData.Margin = new System.Windows.Forms.Padding(0);
+			this.tb_SefData.Multiline = true;
+			this.tb_SefData.Name = "tb_SefData";
+			this.tb_SefData.ReadOnly = true;
+			this.tb_SefData.Size = new System.Drawing.Size(241, 83);
+			this.tb_SefData.TabIndex = 0;
+			this.tb_SefData.WordWrap = false;
+			this.tb_SefData.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tb_keydown);
+			// 
+			// tb_EventData
+			// 
+			this.tb_EventData.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.tb_EventData.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tb_EventData.Location = new System.Drawing.Point(0, 0);
+			this.tb_EventData.Margin = new System.Windows.Forms.Padding(0);
+			this.tb_EventData.Multiline = true;
+			this.tb_EventData.Name = "tb_EventData";
+			this.tb_EventData.ReadOnly = true;
+			this.tb_EventData.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.tb_EventData.Size = new System.Drawing.Size(241, 337);
+			this.tb_EventData.TabIndex = 0;
+			this.tb_EventData.WordWrap = false;
+			this.tb_EventData.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tb_keydown);
 			// 
 			// lb_Effects
 			// 
@@ -373,12 +503,17 @@ namespace SpecialEffectsViewer
 			this.sc1_Effects.ResumeLayout(false);
 			this.sc2_Options.Panel1.ResumeLayout(false);
 			this.sc2_Options.ResumeLayout(false);
+			this.tc_Options.ResumeLayout(false);
+			this.tp_Options.ResumeLayout(false);
+			this.gb_Ground.ResumeLayout(false);
+			this.gb_Appearance.ResumeLayout(false);
+			this.gb_Scene.ResumeLayout(false);
+			this.tp_Events.ResumeLayout(false);
 			this.sc3_Events.Panel1.ResumeLayout(false);
 			this.sc3_Events.Panel1.PerformLayout();
 			this.sc3_Events.Panel2.ResumeLayout(false);
 			this.sc3_Events.Panel2.PerformLayout();
 			this.sc3_Events.ResumeLayout(false);
-			this.gb_Scene.ResumeLayout(false);
 			this.pa_Search.ResumeLayout(false);
 			this.pa_Search.PerformLayout();
 			this.pa_bot.ResumeLayout(false);

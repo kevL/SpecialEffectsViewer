@@ -93,4 +93,30 @@ namespace SpecialEffectsViewer
 		}
 		#endregion Methods (static)
 	}
+
+
+	/// <summary>
+	/// Decrypts obfuscated strings in the toolset DLLs.
+	/// </summary>
+	static class StringDecryptor
+	{
+		internal static string Decrypt(string st)
+		{
+			char[] array0 = st.ToCharArray();
+			char[] array1 = array0;
+
+			int len0;
+			int len1 = array1.Length;
+			while (len1 != 0)
+			{
+				len0 = len1 - 1;
+				array1[len0] = (char)(array0[len0] - 5225);
+
+				array1 = array0;
+				len1 = len0;
+			}
+
+			return String.Intern(new string(array1));
+		}
+	}
 }
