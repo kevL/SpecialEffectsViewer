@@ -496,6 +496,8 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		protected override void OnFormClosing(FormClosingEventArgs e)
 		{
+			_panel.Scene.SpecialEffectsManager.EndUpdating();
+
 			NWN2ToolsetMainForm.ModuleChanged                  -= OnModuleChanged;
 			NWN2CampaignManager.Instance.ActiveCampaignChanged -= OnActiveCampaignChanged;
 
