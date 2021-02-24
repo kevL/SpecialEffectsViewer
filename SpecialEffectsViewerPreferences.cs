@@ -66,6 +66,13 @@ namespace SpecialEffectsViewer
 		public int SplitterDistanceEffects
 		{ get; set; }
 
+		[Category("Window")]
+		[Description("The width of the options-panel from the left border of"
+				   + " the window. Min 0, Max w")]
+		[DefaultValue(255)]
+		public int SplitterDistanceOptions
+		{ get; set; }
+
 
 		[Category("Options")]
 		[Description("The distance of event-data in the Options panel from the"
@@ -215,6 +222,7 @@ namespace SpecialEffectsViewer
 			Maximized = false;
 
 			SplitterDistanceEffects = 575;
+			SplitterDistanceOptions = 255;
 			SplitterDistanceEvents  =  83;
 
 			StayOnTop    = true;
@@ -257,6 +265,10 @@ namespace SpecialEffectsViewer
 			if      (SplitterDistanceEffects < 0) SplitterDistanceEffects = 0;
 			else if (SplitterDistanceEffects > w && w != Int32.MinValue)
 					 SplitterDistanceEffects = w;
+
+			if      (SplitterDistanceOptions < 0) SplitterDistanceOptions = 0;
+			else if (SplitterDistanceOptions > w && w != Int32.MinValue)
+					 SplitterDistanceOptions = w;
 
 			if (SplitterDistanceEvents < 0) SplitterDistanceEvents = 0;
 			if (SplitterDistanceEvents > sevi.that.GetInfoContainerHeight())

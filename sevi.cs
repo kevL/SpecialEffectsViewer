@@ -74,7 +74,7 @@ namespace SpecialEffectsViewer
 		/// <summary>
 		/// A default width for the Options popout.
 		/// </summary>
-		static int WidthOptions;
+//		static int WidthOptions;
 
 		/// <summary>
 		/// Static pointer to this. Is used by
@@ -175,7 +175,7 @@ namespace SpecialEffectsViewer
 
 			InitializeComponent();
 
-			WidthOptions = sc2_Options.SplitterDistance;
+//			WidthOptions = sc2_Options.SplitterDistance;
 
 			// leave Options-panel open in the designer but close it here
 			sc2_Options.Panel1Collapsed = true;
@@ -390,6 +390,7 @@ namespace SpecialEffectsViewer
 				_itView_Options.PerformClick();
 
 			sc1_Effects.SplitterDistance = SpecialEffectsViewerPreferences.that.SplitterDistanceEffects;
+			sc2_Options.SplitterDistance = SpecialEffectsViewerPreferences.that.SplitterDistanceOptions;
 			sc3_Events .SplitterDistance = SpecialEffectsViewerPreferences.that.SplitterDistanceEvents;
 
 			if (!SpecialEffectsViewerPreferences.that.StayOnTop)
@@ -1629,7 +1630,7 @@ namespace SpecialEffectsViewer
 				sb.Append(_sefgroup.SpecialTargetPosition);
 
 				tb_SefData.Text = sb.ToString();
-				int width = TextRenderer.MeasureText(tb_SefData.Text, Font).Width + 4;
+//				int width = TextRenderer.MeasureText(tb_SefData.Text, Font).Width + 4;
 
 				sb.Length = 0;
 				for (int i = 0; i != _sefgroup.Events.Count; ++i)
@@ -1648,9 +1649,9 @@ namespace SpecialEffectsViewer
 				}
 				tb_EventData.Text = sb.ToString();
 
-				width = Math.Max(width, TextRenderer.MeasureText(tb_EventData.Text, Font).Width + 4
-										+ SystemInformation.VerticalScrollBarWidth);
-				sc2_Options.SplitterDistance = Math.Max(width, WidthOptions);
+//				width = Math.Max(width, TextRenderer.MeasureText(tb_EventData.Text, Font).Width + 4
+//										+ SystemInformation.VerticalScrollBarWidth);
+//				sc2_Options.SplitterDistance = Math.Max(width, WidthOptions);
 			}
 		}
 
