@@ -145,8 +145,9 @@ namespace SpecialEffectsViewer
 			this.sc2_Options.Panel2MinSize = 0;
 			this.sc2_Options.Size = new System.Drawing.Size(575, 454);
 			this.sc2_Options.SplitterDistance = 255;
-			this.sc2_Options.SplitterWidth = 1;
+			this.sc2_Options.SplitterWidth = 3;
 			this.sc2_Options.TabIndex = 0;
+			this.sc2_Options.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.sc2_Options_splittermoved);
 			// 
 			// tc_Options
 			// 
@@ -199,12 +200,12 @@ namespace SpecialEffectsViewer
 			// 
 			// gb_Appearance
 			// 
-			this.gb_Appearance.Controls.Add(this.la_Source);
-			this.gb_Appearance.Controls.Add(this.la_Target);
 			this.gb_Appearance.Controls.Add(this.co_Source);
 			this.gb_Appearance.Controls.Add(this.co_Target);
 			this.gb_Appearance.Controls.Add(this.cb_SourceF);
 			this.gb_Appearance.Controls.Add(this.cb_TargetF);
+			this.gb_Appearance.Controls.Add(this.la_Source);
+			this.gb_Appearance.Controls.Add(this.la_Target);
 			this.gb_Appearance.Dock = System.Windows.Forms.DockStyle.Top;
 			this.gb_Appearance.Location = new System.Drawing.Point(3, 65);
 			this.gb_Appearance.Margin = new System.Windows.Forms.Padding(0);
@@ -240,7 +241,7 @@ namespace SpecialEffectsViewer
 			| System.Windows.Forms.AnchorStyles.Right)));
 			this.co_Source.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.co_Source.FormattingEnabled = true;
-			this.co_Source.Location = new System.Drawing.Point(50, 12);
+			this.co_Source.Location = new System.Drawing.Point(49, 12);
 			this.co_Source.Margin = new System.Windows.Forms.Padding(0);
 			this.co_Source.Name = "co_Source";
 			this.co_Source.Size = new System.Drawing.Size(155, 21);
@@ -253,7 +254,7 @@ namespace SpecialEffectsViewer
 			| System.Windows.Forms.AnchorStyles.Right)));
 			this.co_Target.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.co_Target.FormattingEnabled = true;
-			this.co_Target.Location = new System.Drawing.Point(50, 37);
+			this.co_Target.Location = new System.Drawing.Point(49, 37);
 			this.co_Target.Margin = new System.Windows.Forms.Padding(0);
 			this.co_Target.Name = "co_Target";
 			this.co_Target.Size = new System.Drawing.Size(155, 21);
@@ -264,10 +265,10 @@ namespace SpecialEffectsViewer
 			// 
 			this.cb_SourceF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.cb_SourceF.CheckAlign = System.Drawing.ContentAlignment.BottomLeft;
-			this.cb_SourceF.Location = new System.Drawing.Point(210, 10);
+			this.cb_SourceF.Location = new System.Drawing.Point(209, 10);
 			this.cb_SourceF.Margin = new System.Windows.Forms.Padding(0);
 			this.cb_SourceF.Name = "cb_SourceF";
-			this.cb_SourceF.Size = new System.Drawing.Size(27, 20);
+			this.cb_SourceF.Size = new System.Drawing.Size(29, 20);
 			this.cb_SourceF.TabIndex = 2;
 			this.cb_SourceF.Text = "F";
 			this.cb_SourceF.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
@@ -277,10 +278,10 @@ namespace SpecialEffectsViewer
 			// 
 			this.cb_TargetF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.cb_TargetF.CheckAlign = System.Drawing.ContentAlignment.BottomLeft;
-			this.cb_TargetF.Location = new System.Drawing.Point(210, 35);
+			this.cb_TargetF.Location = new System.Drawing.Point(209, 35);
 			this.cb_TargetF.Margin = new System.Windows.Forms.Padding(0);
 			this.cb_TargetF.Name = "cb_TargetF";
-			this.cb_TargetF.Size = new System.Drawing.Size(27, 20);
+			this.cb_TargetF.Size = new System.Drawing.Size(29, 20);
 			this.cb_TargetF.TabIndex = 5;
 			this.cb_TargetF.Text = "F";
 			this.cb_TargetF.TextAlign = System.Drawing.ContentAlignment.BottomLeft;

@@ -1415,6 +1415,16 @@ namespace SpecialEffectsViewer
 		{
 			Close();
 		}
+
+		/// <summary>
+		/// Invalidates the options-panel when the splitter is moved.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void sc2_Options_splittermoved(object sender, SplitterEventArgs e)
+		{
+			tc_Options.Invalidate();
+		}
 		#endregion eventhandlers (controls)
 
 
