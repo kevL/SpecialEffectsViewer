@@ -993,7 +993,18 @@ namespace SpecialEffectsViewer
 						break;
 				}
 			}
+
+			if (SceneData != null)
+				SceneData.ResetDatatext();
 		}
+
+//		void Play(SEFGroup sefgroup)
+//		{
+//			_sefer.EndUpdating();
+//			_sefer.Groups.Clear();
+//			_sefer.Groups.Add(sefgroup);
+//			_sefer.BeginUpdating();
+//		}
 
 		/// <summary>
 		/// Checks if any event is currently checked in the Events menu for
@@ -1076,7 +1087,13 @@ namespace SpecialEffectsViewer
 
 			ApplySefgroup(sefgroup);
 
-			if (_isSolo) _sefer.BeginUpdating();
+			if (_isSolo)
+			{
+				_sefer.BeginUpdating();
+
+				if (SceneData != null)
+					SceneData.ResetDatatext();
+			}
 		}
 		#endregion eventhandlers (events)
 
@@ -1291,7 +1308,7 @@ namespace SpecialEffectsViewer
 			}
 
 			if (SceneData != null)
-				SceneData.ClearDatatext();
+				SceneData.ResetDatatext();
 		}
 
 		/// <summary>
@@ -1436,7 +1453,7 @@ namespace SpecialEffectsViewer
 			}
 
 			if (SceneData != null)
-				SceneData.ClearDatatext();
+				SceneData.ResetDatatext();
 		}
 
 		/// <summary>
@@ -1516,6 +1533,9 @@ namespace SpecialEffectsViewer
 						CreateSingleCharacter();
 					break;
 			}
+
+			if (SceneData != null)
+				SceneData.ResetDatatext();
 		}
 
 		/// <summary>
@@ -1555,6 +1575,9 @@ namespace SpecialEffectsViewer
 						CreatePlacedObject();
 						break;
 				}
+
+				if (SceneData != null)
+					SceneData.ResetDatatext();
 			}
 		}
 
