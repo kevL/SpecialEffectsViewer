@@ -128,9 +128,9 @@ namespace SpecialEffectsViewer
 
 		#region Methods
 		/// <summary>
-		/// Clears the text and starts the timer.
+		/// Clears the text and starts the timer that reacquires scene-data.
 		/// </summary>
-		internal void ClearDatatext()
+		internal void ResetDatatext()
 		{
 			tb_Scenedata.Text = String.Empty;
 			_t1.Start();
@@ -139,7 +139,7 @@ namespace SpecialEffectsViewer
 		/// <summary>
 		/// Conflates a bunch of data about the current scene to text.
 		/// </summary>
-		internal void SetDatatext()
+		void SetDatatext()
 		{
 			switch (_f.Scenary)
 			{
