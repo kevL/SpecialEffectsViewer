@@ -267,12 +267,12 @@ namespace SpecialEffectsViewer
 					 SplitterDistanceEffects = w;
 
 			if      (SplitterDistanceOptions < 0) SplitterDistanceOptions = 0;
-			else if (SplitterDistanceOptions > w && w != Int32.MinValue)
-					 SplitterDistanceOptions = w;
+			else if (SplitterDistanceOptions > SplitterDistanceEffects)
+					 SplitterDistanceOptions = SplitterDistanceEffects;
 
 			if (SplitterDistanceEvents < 0) SplitterDistanceEvents = 0;
-			if (SplitterDistanceEvents > sevi.that.GetInfoContainerHeight())
-				SplitterDistanceEvents = sevi.that.GetInfoContainerHeight();
+			if (SplitterDistanceEvents > sevi.that.GetEventsContainerHeight())
+				SplitterDistanceEvents = sevi.that.GetEventsContainerHeight();
 
 			if (Scene < 1 || Scene > 3) Scene = 1;
 

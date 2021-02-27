@@ -18,9 +18,9 @@ namespace SpecialEffectsViewer
 		ListBox lb_Effects;
 
 		Panel pa_bot;
+		Button bu_Play;
+		Button bu_Stop;
 		Button bu_Copy;
-		Button bu_Clear;
-		Button bu_Close;
 
 		SplitContainer sc2_Options;
 		TabControl tc_Options;
@@ -47,6 +47,43 @@ namespace SpecialEffectsViewer
 
 
 		/// <summary>
+		/// Resizes the bottom-panel buttons when the events-splitter is moved.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void sc1_Effects_splittermoved(object sender, SplitterEventArgs e)
+		{
+			int width = pa_bot.Width / 3;
+			bu_Play.Width =
+			bu_Stop.Width =
+			bu_Copy.Width = width;
+
+			bu_Play.Left = 0;
+			bu_Stop.Left = bu_Play.Width;
+			bu_Copy.Left = bu_Play.Width + bu_Stop.Width;
+		}
+
+		/// <summary>
+		/// Invalidates the options-panel when the options-splitter is moved.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void sc2_Options_splittermoved(object sender, SplitterEventArgs e)
+		{
+			tc_Options.Invalidate();
+		}
+
+		/// <summary>
+		/// Gets the height of the splitcontainer that contains the event-info.
+		/// </summary>
+		/// <returns>height of event-info container</returns>
+		internal int GetEventsContainerHeight()
+		{
+			return sc3_Events.Height;
+		}
+
+
+		/// <summary>
 		/// This method is required for Windows Forms designer support. Do not
 		/// change the method contents inside the source code editor. The Forms
 		/// designer might not be able to load this method if it was changed
@@ -61,10 +98,10 @@ namespace SpecialEffectsViewer
 			this.gb_Ground = new System.Windows.Forms.GroupBox();
 			this.cb_Ground = new System.Windows.Forms.CheckBox();
 			this.gb_Appearance = new System.Windows.Forms.GroupBox();
-			this.la_Source = new System.Windows.Forms.Label();
-			this.la_Target = new System.Windows.Forms.Label();
 			this.co_Source = new System.Windows.Forms.ComboBox();
 			this.co_Target = new System.Windows.Forms.ComboBox();
+			this.la_Source = new System.Windows.Forms.Label();
+			this.la_Target = new System.Windows.Forms.Label();
 			this.cb_SourceF = new System.Windows.Forms.CheckBox();
 			this.cb_TargetF = new System.Windows.Forms.CheckBox();
 			this.gb_Scene = new System.Windows.Forms.GroupBox();
@@ -82,9 +119,9 @@ namespace SpecialEffectsViewer
 			this.bu_SearchU = new System.Windows.Forms.Button();
 			this.cb_Filter = new System.Windows.Forms.CheckBox();
 			this.pa_bot = new System.Windows.Forms.Panel();
+			this.bu_Play = new System.Windows.Forms.Button();
+			this.bu_Stop = new System.Windows.Forms.Button();
 			this.bu_Copy = new System.Windows.Forms.Button();
-			this.bu_Clear = new System.Windows.Forms.Button();
-			this.bu_Close = new System.Windows.Forms.Button();
 			this.sc1_Effects.Panel1.SuspendLayout();
 			this.sc1_Effects.Panel2.SuspendLayout();
 			this.sc1_Effects.SuspendLayout();
@@ -125,6 +162,7 @@ namespace SpecialEffectsViewer
 			this.sc1_Effects.Size = new System.Drawing.Size(792, 454);
 			this.sc1_Effects.SplitterDistance = 575;
 			this.sc1_Effects.TabIndex = 0;
+			this.sc1_Effects.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.sc1_Effects_splittermoved);
 			// 
 			// sc2_Options
 			// 
@@ -178,7 +216,7 @@ namespace SpecialEffectsViewer
 			// 
 			this.gb_Ground.Controls.Add(this.cb_Ground);
 			this.gb_Ground.Dock = System.Windows.Forms.DockStyle.Top;
-			this.gb_Ground.Location = new System.Drawing.Point(3, 135);
+			this.gb_Ground.Location = new System.Drawing.Point(3, 133);
 			this.gb_Ground.Margin = new System.Windows.Forms.Padding(0);
 			this.gb_Ground.Name = "gb_Ground";
 			this.gb_Ground.Padding = new System.Windows.Forms.Padding(0);
@@ -188,52 +226,31 @@ namespace SpecialEffectsViewer
 			// 
 			// cb_Ground
 			// 
-			this.cb_Ground.Location = new System.Drawing.Point(5, 11);
+			this.cb_Ground.Location = new System.Drawing.Point(7, 11);
 			this.cb_Ground.Margin = new System.Windows.Forms.Padding(0);
 			this.cb_Ground.Name = "cb_Ground";
-			this.cb_Ground.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
 			this.cb_Ground.Size = new System.Drawing.Size(100, 20);
 			this.cb_Ground.TabIndex = 0;
 			this.cb_Ground.Text = "show Ground";
 			this.cb_Ground.UseVisualStyleBackColor = false;
-			this.cb_Ground.Click += new System.EventHandler(this.cb_Ground_click);
+			this.cb_Ground.CheckedChanged += new System.EventHandler(this.cb_Ground_checkedchanged);
 			// 
 			// gb_Appearance
 			// 
 			this.gb_Appearance.Controls.Add(this.co_Source);
 			this.gb_Appearance.Controls.Add(this.co_Target);
-			this.gb_Appearance.Controls.Add(this.cb_SourceF);
-			this.gb_Appearance.Controls.Add(this.cb_TargetF);
 			this.gb_Appearance.Controls.Add(this.la_Source);
 			this.gb_Appearance.Controls.Add(this.la_Target);
+			this.gb_Appearance.Controls.Add(this.cb_SourceF);
+			this.gb_Appearance.Controls.Add(this.cb_TargetF);
 			this.gb_Appearance.Dock = System.Windows.Forms.DockStyle.Top;
-			this.gb_Appearance.Location = new System.Drawing.Point(3, 65);
+			this.gb_Appearance.Location = new System.Drawing.Point(3, 66);
 			this.gb_Appearance.Margin = new System.Windows.Forms.Padding(0);
 			this.gb_Appearance.Name = "gb_Appearance";
 			this.gb_Appearance.Padding = new System.Windows.Forms.Padding(0);
-			this.gb_Appearance.Size = new System.Drawing.Size(241, 70);
+			this.gb_Appearance.Size = new System.Drawing.Size(241, 67);
 			this.gb_Appearance.TabIndex = 1;
 			this.gb_Appearance.TabStop = false;
-			// 
-			// la_Source
-			// 
-			this.la_Source.Location = new System.Drawing.Point(2, 15);
-			this.la_Source.Margin = new System.Windows.Forms.Padding(0);
-			this.la_Source.Name = "la_Source";
-			this.la_Source.Size = new System.Drawing.Size(48, 20);
-			this.la_Source.TabIndex = 0;
-			this.la_Source.Text = "Source";
-			this.la_Source.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// la_Target
-			// 
-			this.la_Target.Location = new System.Drawing.Point(2, 40);
-			this.la_Target.Margin = new System.Windows.Forms.Padding(0);
-			this.la_Target.Name = "la_Target";
-			this.la_Target.Size = new System.Drawing.Size(48, 20);
-			this.la_Target.TabIndex = 3;
-			this.la_Target.Text = "Target";
-			this.la_Target.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// co_Source
 			// 
@@ -241,7 +258,7 @@ namespace SpecialEffectsViewer
 			| System.Windows.Forms.AnchorStyles.Right)));
 			this.co_Source.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.co_Source.FormattingEnabled = true;
-			this.co_Source.Location = new System.Drawing.Point(49, 12);
+			this.co_Source.Location = new System.Drawing.Point(49, 13);
 			this.co_Source.Margin = new System.Windows.Forms.Padding(0);
 			this.co_Source.Name = "co_Source";
 			this.co_Source.Size = new System.Drawing.Size(155, 21);
@@ -254,18 +271,36 @@ namespace SpecialEffectsViewer
 			| System.Windows.Forms.AnchorStyles.Right)));
 			this.co_Target.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.co_Target.FormattingEnabled = true;
-			this.co_Target.Location = new System.Drawing.Point(49, 37);
+			this.co_Target.Location = new System.Drawing.Point(49, 38);
 			this.co_Target.Margin = new System.Windows.Forms.Padding(0);
 			this.co_Target.Name = "co_Target";
 			this.co_Target.Size = new System.Drawing.Size(155, 21);
 			this.co_Target.TabIndex = 4;
 			this.co_Target.SelectedIndexChanged += new System.EventHandler(this.co_Appearance_selectedindexchanged);
 			// 
+			// la_Source
+			// 
+			this.la_Source.Location = new System.Drawing.Point(2, 16);
+			this.la_Source.Margin = new System.Windows.Forms.Padding(0);
+			this.la_Source.Name = "la_Source";
+			this.la_Source.Size = new System.Drawing.Size(48, 20);
+			this.la_Source.TabIndex = 0;
+			this.la_Source.Text = "Source";
+			// 
+			// la_Target
+			// 
+			this.la_Target.Location = new System.Drawing.Point(2, 41);
+			this.la_Target.Margin = new System.Windows.Forms.Padding(0);
+			this.la_Target.Name = "la_Target";
+			this.la_Target.Size = new System.Drawing.Size(48, 20);
+			this.la_Target.TabIndex = 3;
+			this.la_Target.Text = "Target";
+			// 
 			// cb_SourceF
 			// 
 			this.cb_SourceF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.cb_SourceF.CheckAlign = System.Drawing.ContentAlignment.BottomLeft;
-			this.cb_SourceF.Location = new System.Drawing.Point(209, 10);
+			this.cb_SourceF.Location = new System.Drawing.Point(209, 11);
 			this.cb_SourceF.Margin = new System.Windows.Forms.Padding(0);
 			this.cb_SourceF.Name = "cb_SourceF";
 			this.cb_SourceF.Size = new System.Drawing.Size(29, 20);
@@ -273,12 +308,13 @@ namespace SpecialEffectsViewer
 			this.cb_SourceF.Text = "F";
 			this.cb_SourceF.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			this.cb_SourceF.UseVisualStyleBackColor = true;
+			this.cb_SourceF.CheckedChanged += new System.EventHandler(this.cb_Fela_checkedchanged);
 			// 
 			// cb_TargetF
 			// 
 			this.cb_TargetF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.cb_TargetF.CheckAlign = System.Drawing.ContentAlignment.BottomLeft;
-			this.cb_TargetF.Location = new System.Drawing.Point(209, 35);
+			this.cb_TargetF.Location = new System.Drawing.Point(209, 36);
 			this.cb_TargetF.Margin = new System.Windows.Forms.Padding(0);
 			this.cb_TargetF.Name = "cb_TargetF";
 			this.cb_TargetF.Size = new System.Drawing.Size(29, 20);
@@ -286,6 +322,7 @@ namespace SpecialEffectsViewer
 			this.cb_TargetF.Text = "F";
 			this.cb_TargetF.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			this.cb_TargetF.UseVisualStyleBackColor = true;
+			this.cb_TargetF.CheckedChanged += new System.EventHandler(this.cb_Fela_checkedchanged);
 			// 
 			// gb_Scene
 			// 
@@ -297,22 +334,20 @@ namespace SpecialEffectsViewer
 			this.gb_Scene.Margin = new System.Windows.Forms.Padding(0);
 			this.gb_Scene.Name = "gb_Scene";
 			this.gb_Scene.Padding = new System.Windows.Forms.Padding(0);
-			this.gb_Scene.Size = new System.Drawing.Size(241, 62);
+			this.gb_Scene.Size = new System.Drawing.Size(241, 63);
 			this.gb_Scene.TabIndex = 0;
 			this.gb_Scene.TabStop = false;
 			// 
 			// rb_DoubleCharacter
 			// 
-			this.rb_DoubleCharacter.Checked = true;
 			this.rb_DoubleCharacter.Location = new System.Drawing.Point(6, 10);
 			this.rb_DoubleCharacter.Margin = new System.Windows.Forms.Padding(0);
 			this.rb_DoubleCharacter.Name = "rb_DoubleCharacter";
 			this.rb_DoubleCharacter.Size = new System.Drawing.Size(219, 16);
 			this.rb_DoubleCharacter.TabIndex = 0;
-			this.rb_DoubleCharacter.TabStop = true;
 			this.rb_DoubleCharacter.Text = "Double character [source+target]";
 			this.rb_DoubleCharacter.UseVisualStyleBackColor = true;
-			this.rb_DoubleCharacter.Click += new System.EventHandler(this.rb_click);
+			this.rb_DoubleCharacter.CheckedChanged += new System.EventHandler(this.rb_Scene_checkedchanged);
 			// 
 			// rb_SingleCharacter
 			// 
@@ -323,7 +358,7 @@ namespace SpecialEffectsViewer
 			this.rb_SingleCharacter.TabIndex = 1;
 			this.rb_SingleCharacter.Text = "Single character [AppearanceSEF]";
 			this.rb_SingleCharacter.UseVisualStyleBackColor = true;
-			this.rb_SingleCharacter.Click += new System.EventHandler(this.rb_click);
+			this.rb_SingleCharacter.CheckedChanged += new System.EventHandler(this.rb_Scene_checkedchanged);
 			// 
 			// rb_PlacedEffect
 			// 
@@ -334,7 +369,7 @@ namespace SpecialEffectsViewer
 			this.rb_PlacedEffect.TabIndex = 2;
 			this.rb_PlacedEffect.Text = "placed effect object";
 			this.rb_PlacedEffect.UseVisualStyleBackColor = true;
-			this.rb_PlacedEffect.Click += new System.EventHandler(this.rb_click);
+			this.rb_PlacedEffect.CheckedChanged += new System.EventHandler(this.rb_Scene_checkedchanged);
 			// 
 			// tp_Events
 			// 
@@ -407,7 +442,7 @@ namespace SpecialEffectsViewer
 			this.lb_Effects.Location = new System.Drawing.Point(0, 20);
 			this.lb_Effects.Margin = new System.Windows.Forms.Padding(0);
 			this.lb_Effects.Name = "lb_Effects";
-			this.lb_Effects.Size = new System.Drawing.Size(213, 408);
+			this.lb_Effects.Size = new System.Drawing.Size(213, 411);
 			this.lb_Effects.Sorted = true;
 			this.lb_Effects.TabIndex = 1;
 			this.lb_Effects.SelectedIndexChanged += new System.EventHandler(this.lb_Effects_selectedindexchanged);
@@ -473,59 +508,54 @@ namespace SpecialEffectsViewer
 			this.cb_Filter.Text = "filtr";
 			this.cb_Filter.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.cb_Filter.UseVisualStyleBackColor = true;
-			this.cb_Filter.Click += new System.EventHandler(this.cb_Filter_click);
+			this.cb_Filter.CheckedChanged += new System.EventHandler(this.cb_Filter_checkedchanged);
 			this.cb_Filter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.cb_Filter_keydown);
 			// 
 			// pa_bot
 			// 
+			this.pa_bot.Controls.Add(this.bu_Play);
+			this.pa_bot.Controls.Add(this.bu_Stop);
 			this.pa_bot.Controls.Add(this.bu_Copy);
-			this.pa_bot.Controls.Add(this.bu_Clear);
-			this.pa_bot.Controls.Add(this.bu_Close);
 			this.pa_bot.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.pa_bot.Location = new System.Drawing.Point(0, 428);
+			this.pa_bot.Location = new System.Drawing.Point(0, 431);
 			this.pa_bot.Margin = new System.Windows.Forms.Padding(0);
 			this.pa_bot.Name = "pa_bot";
-			this.pa_bot.Size = new System.Drawing.Size(213, 26);
+			this.pa_bot.Size = new System.Drawing.Size(213, 23);
 			this.pa_bot.TabIndex = 2;
+			// 
+			// bu_Play
+			// 
+			this.bu_Play.Location = new System.Drawing.Point(0, 0);
+			this.bu_Play.Margin = new System.Windows.Forms.Padding(0);
+			this.bu_Play.Name = "bu_Play";
+			this.bu_Play.Size = new System.Drawing.Size(70, 23);
+			this.bu_Play.TabIndex = 0;
+			this.bu_Play.Text = "PLAY";
+			this.bu_Play.UseVisualStyleBackColor = true;
+			this.bu_Play.Click += new System.EventHandler(this.mi_events_Play);
+			// 
+			// bu_Stop
+			// 
+			this.bu_Stop.Location = new System.Drawing.Point(72, 0);
+			this.bu_Stop.Margin = new System.Windows.Forms.Padding(0);
+			this.bu_Stop.Name = "bu_Stop";
+			this.bu_Stop.Size = new System.Drawing.Size(70, 23);
+			this.bu_Stop.TabIndex = 1;
+			this.bu_Stop.Text = "STOP";
+			this.bu_Stop.UseVisualStyleBackColor = true;
+			this.bu_Stop.Click += new System.EventHandler(this.mi_events_Stop);
 			// 
 			// bu_Copy
 			// 
-			this.bu_Copy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.bu_Copy.Location = new System.Drawing.Point(24, 0);
+			this.bu_Copy.Enabled = false;
+			this.bu_Copy.Location = new System.Drawing.Point(144, 0);
 			this.bu_Copy.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_Copy.Name = "bu_Copy";
-			this.bu_Copy.Size = new System.Drawing.Size(60, 24);
-			this.bu_Copy.TabIndex = 0;
-			this.bu_Copy.Text = "copy";
-			this.bu_Copy.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+			this.bu_Copy.Size = new System.Drawing.Size(70, 23);
+			this.bu_Copy.TabIndex = 2;
+			this.bu_Copy.Text = "COPY";
 			this.bu_Copy.UseVisualStyleBackColor = true;
 			this.bu_Copy.Click += new System.EventHandler(this.bu_Copy_click);
-			// 
-			// bu_Clear
-			// 
-			this.bu_Clear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.bu_Clear.Location = new System.Drawing.Point(87, 0);
-			this.bu_Clear.Margin = new System.Windows.Forms.Padding(0);
-			this.bu_Clear.Name = "bu_Clear";
-			this.bu_Clear.Size = new System.Drawing.Size(60, 24);
-			this.bu_Clear.TabIndex = 1;
-			this.bu_Clear.Text = "clear";
-			this.bu_Clear.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-			this.bu_Clear.UseVisualStyleBackColor = true;
-			this.bu_Clear.Click += new System.EventHandler(this.bu_Clear_click);
-			// 
-			// bu_Close
-			// 
-			this.bu_Close.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.bu_Close.Location = new System.Drawing.Point(150, 0);
-			this.bu_Close.Margin = new System.Windows.Forms.Padding(0);
-			this.bu_Close.Name = "bu_Close";
-			this.bu_Close.Size = new System.Drawing.Size(60, 24);
-			this.bu_Close.TabIndex = 2;
-			this.bu_Close.Text = "close";
-			this.bu_Close.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-			this.bu_Close.UseVisualStyleBackColor = true;
-			this.bu_Close.Click += new System.EventHandler(this.bu_Close_click);
 			// 
 			// sevi
 			// 

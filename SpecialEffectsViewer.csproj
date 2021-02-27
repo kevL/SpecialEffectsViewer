@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AboutF.cs" />
+    <Compile Include="apr.cs" />
     <Compile Include="BwResourceTypes.cs" />
     <Compile Include="EventData.cs" />
     <Compile Include="logger.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="sevi.Designer.cs">
       <DependentUpon>sevi.cs</DependentUpon>
     </Compile>
+    <Compile Include="SpecialEffect.cs" />
     <Compile Include="SpecialEffectsViewer.cs" />
     <Compile Include="SpecialEffectsViewerPreferences.cs" />
     <Compile Include="util.cs" />

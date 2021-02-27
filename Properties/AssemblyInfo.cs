@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 #endif
 [assembly: AssemblyCompany("kL")]
 [assembly: AssemblyProduct("SpecialEffectsViewer")]
-[assembly: AssemblyCopyright("copyleft 2021 feb 23")]
+[assembly: AssemblyCopyright("copyleft 2021 feb 26")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]

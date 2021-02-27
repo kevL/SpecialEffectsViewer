@@ -141,9 +141,8 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		internal void SetDatatext()
 		{
-			switch ((sevi.Scene)SpecialEffectsViewerPreferences.that.Scene)
+			switch (_f.Scenary)
 			{
-				case sevi.Scene.non:             Text = TITLE;                             break;
 				case sevi.Scene.doublecharacter: Text = TITLE + " - Double character";     break;
 				case sevi.Scene.singlecharacter: Text = TITLE + " - Single character";     break;
 				case sevi.Scene.placedeffect:    Text = TITLE + " - Placed effect object"; break;

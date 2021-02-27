@@ -61,20 +61,17 @@ namespace SpecialEffectsViewer
 
 
 		#region Fields (static)
-		const string TITLE = "Special Effects Viewer";
-
-		const string SEF = "sef";
-
+		const string TITLE     = "Special Effects";
+		const string SEF       = "sef";
 		const string MODULES   = "modules";
 		const string CAMPAIGNS = "campaigns";
 		const string OVERRIDE  = "override";
 
-		const int ItemsReserved = 6; // count of standard its in the Events dropdown
-
 		/// <summary>
-		/// A default width for the Options popout.
+		/// The count of standard its in the Events dropdown.
 		/// </summary>
-//		static int WidthOptions;
+		/// <remarks>play, stop, sep, disableall, enableall, sep</remarks>
+		const int ItemsReserved = 6;
 
 		/// <summary>
 		/// Static pointer to this. Is used by
@@ -85,10 +82,11 @@ namespace SpecialEffectsViewer
 
 
 		#region Fields
-		IResourceEntry _effect; SEFGroup _sefgroup, _altgroup;
-		// TODO: Probably don't need both '_sefgroup' and '_altgroup'.
-
 		internal ElectronPanel _panel; // i hate u
+		SEFManager _sefer;
+
+		NetDisplayObject _oIdiot1;
+		NetDisplayObject _oIdiot2;
 
 		MenuItem _itResrepo_all;
 		MenuItem _itResrepo_stock;
@@ -144,6 +142,16 @@ namespace SpecialEffectsViewer
 		/// to deter the current cursor.
 		/// </summary>
 		bool _Ctrl;
+
+		/// <summary>
+		/// Set true to bypass handling events redundantly.
+		/// </summary>
+		bool _init;
+
+		/// <summary>
+		/// Set true if a solo-event was last played via [Shift] on the events.
+		/// </summary>
+		bool _isSolo;
 		#endregion Fields
 
 
@@ -161,6 +169,14 @@ namespace SpecialEffectsViewer
 				_itView_SceneData.Checked = ((_sceneData = value) != null);
 			}
 		}
+
+		/// <summary>
+		/// A convenient getter for the user-selected scene in Preferences.
+		/// </summary>
+		internal Scene Scenary
+		{
+			get { return (Scene)SpecialEffectsViewerPreferences.that.Scene; }
+		}
 		#endregion Properties
 
 
@@ -175,27 +191,21 @@ namespace SpecialEffectsViewer
 
 			InitializeComponent();
 
-//			WidthOptions = sc2_Options.SplitterDistance;
+			NWN2ToolsetMainForm.ModuleChanged                  += OnModuleChanged;
+			NWN2CampaignManager.Instance.ActiveCampaignChanged += OnActiveCampaignChanged;
 
-			// leave Options-panel open in the designer but close it here
+			// leave the options-panel open in the designer but close it here
 			sc2_Options.Panel1Collapsed = true;
 
-			// set unicode text on the up/down Search btns.
+			// set unicode text on the up/down search-buttons
 			bu_SearchD.Text = "\u25bc"; // down triangle
 			bu_SearchU.Text = "\u25b2"; // up triangle
 
 			CreateMainMenu();
 			CreateElectronPanel();
-
 			PopulateAppearanceDropdowns();
 
-			LoadPreferences();
-
-			NWN2ToolsetMainForm.ModuleChanged                  += OnModuleChanged;
-			NWN2CampaignManager.Instance.ActiveCampaignChanged += OnActiveCampaignChanged;
-
 			mi_resrepo_All(null, EventArgs.Empty);
-
 			Show();
 		}
 
@@ -226,7 +236,6 @@ namespace SpecialEffectsViewer
 
 // Events ->
 			_itEvents = Menu.MenuItems.Add("&Events"); // 1
-			_itEvents.Popup += mi_events_popup;
 
 			CreateBasicEvents();
 
@@ -276,7 +285,25 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
-		/// 
+		/// Clears the events-list and re/creates Play and Stop.
+		/// </summary>
+		void CreateBasicEvents()
+		{
+			_itEvents.MenuItems.Clear();
+
+			_itEvents_Play = _itEvents.MenuItems.Add("&Play", mi_events_Play);
+			_itEvents_Stop = _itEvents.MenuItems.Add("&Stop", mi_events_Stop);
+
+			_itEvents_Play.Shortcut = Shortcut.F5;
+			_itEvents_Stop.Shortcut = Shortcut.F6;
+
+			_itEvents_Play.Enabled =
+			_itEvents_Stop.Enabled = lb_Effects.SelectedIndex != -1;
+		}
+
+
+		/// <summary>
+		/// Creates the ElectronPanel and subscribes input-handlers to events.
 		/// </summary>
 		void CreateElectronPanel()
 		{
@@ -294,7 +321,7 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
-		/// Populates the Source and Target dropdowns in the Options panel.
+		/// Populates the Source and Target dropdowns in the options-panel.
 		/// </summary>
 		private void PopulateAppearanceDropdowns()
 		{
@@ -314,28 +341,75 @@ namespace SpecialEffectsViewer
 					skel = skels[i];
 					if (!String.IsNullOrEmpty(skel))
 					{
+						//logger.log();
+						//logger.log(i + "= " + "skel= " + skel);
+						bool felaskel, felabody, andrskel, andrbody;
+
 						if (skel.Contains("?"))
 						{
+							resent = NWN2ResourceManager.Instance.GetEntry(new OEIResRef(GetFela(skel)), 4003); // .gr2
+							if (resent != null && !(resent is MissingResourceEntry)) // check that the female skeleton-file exists
+								felaskel = true;
+							else
+								felaskel = false;
+
+							//logger.log(". . felaskel= " + felaskel);
+
 							resent = NWN2ResourceManager.Instance.GetEntry(new OEIResRef(GetMale(skel)), 4003); // .gr2 - use the Male skel
+							if (resent != null && !(resent is MissingResourceEntry)) // check that the male skeleton-file exists
+								andrskel = true;
+							else
+								andrskel = false;
+
+							//logger.log(". . andrskel= " + andrskel);
 						}
 						else
+						{
 							resent = NWN2ResourceManager.Instance.GetEntry(new OEIResRef(skel), 4003); // .gr2
+							felaskel = false;
+							andrskel = true;
 
-						if (resent != null && !(resent is MissingResourceEntry)) // check that the skeleton-file exists
+							//logger.log(". felaskel= " + felaskel);
+							//logger.log(". andrskel= " + andrskel);
+						}
+
+						if (resent != null && !(resent is MissingResourceEntry)) // check that a skeleton-file exists
 						{
 							body = bodies[i];
 							if (!String.IsNullOrEmpty(body))
 							{
+								//logger.log(i + "= " + "body= " + body);
 								if (body.Contains("?"))
 								{
+									resent = NWN2ResourceManager.Instance.GetEntry(new OEIResRef(GetBody(GetFela(body))), 4000); // .mdb
+									if (resent != null && !(resent is MissingResourceEntry)) // check that the female body-file exists
+										felabody = true;
+									else
+										felabody = false;
+
+									//logger.log(". . felabody= " + felabody);
+
 									resent = NWN2ResourceManager.Instance.GetEntry(new OEIResRef(GetBody(GetMale(body))), 4000); // .mdb - use the Male body
+									if (resent != null && !(resent is MissingResourceEntry)) // check that the male body-file exists
+										andrbody = true;
+									else
+										andrbody = false;
+
+									//logger.log(". . andrbody= " + andrbody);
 								}
 								else
-									resent = NWN2ResourceManager.Instance.GetEntry(new OEIResRef(GetBody(body)), 4000); // .mdb
-
-								if (resent != null && !(resent is MissingResourceEntry)) // check that the body-file exists
 								{
-									it = new apr(labels[i], i);
+									resent = NWN2ResourceManager.Instance.GetEntry(new OEIResRef(GetBody(body)), 4000); // .mdb
+									felabody = false;
+									andrbody = true;
+
+									//logger.log(". felabody= " + felabody);
+									//logger.log(". andrbody= " + andrbody);
+								}
+
+								if (resent != null && !(resent is MissingResourceEntry)) // check that a body-file exists
+								{
+									it = new apr(labels[i], i, (felaskel || felabody), (andrskel || andrbody));
 									co_Source.Items.Add(it);
 									co_Target.Items.Add(it);
 								}
@@ -357,6 +431,16 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
+		/// Gets the female resref.
+		/// </summary>
+		/// <param name="resref"></param>
+		/// <returns></returns>
+		private string GetFela(string resref)
+		{
+			return resref.Replace('?', 'F');
+		}
+
+		/// <summary>
 		/// Gets the body resref.
 		/// </summary>
 		/// <param name="resref"></param>
@@ -364,6 +448,20 @@ namespace SpecialEffectsViewer
 		private string GetBody(string resref)
 		{
 			return resref + "_cl_body01";
+		}
+		#endregion cTor
+
+
+		#region eventhandlers (override)
+		/// <summary>
+		/// Prepares the ElectronPanel.
+		/// </summary>
+		/// <param name="e"></param>
+		/// <remarks>The camera-receiver goes borky if this is done in the cTor.</remarks>
+		protected override void OnLoad(EventArgs e)
+		{
+			LoadPreferences(); // -> finalize initialization
+			InitializeReceiver();
 		}
 
 		/// <summary>
@@ -387,49 +485,46 @@ namespace SpecialEffectsViewer
 			}
 
 			if (SpecialEffectsViewerPreferences.that.OptionsPanel)
-				_itView_Options.PerformClick();
+			{
+				_itView_Options.Checked = true;
+				sc2_Options.Panel1Collapsed = false;
+			}
 
 			sc1_Effects.SplitterDistance = SpecialEffectsViewerPreferences.that.SplitterDistanceEffects;
 			sc2_Options.SplitterDistance = SpecialEffectsViewerPreferences.that.SplitterDistanceOptions;
 			sc3_Events .SplitterDistance = SpecialEffectsViewerPreferences.that.SplitterDistanceEvents;
 
 			if (!SpecialEffectsViewerPreferences.that.StayOnTop)
-				_itView_StayOnTop.PerformClick();
+			{
+				_itView_StayOnTop.Checked = false;
+				Owner = null;
+			}
 
 			if (SpecialEffectsViewerPreferences.that.Maximized)
 				WindowState = FormWindowState.Maximized;
 
-			if (SpecialEffectsViewerPreferences.that.Scene != (int)Scene.doublecharacter)
+			if (SpecialEffectsViewerPreferences.that.Ground)
 			{
-				_itView_DoubleCharacter.Checked = (rb_DoubleCharacter.Checked = false);
+				_itView_Ground.Checked = true;
 
-				switch ((Scene)SpecialEffectsViewerPreferences.that.Scene)
-				{
-					default: // safety.
-						_itView_DoubleCharacter.Checked = (rb_DoubleCharacter.Checked = true);
-						break;
-
-					case Scene.singlecharacter:
-						_itView_SingleCharacter.Checked = (rb_SingleCharacter.Checked = true);
-						break;
-
-					case Scene.placedeffect:
-						_itView_PlacedEffect.Checked = (rb_PlacedEffect.Checked = true);
-						break;
-				}
+				_init = true;
+				cb_Ground.Checked = true;
+				_init = false;
 			}
 
-			_itView_Ground      .Checked = (cb_Ground.Checked = SpecialEffectsViewerPreferences.that.Ground);
 			_itView_ExtendedInfo.Checked = SpecialEffectsViewerPreferences.that.ExtendedInfo;
 
 
-			apr it;
-
+			_init = true;
 			int id = SpecialEffectsViewerPreferences.that.AppearanceSource; // select Source ->
 			for (int i = 0; i != co_Source.Items.Count; ++i)
-			if ((it = co_Source.Items[i] as apr).Id == id)
+			if ((co_Source.Items[i] as apr).Id == id)
 			{
+				var it = co_Source.Items[i] as apr;
 				co_Source.SelectedItem = it; // init
+
+				cb_SourceF.Enabled = (it.Fela &&  it.Andr);
+				cb_SourceF.Checked = (it.Fela && !it.Andr);
 				break;
 			}
 
@@ -437,14 +532,28 @@ namespace SpecialEffectsViewer
 			{
 				SpecialEffectsViewerPreferences.that.AppearanceSource = 0;
 				if (co_Source.Items.Count != 0)
+				{
 					co_Source.SelectedIndex = 0;
+					var it = co_Source.Items[0] as apr;
+					cb_SourceF.Enabled = (it.Fela &&  it.Andr);
+					cb_SourceF.Checked = (it.Fela && !it.Andr);
+				}
+				else
+				{
+					cb_SourceF.Enabled =
+					cb_SourceF.Checked = false;
+				}
 			}
 
 			id = SpecialEffectsViewerPreferences.that.AppearanceTarget; // select Target ->
 			for (int i = 0; i != co_Target.Items.Count; ++i)
-			if ((it = co_Target.Items[i] as apr).Id == id)
+			if ((co_Target.Items[i] as apr).Id == id)
 			{
+				var it = co_Target.Items[i] as apr;
 				co_Target.SelectedItem = it; // init
+
+				cb_TargetF.Enabled = (it.Fela &&  it.Andr);
+				cb_TargetF.Checked = (it.Fela && !it.Andr);
 				break;
 			}
 
@@ -452,27 +561,51 @@ namespace SpecialEffectsViewer
 			{
 				SpecialEffectsViewerPreferences.that.AppearanceTarget = 0;
 				if (co_Target.Items.Count != 0)
+				{
 					co_Target.SelectedIndex = 0;
+					var it = co_Target.Items[0] as apr;
+					cb_TargetF.Enabled = (it.Fela &&  it.Andr);
+					cb_TargetF.Checked = (it.Fela && !it.Andr);
+				}
+				else
+				{
+					cb_TargetF.Enabled =
+					cb_TargetF.Checked = false;
+				}
+			}
+			_init = false;
+
+
+			switch (Scenary)	// LAST select Scene ->
+			{					// instantiate the scene using all sevi vars that were set above.
+				case Scene.doublecharacter:
+					rb_DoubleCharacter.Checked = true;
+					break;
+
+				case Scene.singlecharacter:
+					rb_SingleCharacter.Checked = true;
+					break;
+
+				case Scene.placedeffect:
+					rb_PlacedEffect.Checked = true;
+					break;
 			}
 		}
-		#endregion cTor
 
-
-		#region eventhandlers (override)
 		/// <summary>
-		/// Prepares the ElectronPanel.
+		/// Initializes the camera-receiver.
 		/// </summary>
-		/// <param name="e"></param>
-		/// <remarks>The camera-receiver goes borky if this is done in the cTor.</remarks>
-		protected override void OnLoad(EventArgs e)
+		void InitializeReceiver()
 		{
+			_sefer = _panel.Scene.SpecialEffectsManager;
+
 			if (_panel.Scene.DayNightCycleStages[(int)DayNightStageType.Default] != null)
 			{
 				_panel.Scene.DayNightCycleStages[(int)DayNightStageType.Default].SunMoonDirection = new Vector3(0.00f,-0.67f,-0.67f);
 				_panel.Scene.DayNightCycleStages[(int)DayNightStageType.Default].ShadowIntensity  = 0f;
 			}
 
-			if (cb_Ground.Checked)
+			if (SpecialEffectsViewerPreferences.that.Ground)
 				NWN2NetDisplayManager.Instance.UpdateTerrainSize(_panel.Scene, new Size(4,4)); // note: 4x4 is min area (200x200)
 
 			var receiver = new ModelViewerInputCameraReceiver(); // is null on Load
@@ -489,55 +622,6 @@ namespace SpecialEffectsViewer
 			state.MouseWheelSpeed = 0.8f;
 
 			receiver.UpdateCamera();
-		}
-
-		/// <summary>
-		/// Stores preferences and unsubscribes from toolset-events.
-		/// </summary>
-		/// <param name="e"></param>
-		protected override void OnFormClosing(FormClosingEventArgs e)
-		{
-			_panel.Scene.SpecialEffectsManager.EndUpdating();
-
-			NWN2ToolsetMainForm.ModuleChanged                  -= OnModuleChanged;
-			NWN2CampaignManager.Instance.ActiveCampaignChanged -= OnActiveCampaignChanged;
-
-			if (SceneData != null)
-				SceneData.Close();
-
-			if (WindowState == FormWindowState.Maximized)
-				SpecialEffectsViewerPreferences.that.Maximized = true;
-			else
-				SpecialEffectsViewerPreferences.that.Maximized = false;
-
-			WindowState = FormWindowState.Normal;
-
-			SpecialEffectsViewerPreferences.that.x = DesktopLocation.X;
-			SpecialEffectsViewerPreferences.that.y = DesktopLocation.Y;
-			SpecialEffectsViewerPreferences.that.w = ClientSize.Width;
-			SpecialEffectsViewerPreferences.that.h = ClientSize.Height;
-
-			SpecialEffectsViewerPreferences.that.SplitterDistanceEffects = sc1_Effects.SplitterDistance;
-
-			if (!sc2_Options.Panel1Collapsed)
-				SpecialEffectsViewerPreferences.that.SplitterDistanceEvents = sc3_Events.SplitterDistance;
-
-			StoreCameraState();
-
-
-			_panel.Dispose(); // not sure as usual
-
-			while (Menu.MenuItems.Count != 0) // not sure as usual ->
-			{
-				while (Menu.MenuItems[0].MenuItems.Count != 0)
-					Menu.MenuItems[0].MenuItems[0].Dispose();
-
-				Menu.MenuItems[0].Dispose();
-			}
-			Menu.Dispose();
-
-
-			base.OnFormClosing(e);
 		}
 
 		/// <summary>
@@ -581,12 +665,86 @@ namespace SpecialEffectsViewer
 		/// <remarks>Requires 'KeyPreview' true.</remarks>
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
+			// TODO: universal [Enter] to play effect if valid
+			// unless certain controls are focused
+
 			if (e.KeyData == Keys.Escape)
 			{
 				e.Handled = e.SuppressKeyPress = true;
 				Close();
 			}
 			base.OnKeyDown(e);
+		}
+
+		/// <summary>
+		/// Stores preferences and unsubscribes from toolset-events.
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnFormClosing(FormClosingEventArgs e)
+		{
+			_sefer.EndUpdating();
+//			_sefer.ShutdownGroups();
+//			for (int i = _sefer.Groups.Count - 1; i != -1; --i)
+//				_sefer.Groups.Remove(i);
+			_sefer.Groups.Clear();
+
+
+			NWN2ToolsetMainForm.ModuleChanged                  -= OnModuleChanged;
+			NWN2CampaignManager.Instance.ActiveCampaignChanged -= OnActiveCampaignChanged;
+
+			if (SceneData != null)
+				SceneData.Close();
+
+			if (WindowState == FormWindowState.Maximized)
+				SpecialEffectsViewerPreferences.that.Maximized = true;
+			else
+				SpecialEffectsViewerPreferences.that.Maximized = false;
+
+			WindowState = FormWindowState.Normal;
+
+			SpecialEffectsViewerPreferences.that.x = DesktopLocation.X;
+			SpecialEffectsViewerPreferences.that.y = DesktopLocation.Y;
+			SpecialEffectsViewerPreferences.that.w = ClientSize.Width;
+			SpecialEffectsViewerPreferences.that.h = ClientSize.Height;
+
+			SpecialEffectsViewerPreferences.that.SplitterDistanceEffects = sc1_Effects.SplitterDistance;
+			SpecialEffectsViewerPreferences.that.SplitterDistanceOptions = sc2_Options.SplitterDistance;
+
+			if (!sc2_Options.Panel1Collapsed)
+				SpecialEffectsViewerPreferences.that.SplitterDistanceEvents = sc3_Events.SplitterDistance;
+
+			StoreCameraState();
+
+
+			_panel.Dispose(); // not sure as usual
+
+			while (Menu.MenuItems.Count != 0) // not sure as usual ->
+			{
+				while (Menu.MenuItems[0].MenuItems.Count != 0)
+					   Menu.MenuItems[0].MenuItems[0].Dispose();
+
+				Menu.MenuItems[0].Dispose();
+			}
+			Menu.Dispose();
+
+
+			base.OnFormClosing(e);
+		}
+
+		/// <summary>
+		/// Stores the current camera-state in Preferences.
+		/// </summary>
+		/// <remarks>Ensure that the ElectronPanel (etc) is valid before call.</remarks>
+		void StoreCameraState()
+		{
+			var receiver = (_panel.CameraMovementReceiver as ModelViewerInputCameraReceiver);
+			var state = (receiver.CameraState as ModelViewerInputCameraReceiverState);
+			SpecialEffectsViewerPreferences.that.FocusPhi     = state.FocusPhi;
+			SpecialEffectsViewerPreferences.that.FocusTheta   = state.FocusTheta;
+			SpecialEffectsViewerPreferences.that.Distance     = state.Distance;
+			SpecialEffectsViewerPreferences.that.FocusPoint_x = state.FocusPoint.X;
+			SpecialEffectsViewerPreferences.that.FocusPoint_y = state.FocusPoint.Y;
+			SpecialEffectsViewerPreferences.that.FocusPoint_z = state.FocusPoint.Z;
 		}
 		#endregion eventhandlers (override)
 
@@ -783,21 +941,27 @@ namespace SpecialEffectsViewer
 			if (!_bypassSearchFocus)
 				ActiveControl = tb_Search;
 		}
+
+		/// <summary>
+		/// Clears the scene, the events-list, and the effects-list, then
+		/// unchecks the repo-list so things are ready for the effects in a repo
+		/// to be listed.
+		/// </summary>
+		void ClearEffectsList()
+		{
+			lb_Effects.SelectedIndex = -1;
+			lb_Effects.Items.Clear();
+
+			_itResrepo_all     .Checked =
+			_itResrepo_stock   .Checked =
+			_itResrepo_module  .Checked =
+			_itResrepo_campaign.Checked =
+			_itResrepo_override.Checked = false;
+		}
 		#endregion eventhandlers (resrepo)
 
 
 		#region eventhandlers (events)
-		/// <summary>
-		/// Disables Play and Stop if there is not a selected effect.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void mi_events_popup(object sender, EventArgs e)
-		{
-			_itEvents_Play.Enabled =
-			_itEvents_Stop.Enabled = (lb_Effects.SelectedIndex != -1);
-		}
-
 		/// <summary>
 		/// Plays the currently selected effect.
 		/// </summary>
@@ -805,26 +969,44 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void mi_events_Play(object sender, EventArgs e)
 		{
-			_panel.Scene.SpecialEffectsManager.EndUpdating();
+			_sefer.EndUpdating();
 
 			if (lb_Effects.SelectedIndex != -1)
 			{
-				if (rb_DoubleCharacter.Checked)
+				switch (Scenary)
 				{
-					if (CanPlayEvents())
-					{
-						// clear the netdisplay
-						// - recreate the scene in case a solo-event was played previously.
-						// - the toolset code is not as cooperative as I'd like ...
-						ClearScene();
+					case Scene.doublecharacter:
+						if (_isSolo)
+						{
+							_isSolo = false;
+							ApplySefgroup(SpecialEffect.Altgroup);
+						}
 
-						_altgroup = null;
-						mi_events_Event(null, EventArgs.Empty);
-					}
+						if (AnyEventEnabled())
+							goto case Scene.singlecharacter;
+
+						break;
+
+					case Scene.singlecharacter:
+					case Scene.placedeffect:
+						_sefer.BeginUpdating();
+						break;
 				}
-				else
-					_panel.Scene.SpecialEffectsManager.BeginUpdating();
 			}
+		}
+
+		/// <summary>
+		/// Checks if any event is currently checked in the Events menu for
+		/// DoubleCharacter active.
+		/// </summary>
+		/// <returns>true if any event is checked</returns>
+		bool AnyEventEnabled()
+		{
+			for (int i = ItemsReserved; i != _itEvents.MenuItems.Count; ++i)
+			if (_itEvents.MenuItems[i].Checked)
+				return true;
+
+			return false;
 		}
 
 		/// <summary>
@@ -834,83 +1016,67 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void mi_events_Stop(object sender, EventArgs e)
 		{
-			_panel.Scene.SpecialEffectsManager.EndUpdating();
+			_sefer.EndUpdating();
 		}
 
+
 		/// <summary>
-		/// Alters the current effect in accord with the Events menu and then
-		/// plays it.
+		/// Alters the current effect in accord with the Events menu.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
+		/// <remarks>Used only by DoubleCharacter scene.</remarks>
 		void mi_events_Event(object sender, EventArgs e)
 		{
-			if (lb_Effects.SelectedIndex != -1)
+			_sefer.EndUpdating();
+
+			var it = sender as MenuItem;
+
+			// set the it(s)' check
+			if (it == _itEvents_Enable)							// enable all events
 			{
-				var it = sender as MenuItem;
+				_isSolo = false;
 
-				bool isDisable = false;
-				bool isSolo    = false;
-
-				if (sender != null) // if NOT cb_Ground_click() ie. is a real Events click ->
-				{
-					// set the items' check
-					if (it == _itEvents_Enable) // enable all events
-					{
-						for (int i = ItemsReserved; i != _itEvents.MenuItems.Count; ++i)
-							_itEvents.MenuItems[i].Checked = true;
-					}
-					else if (it == _itEvents_Disable) // disable all events
-					{
-						isDisable = true;
-						for (int i = ItemsReserved; i != _itEvents.MenuItems.Count; ++i)
-							_itEvents.MenuItems[i].Checked = false;
-					}
-					else if (!(isSolo = (ModifierKeys == Keys.Shift)))
-						it.Checked = !it.Checked;
-
-					// clear the netdisplay
-					// - don't bother with this for a Ground-toggle since the ElectronPanel will be recreated for that.
-					ClearScene();
-
-					_altgroup = null;
-				}
-
-				if (_altgroup == null) // create or recreate '_altgroup' ->
-				{
-					// alter the sefgroup
-					var effect_alt = CommonUtils.SerializationClone(_effect) as IResourceEntry;
-
-					_altgroup = new SEFGroup();
-
-					using (Stream bin = effect_alt.GetStream(false))
-						_altgroup.XmlUnserialize(bin);
-					effect_alt.Release();
-
-					if (!isSolo)
-					{
-						for (int i = _altgroup.Events.Count - 1; i != -1; --i)
-						{
-							if (!_itEvents.MenuItems[i + ItemsReserved].Checked)
-								_altgroup.Events.RemoveAt(i);
-						}
-					}
-					else
-					{
-						for (int i = _altgroup.Events.Count - 1; i != -1; --i)
-						{
-							if (i != (int)it.Tag)
-								_altgroup.Events.RemoveAt(i);
-						}
-					}
-				}
-
-				// play it
-				LoadSefgroup(_altgroup);
-
-				if (!isDisable)
-					_panel.Scene.SpecialEffectsManager.BeginUpdating();
+				for (int i = ItemsReserved; i != _itEvents.MenuItems.Count; ++i)
+					_itEvents.MenuItems[i].Checked = true;
 			}
+			else if (it == _itEvents_Disable)					// disable all events
+			{
+				_isSolo = false;
+
+				for (int i = ItemsReserved; i != _itEvents.MenuItems.Count; ++i)
+					_itEvents.MenuItems[i].Checked = false;
+			}
+			else if (!(_isSolo = (ModifierKeys == Keys.Shift)))	// else deter solo
+			{
+				it.Checked = !it.Checked;
+			}
+
+
+			SpecialEffect.CreateAltgroup();	// alternate sefgroup could be needed later so create
+											// and prep it - TODO: refactor this events-routine.
+
+			for (int i = SpecialEffect.Altgroup.Events.Count - 1; i != -1; --i)
+			if (!_itEvents.MenuItems[i + ItemsReserved].Checked)
+				SpecialEffect.Altgroup.Events.RemoveAt(i);
+
+
+			SEFGroup sefgroup;
+			if (_isSolo)
+			{
+				SpecialEffect.CreateSolgroup();
+				sefgroup = SpecialEffect.Solgroup;
+
+				for (int i = sefgroup.Events.Count - 1; i != -1; --i)
+				if (i != (int)it.Tag)
+					sefgroup.Events.RemoveAt(i);
+			}
+			else
+				sefgroup = SpecialEffect.Altgroup;
+
+			ApplySefgroup(sefgroup);
+
+			if (_isSolo) _sefer.BeginUpdating();
 		}
 		#endregion eventhandlers (events)
 
@@ -924,10 +1090,7 @@ namespace SpecialEffectsViewer
 		void mi_view_DoubleCharacter(object sender, EventArgs e)
 		{
 			if (!_itView_DoubleCharacter.Checked)
-			{
 				rb_DoubleCharacter.Checked = true;
-				rb_click(null, EventArgs.Empty);
-			}
 		}
 
 		/// <summary>
@@ -938,10 +1101,7 @@ namespace SpecialEffectsViewer
 		void mi_view_SingleCharacter(object sender, EventArgs e)
 		{
 			if (!_itView_SingleCharacter.Checked)
-			{
 				rb_SingleCharacter.Checked = true;
-				rb_click(null, EventArgs.Empty);
-			}
 		}
 
 		/// <summary>
@@ -952,10 +1112,7 @@ namespace SpecialEffectsViewer
 		void mi_view_PlacedEffect(object sender, EventArgs e)
 		{
 			if (!_itView_PlacedEffect.Checked)
-			{
 				rb_PlacedEffect.Checked = true;
-				rb_click(null, EventArgs.Empty);
-			}
 		}
 
 		/// <summary>
@@ -966,7 +1123,6 @@ namespace SpecialEffectsViewer
 		void mi_view_Ground(object sender, EventArgs e)
 		{
 			cb_Ground.Checked = !cb_Ground.Checked;
-			cb_Ground_click(null, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -996,7 +1152,6 @@ namespace SpecialEffectsViewer
 			SpecialEffectsViewerPreferences.that.ExtendedInfo =
 			(_itView_ExtendedInfo.Checked = !_itView_ExtendedInfo.Checked);
 
-			CreateBasicEvents();
 			PrintEffectData();
 		}
 
@@ -1020,6 +1175,8 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
+		/// <remarks>The plugin stays on top of the toolset only when the
+		/// toolset is given ownership of the plugin.</remarks>
 		void mi_view_StayOnTop(object sender, EventArgs e)
 		{
 			if (SpecialEffectsViewerPreferences.that.StayOnTop =
@@ -1075,35 +1232,159 @@ namespace SpecialEffectsViewer
 
 		#region eventhandlers (controls)
 		/// <summary>
-		/// This is NOT "selectedindexchanged" - it fires if the current
-		/// selection is (re)clicked also.
+		/// Tracks the currently selected effects-list id.
+		/// </summary>
+		int _efid = -1;
+
+		/// <summary>
+		/// Creates the selected effect and plays it.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
+		/// <remarks>This is NOT "selectedindexchanged" - it fires if the
+		/// current selection is (re)clicked also. So use <see cref="_efid"/> to
+		/// track the currently selected effects-list id</remarks>
 		void lb_Effects_selectedindexchanged(object sender, EventArgs e)
 		{
-			if (lb_Effects.SelectedIndex != -1)
+			_sefer.EndUpdating();
+
+			if (lb_Effects.SelectedIndex != _efid)
 			{
-				_effect = lb_Effects.SelectedItem as IResourceEntry;
-				_sefgroup = new SEFGroup();
+				_efid = lb_Effects.SelectedIndex;
 
-				using (Stream bin = _effect.GetStream(false))
-					_sefgroup.XmlUnserialize(bin);
-				_effect.Release();
+				CreateBasicEvents();
 
-				ApplyEffect();
+				if (lb_Effects.SelectedIndex != -1)
+				{
+					EnableControls(true);
 
-				Text = TITLE + " - " + _effect.Repository.Name;
+					SpecialEffect.CreateSefgroup(lb_Effects.SelectedItem as IResourceEntry);
+
+					switch (Scenary)
+					{
+						case Scene.doublecharacter:	// the scene is ready - just apply and play a SEFGroup
+							CreateDoubleCharacterEvents();
+							ApplySefgroup(SpecialEffect.Sefgroup);
+							break;
+
+						case Scene.singlecharacter:	// creature needs to be instantiated w/ an effect
+							CreateSingleCharacter();
+							break;
+
+						case Scene.placedeffect:	// placedeffectobject needs to be instantiated w/ an effect
+							CreatePlacedObject();
+							break;
+					}
+					_sefer.BeginUpdating();
+				}
+				else
+				{
+					EnableControls(false);
+					SpecialEffect.ClearEffect();
+				}
+
+				PrintEffectData();
 			}
-			else
+			else if (lb_Effects.SelectedIndex != -1)
 			{
-				Text = TITLE;
-				_effect = null; _sefgroup = null; _altgroup = null;
-				tb_SefData.Text = tb_EventData.Text = String.Empty;
+				_sefer.BeginUpdating();
 			}
 
 			if (SceneData != null)
 				SceneData.ClearDatatext();
+		}
+
+		/// <summary>
+		/// Dis/enables play, stop, copy controls.
+		/// </summary>
+		/// <param name="enabled"></param>
+		void EnableControls(bool enabled)
+		{
+			_itEvents_Play.Enabled =
+			_itEvents_Stop.Enabled =
+
+			bu_Play       .Enabled =
+			bu_Stop       .Enabled =
+			bu_Copy       .Enabled = enabled;
+		}
+
+
+		/// <summary>
+		/// Populates extended its on the Events menu to toggle the events of
+		/// the current SEFGroup for a DoubleCharacter scene only.
+		/// </summary>
+		void CreateDoubleCharacterEvents()
+		{
+			_itEvents.MenuItems.Add("-");
+
+			_itEvents_Enable  = _itEvents.MenuItems.Add("&Enable all events",  mi_events_Event);
+			_itEvents_Disable = _itEvents.MenuItems.Add("&Disable all events", mi_events_Event);
+
+			_itEvents_Enable .Shortcut = Shortcut.F7;
+			_itEvents_Disable.Shortcut = Shortcut.F8;
+
+			_itEvents.MenuItems.Add("-");
+
+			for (int i = 0; i != SpecialEffect.Sefgroup.Events.Count; ++i)
+			{
+				var it = _itEvents.MenuItems.Add("event " + i, mi_events_Event);
+				it.Tag = i;
+				it.Checked = true;
+			}
+		}
+
+		/// <summary>
+		/// Prints the currently loaded effect-events to the Options panel. Also
+		/// adds items to the Events menu iff scene is DoubleCharacter.
+		/// </summary>
+		void PrintEffectData()
+		{
+			SetTitle();
+
+			if (SpecialEffect.Sefgroup != null)
+			{
+				var sb = new StringBuilder();
+
+				sb.Append("[" + SpecialEffect.Sefgroup.Name + "]"                      + util.L);
+				sb.Append("pos - " + util.Get3dString(SpecialEffect.Sefgroup.Position) + util.L);
+//				sb.Append("1st - " + SpecialEffect.Sefgroup.FirstObject                + util.L);
+//				sb.Append("2nd - " + SpecialEffect.Sefgroup.SecondObject               + util.L);
+				sb.Append("fog - " + SpecialEffect.Sefgroup.FogMultiplier              + util.L);
+				sb.Append("dur - " + SpecialEffect.Sefgroup.HasMaximumDuration         + util.L);
+				sb.Append("dur - " + SpecialEffect.Sefgroup.MaximumDuration            + util.L);
+				sb.Append(SpecialEffect.Sefgroup.SpecialTargetPosition);
+
+				tb_SefData.Text = sb.ToString();
+
+				sb.Length = 0;
+				for (int i = 0; i != SpecialEffect.Sefgroup.Events.Count; ++i)
+				{
+					// NOTE: a line is 13 px high (+5 pad total)
+					if (sb.Length != 0) sb.Append(util.L + util.L);
+
+					sb.Append(EventData.GetEventData(SpecialEffect.Sefgroup.Events[i], i, _itView_ExtendedInfo.Checked));
+				}
+				tb_EventData.Text = sb.ToString();
+			}
+			else
+			{
+				tb_SefData  .Text =
+				tb_EventData.Text = String.Empty;
+			}
+		}
+
+		/// <summary>
+		/// Sets text on the titlebar.
+		/// </summary>
+		void SetTitle()
+		{
+			string post;
+			if (SpecialEffect.Resent != null)
+				post = " - " + SpecialEffect.Resent.Repository.Name;
+			else
+				post = String.Empty;
+
+			Text = TITLE + post;
 		}
 
 		/// <summary>
@@ -1121,32 +1402,55 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
-		/// Sets the Scene-preference and reloads the scene itself.
+		/// Creates objects in the NetDisplay according to the current
+		/// scene-configuration.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void rb_click(object sender, EventArgs e)
+		/// <remarks>Although PlacedEffectObjects are invisible wire one up so
+		/// it's ready to play.</remarks>
+		void rb_Scene_checkedchanged(object sender, EventArgs e)
 		{
+			if (_sefer != null) // NetDisplay is null on launch.
+				_sefer.EndUpdating();
+
+			CreateBasicEvents();
+
 			if (rb_DoubleCharacter.Checked)
 			{
-				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.doublecharacter;
 				SetSceneType(Scene.doublecharacter);
+				CreateDoubleCharacter();
+
+				if (SpecialEffect.Sefgroup != null) // ie. an effect is currently selected in the effects-list
+					CreateDoubleCharacterEvents();
 			}
 			else if (rb_SingleCharacter.Checked)
 			{
-				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.singlecharacter;
 				SetSceneType(Scene.singlecharacter);
+				CreateSingleCharacter();
 			}
-			else //if (rb_PlacedEffect.Checked)
+			else // rb_PlacedEffect.Checked
 			{
-				SpecialEffectsViewerPreferences.that.Scene = (int)Scene.placedeffect;
 				SetSceneType(Scene.placedeffect);
+				CreatePlacedObject();
 			}
-
-			ApplyEffect();
 
 			if (SceneData != null)
 				SceneData.ClearDatatext();
+		}
+
+		/// <summary>
+		/// Toggles scene-checks on the View menu to keep them synchronized with
+		/// the radio-buttons on the options-panel.
+		/// </summary>
+		/// <param name="scene"></param>
+		void SetSceneType(Scene scene)
+		{
+			SpecialEffectsViewerPreferences.that.Scene = (int)scene;
+
+			_itView_DoubleCharacter.Checked = (scene == Scene.doublecharacter);
+			_itView_SingleCharacter.Checked = (scene == Scene.singlecharacter);
+			_itView_PlacedEffect   .Checked = (scene == Scene.placedeffect);
 		}
 
 		/// <summary>
@@ -1156,14 +1460,61 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void co_Appearance_selectedindexchanged(object sender, EventArgs e)
 		{
-			var co = sender as ComboBox;
-			if (co == co_Source)
+			if (!_init) // do not fire by LoadPreferences()
 			{
-				SpecialEffectsViewerPreferences.that.AppearanceSource = (co_Source.SelectedItem as apr).Id;
+				_init = true; // do not double-fire CreateScene()
+
+				var co = sender as ComboBox;
+				if (co == co_Source)
+				{
+					var it = co_Source.SelectedItem as apr;
+					SpecialEffectsViewerPreferences.that.AppearanceSource = it.Id;
+
+					cb_SourceF.Enabled = (it.Fela && it.Andr);
+					cb_SourceF.Checked = (it.Fela && (cb_SourceF.Checked || !it.Andr));
+				}
+				else // co == co_Target
+				{
+					var it = co_Target.SelectedItem as apr;
+					SpecialEffectsViewerPreferences.that.AppearanceTarget = it.Id;
+
+					cb_TargetF.Enabled = (it.Fela && it.Andr);
+					cb_TargetF.Checked = (it.Fela && (cb_TargetF.Checked || !it.Andr));
+				}
+				_init = false;
+
+				CreateScene_appearancechanged(co == co_Source);
 			}
-			else //if (co == co_Target)
+		}
+
+		/// <summary>
+		/// Handles the checkchanged event for the Fela checkboxes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void cb_Fela_checkedchanged(object sender, EventArgs e)
+		{
+			if (!_init) CreateScene_appearancechanged(sender as CheckBox == cb_SourceF);
+		}
+
+		/// <summary>
+		/// Instantiates a scene but does not play any effect yet.
+		/// </summary>
+		/// <param name="source">true if the Source appearance or gender changed</param>
+		void CreateScene_appearancechanged(bool source)
+		{
+			_sefer.EndUpdating();
+
+			switch (Scenary)
 			{
-				SpecialEffectsViewerPreferences.that.AppearanceTarget = (co_Target.SelectedItem as apr).Id;
+				case Scene.doublecharacter:
+					CreateDoubleCharacter();
+					break;
+
+				case Scene.singlecharacter:
+					if (source)
+						CreateSingleCharacter();
+					break;
 			}
 		}
 
@@ -1173,29 +1524,38 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void cb_Ground_click(object sender, EventArgs e)
+		/// <remarks>Although PlacedEffectObjects are invisible wire one up so
+		/// it's ready to play.</remarks>
+		void cb_Ground_checkedchanged(object sender, EventArgs e)
 		{
-			SpecialEffectsViewerPreferences.that.Ground =
-			(_itView_Ground.Checked = cb_Ground.Checked);
-
-			StoreCameraState();
-
-			_panel.Dispose();
-			CreateElectronPanel();
-			OnLoad(EventArgs.Empty);
-
-			if (rb_DoubleCharacter.Checked)
+			if (!_init)
 			{
-				mi_events_Event(null, EventArgs.Empty);
-			}
-			else
-			{
-				_altgroup = null;
-				ApplyEffect();
-			}
+				SpecialEffectsViewerPreferences.that.Ground =
+				_itView_Ground.Checked = cb_Ground.Checked;
 
-			if (SceneData != null)
-				SceneData.ClearDatatext();
+				_sefer.EndUpdating();
+
+				StoreCameraState();
+
+				_panel.Dispose();
+				CreateElectronPanel();
+				InitializeReceiver();
+
+				switch (Scenary)
+				{
+					case Scene.doublecharacter:
+						CreateDoubleCharacter();
+						break;
+
+					case Scene.singlecharacter:
+						CreateSingleCharacter();
+						break;
+
+					case Scene.placedeffect:
+						CreatePlacedObject();
+						break;
+				}
+			}
 		}
 
 		/// <summary>
@@ -1236,12 +1596,15 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void cb_Filter_click(object sender, EventArgs e)
+		void cb_Filter_checkedchanged(object sender, EventArgs e)
 		{
 			if (cb_Filter.Checked)
 			{
-				if (String.IsNullOrEmpty(_filtr = tb_Search.Text.ToLower()))
-					cb_Filter.Checked = false;
+				if ((_filtr = tb_Search.Text.ToLower()) == String.Empty)
+				{
+					cb_Filter.Checked = false;	// recurse
+					return;						// but don't run twice.
+				}
 			}
 			else
 				_filtr = String.Empty;
@@ -1267,7 +1630,7 @@ namespace SpecialEffectsViewer
 				_itResrepo_campaign.Checked = false;
 				mi_resrepo_Campaign(null, EventArgs.Empty);
 			}
-			else //if (_itFxList_override.Checked)
+			else // _itFxList_override.Checked
 			{
 				_itResrepo_override.Checked = false;
 				mi_resrepo_Override(null, EventArgs.Empty);
@@ -1280,13 +1643,13 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
+		/// <remarks>Spacebar also toggles the filter on/off.</remarks>
 		void cb_Filter_keydown(object sender, KeyEventArgs e)
 		{
 			if (e.KeyData == Keys.Enter)
 			{
 				e.Handled = e.SuppressKeyPress = true;
 				cb_Filter.Checked = !cb_Filter.Checked;
-				cb_Filter_click(null, EventArgs.Empty);
 			}
 		}
 
@@ -1378,6 +1741,7 @@ namespace SpecialEffectsViewer
 			}
 		}
 
+
 		/// <summary>
 		/// Copies the currently selected special-effect string to the clipboard.
 		/// </summary>
@@ -1392,70 +1756,20 @@ namespace SpecialEffectsViewer
 				Clipboard.SetText(lb_Effects.SelectedItem.ToString());
 			}
 		}
-
-		/// <summary>
-		/// Clears the ElectronPanel scene and deselects the current effect.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void bu_Clear_click(object sender, EventArgs e)
-		{
-			ClearScene();
-			CreateBasicEvents();
-
-			lb_Effects.SelectedIndex = -1;
-		}
-
-		/// <summary>
-		/// Closes the plugin.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void bu_Close_click(object sender, EventArgs e)
-		{
-			Close();
-		}
-
-		/// <summary>
-		/// Invalidates the options-panel when the splitter is moved.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void sc2_Options_splittermoved(object sender, SplitterEventArgs e)
-		{
-			tc_Options.Invalidate();
-		}
 		#endregion eventhandlers (controls)
 
 
 		#region Methods
 		/// <summary>
-		/// Clears the scene, the events-list, and the effects-list, then
-		/// unchecks the repo-list so things are ready for the effects in a repo
-		/// to be listed.
-		/// </summary>
-		void ClearEffectsList()
-		{
-			bu_Clear_click(null, EventArgs.Empty);
-
-			lb_Effects.Items.Clear();
-
-			_itResrepo_all     .Checked =
-			_itResrepo_stock   .Checked =
-			_itResrepo_module  .Checked =
-			_itResrepo_campaign.Checked =
-			_itResrepo_override.Checked = false;
-		}
-
-		/// <summary>
-		/// Clears the scene.
+		/// Clears the scene. Stops playing the effect, clears the SEFGroups,
+		/// and removes all objects from the NetDisplay scene.
 		/// </summary>
 		void ClearScene()
 		{
-			if (_panel.Scene != null) // netdisplaywindow is null on launch
+			if (_sefer != null) // NetDisplay is null on launch
 			{
-				_panel.Scene.SpecialEffectsManager.EndUpdating();
-				_panel.Scene.SpecialEffectsManager.Groups.Clear();
+				_sefer.EndUpdating();
+				_sefer.Groups.Clear();
 
 				for (int i = _panel.Scene.Objects.Count - 1; i != -1; --i)
 					NWN2NetDisplayManager.Instance.RemoveObject(_panel.Scene.Objects[i]);
@@ -1463,110 +1777,16 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
-		/// Clears the events-list and re-creates Play and Stop.
+		/// Instantiates double-character NetDisplayObjects.
 		/// </summary>
-		void CreateBasicEvents()
-		{
-			_itEvents.MenuItems.Clear();
-
-			_itEvents_Play = _itEvents.MenuItems.Add("&Play", mi_events_Play);
-			_itEvents_Stop = _itEvents.MenuItems.Add("&Stop", mi_events_Stop);
-
-			_itEvents_Play.Shortcut = Shortcut.F5;
-			_itEvents_Stop.Shortcut = Shortcut.F6;
-		}
-
-		/// <summary>
-		/// Checks if any event is currently checked in the Events menu for
-		/// DoubleCharacter active.
-		/// </summary>
-		/// <returns>true if any event is checked</returns>
-		bool CanPlayEvents()
-		{
-			for (int i = ItemsReserved; i != _itEvents.MenuItems.Count; ++i)
-			{
-				if (_itEvents.MenuItems[i].Checked)
-					return true;
-			}
-			return false;
-		}
-
-		/// <summary>
-		/// Toggles scene-type checkboxes on the View menu and keeps them
-		/// synchronized.
-		/// </summary>
-		/// <param name="scene"></param>
-		void SetSceneType(Scene scene)
-		{
-			_itView_DoubleCharacter.Checked = (scene == Scene.doublecharacter);
-			_itView_SingleCharacter.Checked = (scene == Scene.singlecharacter);
-			_itView_PlacedEffect   .Checked = (scene == Scene.placedeffect);
-		}
-
-		/// <summary>
-		/// Clears the scene and the Events menu then instantiates objects and
-		/// applies the current effect.
-		/// </summary>
-		void ApplyEffect()
+		/// <remarks>Idiots can stand around looking dorky. Only
+		/// double-characters play a SEFGroup. A single-character could play a
+		/// sefgroup I suppose, but prefer to use single-character to apply to
+		/// 'AppearanceSEF'.</remarks>
+		void CreateDoubleCharacter()
 		{
 			ClearScene();
-			CreateBasicEvents();
 
-			if (lb_Effects.SelectedIndex != -1)
-			{
-				if (rb_PlacedEffect.Checked)
-				{
-					var iPlacedEffect = new NWN2PlacedEffectInstance();
-					iPlacedEffect.Active = true;
-					iPlacedEffect.Effect = _effect;
-
-					NetDisplayObject oPlacedEffect = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iPlacedEffect, _panel.Scene, 0);
-
-					oPlacedEffect.Position = new Vector3(100f,100f,0f);
-					NWN2NetDisplayManager.Instance.MoveObjects(new NetDisplayObjectCollection(oPlacedEffect),
-															   ChangeType.Absolute,
-															   false,
-															   oPlacedEffect.Position);
-				}
-				else if (rb_SingleCharacter.Checked)
-				{
-					var iIdiot = new NWN2CreatureInstance();
-
-					int id;
-					if (co_Source.SelectedIndex != -1)
-						id = (co_Source.SelectedItem as apr).Id;
-					else
-						id = 4; // half-elf character
-
-					iIdiot.AppearanceType.Row = id;
-					iIdiot.AppearanceSEF = _effect;
-
-					NetDisplayObject oIdiot = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot, _panel.Scene, 0);
-
-					oIdiot.Position = new Vector3(100f,100f,0f);
-					NWN2NetDisplayManager.Instance.MoveObjects(new NetDisplayObjectCollection(oIdiot),
-															   ChangeType.Absolute,
-															   false,
-															   oIdiot.Position);
-				}
-				else //if (rb_DoubleCharacter.Checked)
-					LoadSefgroup(_sefgroup);
-
-				PrintEffectData();
-
-				if (!rb_DoubleCharacter.Checked || CanPlayEvents())
-					_panel.Scene.SpecialEffectsManager.BeginUpdating();
-			}
-		}
-
-		/// <summary>
-		/// Loads a SEFGroup. Only double-characters play a sefgroup. A single-
-		/// character could play a sefgroup I suppose, but prefer to use single-
-		/// character to apply 'AppearanceSEF'.
-		/// </summary>
-		/// <param name="sefgroup"></param>
-		void LoadSefgroup(SEFGroup sefgroup)
-		{
 			var iIdiot1 = new NWN2CreatureInstance();
 			var iIdiot2 = new NWN2CreatureInstance();
 
@@ -1579,6 +1799,11 @@ namespace SpecialEffectsViewer
 			iIdiot1.AppearanceType.Row = id;
 			iIdiot1.AppearanceSEF = null;
 
+			if (cb_SourceF.Checked)
+				iIdiot1.Gender = CreatureGender.Female;
+			else
+				iIdiot1.Gender = CreatureGender.Male;
+
 			if (co_Target.SelectedIndex != -1)
 				id = (co_Target.SelectedItem as apr).Id;
 			else
@@ -1587,135 +1812,104 @@ namespace SpecialEffectsViewer
 			iIdiot2.AppearanceType.Row = id;
 			iIdiot2.AppearanceSEF = null;
 
-			NetDisplayObject oIdiot1 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot1, _panel.Scene, 0);
-			NetDisplayObject oIdiot2 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot2, _panel.Scene, 0);
+			if (cb_TargetF.Checked)
+				iIdiot2.Gender = CreatureGender.Female;
+			else
+				iIdiot2.Gender = CreatureGender.Male;
 
-			oIdiot1.Position = new Vector3(103f,100f,0f);
-			oIdiot2.Position = new Vector3( 97f,100f,0f);
-			oIdiot1.Orientation = RHQuaternion.RotationZ(-util.pi_2);
-			oIdiot2.Orientation = RHQuaternion.RotationZ( util.pi_2);
+			// the Idiots are class-vars so that a SEFGroup can be applied later
+			_oIdiot1 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot1, _panel.Scene, 0);
+			_oIdiot2 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot2, _panel.Scene, 0);
 
-			var col1 = new NetDisplayObjectCollection(oIdiot1);
-			var col2 = new NetDisplayObjectCollection(oIdiot2);
-			NWN2NetDisplayManager.Instance.MoveObjects(  col1, ChangeType.Absolute, false, oIdiot1.Position);
-			NWN2NetDisplayManager.Instance.MoveObjects(  col2, ChangeType.Absolute, false, oIdiot2.Position);
-			NWN2NetDisplayManager.Instance.RotateObjects(col1, ChangeType.Absolute,        oIdiot1.Orientation);
-			NWN2NetDisplayManager.Instance.RotateObjects(col2, ChangeType.Absolute,        oIdiot2.Orientation);
+			_oIdiot1.Position = new Vector3(103f,100f,0f);
+			_oIdiot2.Position = new Vector3( 97f,100f,0f);
+			_oIdiot1.Orientation = RHQuaternion.RotationZ(-util.pi_2);
+			_oIdiot2.Orientation = RHQuaternion.RotationZ( util.pi_2);
 
-			sefgroup.FirstObject  = oIdiot1;
-			sefgroup.SecondObject = oIdiot2;
-			_panel.Scene.SpecialEffectsManager.Groups.Add(sefgroup);
+			var col1 = new NetDisplayObjectCollection(_oIdiot1);
+			var col2 = new NetDisplayObjectCollection(_oIdiot2);
+			NWN2NetDisplayManager.Instance.MoveObjects(  col1, ChangeType.Absolute, false, _oIdiot1.Position);
+			NWN2NetDisplayManager.Instance.MoveObjects(  col2, ChangeType.Absolute, false, _oIdiot2.Position);
+			NWN2NetDisplayManager.Instance.RotateObjects(col1, ChangeType.Absolute,        _oIdiot1.Orientation);
+			NWN2NetDisplayManager.Instance.RotateObjects(col2, ChangeType.Absolute,        _oIdiot2.Orientation);
+
+			ApplySefgroup(SpecialEffect.Sefgroup);
 		}
 
 		/// <summary>
-		/// Prints the currently loaded effect-events to the Options panel. Also
-		/// adds items to the Events menu iff scene is DoubleCharacter.
+		/// Adds a specified SEFGroup to the SpecialEffectsManager for a
+		/// DoubleCharacter scene only.
 		/// </summary>
-		void PrintEffectData()
+		/// <param name="sefgroup"></param>
+		void ApplySefgroup(SEFGroup sefgroup)
 		{
-			if (_sefgroup != null)
+			if (_sefer != null) // NetDisplay is null on launch.
 			{
-				if (rb_DoubleCharacter.Checked)
+				_sefer.Groups.Clear();
+
+				if (sefgroup != null)
 				{
-					_itEvents.MenuItems.Add("-");
+					sefgroup.FirstObject  = _oIdiot1;
+					sefgroup.SecondObject = _oIdiot2;
 
-					_itEvents_Enable  = _itEvents.MenuItems.Add("&Enable all events",  mi_events_Event);
-					_itEvents_Disable = _itEvents.MenuItems.Add("&Disable all events", mi_events_Event);
-
-					_itEvents_Enable .Shortcut = Shortcut.F7;
-					_itEvents_Disable.Shortcut = Shortcut.F8;
-
-					_itEvents.MenuItems.Add("-");
+					_sefer.Groups.Add(sefgroup);
 				}
-
-				var sb = new StringBuilder();
-
-				sb.Append("[" + _sefgroup.Name + "]"                      + util.L);
-				sb.Append("pos - " + util.Get3dString(_sefgroup.Position) + util.L);
-//				sb.Append("1st - " + _sefgroup.FirstObject                + util.L);
-//				sb.Append("2nd - " + _sefgroup.SecondObject               + util.L);
-				sb.Append("fog - " + _sefgroup.FogMultiplier              + util.L);
-				sb.Append("dur - " + _sefgroup.HasMaximumDuration         + util.L);
-				sb.Append("dur - " + _sefgroup.MaximumDuration            + util.L);
-				sb.Append(_sefgroup.SpecialTargetPosition);
-
-				tb_SefData.Text = sb.ToString();
-//				int width = TextRenderer.MeasureText(tb_SefData.Text, Font).Width + 4;
-
-				sb.Length = 0;
-				for (int i = 0; i != _sefgroup.Events.Count; ++i)
-				{
-					// NOTE: a line is 13 px high (+5 pad total)
-					if (sb.Length != 0) sb.Append(util.L + util.L);
-
-					sb.Append(EventData.GetEventData(_sefgroup.Events[i], i, _itView_ExtendedInfo.Checked));
-
-					if (rb_DoubleCharacter.Checked)
-					{
-						var it = _itEvents.MenuItems.Add("event " + i, mi_events_Event);
-						it.Tag = i;
-						it.Checked = true;
-					}
-				}
-				tb_EventData.Text = sb.ToString();
-
-//				width = Math.Max(width, TextRenderer.MeasureText(tb_EventData.Text, Font).Width + 4
-//										+ SystemInformation.VerticalScrollBarWidth);
-//				sc2_Options.SplitterDistance = Math.Max(width, WidthOptions);
 			}
 		}
 
 		/// <summary>
-		/// Stores the current camera-state in Preferences.
+		/// Creates a single-character NetDisplayObject w/ effect.
 		/// </summary>
-		/// <remarks>Ensure that the ElectronPanel (etc) is valid before call.</remarks>
-		void StoreCameraState()
+		/// <remarks>Idiot must be recreated from scratch to apply an effect.</remarks>
+		void CreateSingleCharacter()
 		{
-			var receiver = (_panel.CameraMovementReceiver as ModelViewerInputCameraReceiver);
-			var state = (receiver.CameraState as ModelViewerInputCameraReceiverState);
-			SpecialEffectsViewerPreferences.that.FocusPhi     = state.FocusPhi;
-			SpecialEffectsViewerPreferences.that.FocusTheta   = state.FocusTheta;
-			SpecialEffectsViewerPreferences.that.Distance     = state.Distance;
-			SpecialEffectsViewerPreferences.that.FocusPoint_x = state.FocusPoint.X;
-			SpecialEffectsViewerPreferences.that.FocusPoint_y = state.FocusPoint.Y;
-			SpecialEffectsViewerPreferences.that.FocusPoint_z = state.FocusPoint.Z;
+			ClearScene();
+
+			var iIdiot = new NWN2CreatureInstance();
+
+			int id;
+			if (co_Source.SelectedIndex != -1)
+				id = (co_Source.SelectedItem as apr).Id;
+			else
+				id = 4; // half-elf character
+
+			iIdiot.AppearanceType.Row = id;
+			iIdiot.AppearanceSEF = SpecialEffect.Resent;
+
+			if (cb_SourceF.Checked)
+				iIdiot.Gender = CreatureGender.Female;
+			else
+				iIdiot.Gender = CreatureGender.Male;
+
+			NetDisplayObject oIdiot = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot, _panel.Scene, 0);
+
+			oIdiot.Position = new Vector3(100f,100f,0f);
+			NWN2NetDisplayManager.Instance.MoveObjects(new NetDisplayObjectCollection(oIdiot),
+													   ChangeType.Absolute,
+													   false,
+													   oIdiot.Position);
 		}
 
 		/// <summary>
-		/// Gets the height of the splitcontainer that contains the event-info.
+		/// Creates a placed-effect NetDisplayObject w/ effect.
 		/// </summary>
-		/// <returns>height of event-info container</returns>
-		internal int GetInfoContainerHeight()
+		/// <remarks>Object must be recreated from scratch to apply an effect.</remarks>
+		void CreatePlacedObject()
 		{
-			return sc3_Events.Height;
+			ClearScene();
+
+			var iPlacedEffect = new NWN2PlacedEffectInstance();
+			iPlacedEffect.Active = true;
+			iPlacedEffect.Effect = SpecialEffect.Resent;
+
+			NetDisplayObject oPlacedEffect = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iPlacedEffect, _panel.Scene, 0);
+
+			oPlacedEffect.Position = new Vector3(100f,100f,0f);
+			NWN2NetDisplayManager.Instance.MoveObjects(new NetDisplayObjectCollection(oPlacedEffect),
+													   ChangeType.Absolute,
+													   false,
+													   oPlacedEffect.Position);
 		}
 		#endregion Methods
-	}
-
-
-
-	/// <summary>
-	/// Appearance Row.
-	/// An object for parsing out a label to show in the Source/Target dropdowns
-	/// while retaining a reference to its row-id.
-	/// </summary>
-	internal sealed class apr
-	{
-		internal string Label
-		{ get; private set; }
-
-		internal int Id
-		{ get; private set; }
-
-		internal apr(string label, int id)
-		{
-			Label = label;
-			Id = id;
-		}
-
-		public override string ToString()
-		{
-			return Id + " - " + Label;
-		}
 	}
 }
