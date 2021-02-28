@@ -52,11 +52,23 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
+		/// Clears the sub-SEFGroups of this SpecialEffect.
+		/// </summary>
+		internal static void ClearSubgroups()
+		{
+			Altgroup =
+			Solgroup = null;
+		}
+
+		/// <summary>
 		/// Sets the resource entry and creates a SEFGroup for it.
 		/// </summary>
 		/// <param name="resent"></param>
 		internal static void CreateSefgroup(IResourceEntry resent)
 		{
+			Altgroup = null;
+			Solgroup = null;
+
 			Resent = resent;
 
 			Sefgroup = new SEFGroup();
@@ -72,6 +84,8 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		internal static void CreateAltgroup()
 		{
+			Solgroup = null;
+
 			Altgroup = new SEFGroup();
 
 			using (Stream bin = Resent.GetStream(false))
@@ -85,6 +99,8 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		internal static void CreateSolgroup()
 		{
+			Altgroup = null;
+
 			Solgroup = new SEFGroup();
 
 			using (Stream bin = Resent.GetStream(false))

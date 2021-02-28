@@ -85,8 +85,15 @@ namespace SpecialEffectsViewer
 		internal ElectronPanel _panel; // i hate u
 		SEFManager _sefer;
 
+		NWN2CreatureInstance _iIdiot1;
+		NWN2CreatureInstance _iIdiot2;
+		NWN2CreatureInstance _iIdiot;
+		NWN2PlacedEffectInstance _iPlacedEffect;
+
 		NetDisplayObject _oIdiot1;
 		NetDisplayObject _oIdiot2;
+		NetDisplayObject _oIdiot;
+		NetDisplayObject _oPlacedEffect;
 
 		MenuItem _itResrepo_all;
 		MenuItem _itResrepo_stock;
@@ -147,11 +154,6 @@ namespace SpecialEffectsViewer
 		/// Set true to bypass handling events redundantly.
 		/// </summary>
 		bool _init;
-
-		/// <summary>
-		/// Set true if a solo-event was last played via [Shift] on the events.
-		/// </summary>
-		bool _isSolo;
 		#endregion Fields
 
 
@@ -682,12 +684,7 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		protected override void OnFormClosing(FormClosingEventArgs e)
 		{
-			_sefer.EndUpdating();
-//			_sefer.ShutdownGroups();
-//			for (int i = _sefer.Groups.Count - 1; i != -1; --i)
-//				_sefer.Groups.Remove(i);
-			_sefer.Groups.Clear();
-
+			ClearScene();
 
 			NWN2ToolsetMainForm.ModuleChanged                  -= OnModuleChanged;
 			NWN2CampaignManager.Instance.ActiveCampaignChanged -= OnActiveCampaignChanged;
@@ -969,55 +966,60 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void mi_events_Play(object sender, EventArgs e)
 		{
-			_sefer.EndUpdating();
+			Play();
+
+			if (SceneData != null)
+				SceneData.ResetDatatext();
+		}
+
+		/// <summary>
+		/// Plays the current effect.
+		/// </summary>
+		/// <param name="clearScene"></param>
+		void Play(bool clearScene = true)
+		{
+			if (clearScene) ClearScene();
 
 			if (lb_Effects.SelectedIndex != -1)
 			{
 				switch (Scenary)
 				{
 					case Scene.doublecharacter:
-						if (_isSolo)
-						{
-							_isSolo = false;
-							ApplySefgroup(SpecialEffect.Altgroup);
-						}
-
-						if (AnyEventEnabled())
-							goto case Scene.singlecharacter;
-
+						CreateDoubleCharacterObjects();
+						ApplySefgroup();
 						break;
 
 					case Scene.singlecharacter:
+						CreateSingleCharacterObject();
+						break;
+
 					case Scene.placedeffect:
-						_sefer.BeginUpdating();
+						CreatePlacedEffectObject();
 						break;
 				}
+				_sefer.BeginUpdating();
 			}
-
-			if (SceneData != null)
-				SceneData.ResetDatatext();
 		}
 
-//		void Play(SEFGroup sefgroup)
-//		{
-//			_sefer.EndUpdating();
-//			_sefer.Groups.Clear();
-//			_sefer.Groups.Add(sefgroup);
-//			_sefer.BeginUpdating();
-//		}
-
 		/// <summary>
-		/// Checks if any event is currently checked in the Events menu for
-		/// DoubleCharacter active.
+		/// Adds a SEFGroup to the SpecialEffectsManager for a DoubleCharacter
+		/// scene only.
 		/// </summary>
-		/// <returns>true if any event is checked</returns>
-		bool AnyEventEnabled()
+		void ApplySefgroup()
 		{
-			for (int i = ItemsReserved; i != _itEvents.MenuItems.Count; ++i)
-			if (_itEvents.MenuItems[i].Checked)
-				return true;
+			_sefer.Groups.Clear();
+			_sefer.GroupsToRemove.Clear();
 
-			return false;
+			SEFGroup sefgroup;
+			if (SpecialEffect.Altgroup != null)
+				sefgroup = SpecialEffect.Altgroup;
+			else
+				sefgroup = SpecialEffect.Sefgroup;
+
+			sefgroup.FirstObject  = _oIdiot1;
+			sefgroup.SecondObject = _oIdiot2;
+
+			_sefer.Groups.Add(sefgroup);
 		}
 
 		/// <summary>
@@ -1032,63 +1034,58 @@ namespace SpecialEffectsViewer
 
 
 		/// <summary>
-		/// Alters the current effect in accord with the Events menu.
+		/// Alters the current <see cref="SpecialEffect"/> in accord with the
+		/// Events menu.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		/// <remarks>Used only by DoubleCharacter scene.</remarks>
+		/// <remarks>Event(s) operations are used by DoubleCharacter scene only.</remarks>
 		void mi_events_Event(object sender, EventArgs e)
 		{
 			_sefer.EndUpdating();
 
+
 			var it = sender as MenuItem;
 
 			// set the it(s)' check
-			if (it == _itEvents_Enable)							// enable all events
+			if (it == _itEvents_Enable) // enable all events
 			{
-				_isSolo = false;
+				SpecialEffect.ClearSubgroups();
 
 				for (int i = ItemsReserved; i != _itEvents.MenuItems.Count; ++i)
 					_itEvents.MenuItems[i].Checked = true;
 			}
-			else if (it == _itEvents_Disable)					// disable all events
+			else if (it == _itEvents_Disable) // disable all events
 			{
-				_isSolo = false;
+				SpecialEffect.CreateAltgroup();
 
 				for (int i = ItemsReserved; i != _itEvents.MenuItems.Count; ++i)
 					_itEvents.MenuItems[i].Checked = false;
 			}
-			else if (!(_isSolo = (ModifierKeys == Keys.Shift)))	// else deter solo
-			{
-				it.Checked = !it.Checked;
-			}
-
-
-			SpecialEffect.CreateAltgroup();	// alternate sefgroup could be needed later so create
-											// and prep it - TODO: refactor this events-routine.
-
-			for (int i = SpecialEffect.Altgroup.Events.Count - 1; i != -1; --i)
-			if (!_itEvents.MenuItems[i + ItemsReserved].Checked)
-				SpecialEffect.Altgroup.Events.RemoveAt(i);
-
-
-			SEFGroup sefgroup;
-			if (_isSolo)
-			{
-				SpecialEffect.CreateSolgroup();
-				sefgroup = SpecialEffect.Solgroup;
-
-				for (int i = sefgroup.Events.Count - 1; i != -1; --i)
-				if (i != (int)it.Tag)
-					sefgroup.Events.RemoveAt(i);
-			}
 			else
-				sefgroup = SpecialEffect.Altgroup;
-
-			ApplySefgroup(sefgroup);
-
-			if (_isSolo)
 			{
+				if (ModifierKeys != Keys.Shift)
+				{
+					it.Checked = !it.Checked;
+					SpecialEffect.CreateAltgroup();
+				}
+				else
+					SpecialEffect.CreateSolgroup();
+			}
+
+
+			if (SpecialEffect.Altgroup != null)
+			{
+				for (int i = SpecialEffect.Altgroup.Events.Count - 1; i != -1; --i)
+				if (!_itEvents.MenuItems[i + ItemsReserved].Checked)
+					SpecialEffect.Altgroup.Events.RemoveAt(i);
+			}
+			else if (SpecialEffect.Solgroup != null)
+			{
+				for (int i = SpecialEffect.Solgroup.Events.Count - 1; i != -1; --i)
+				if (i != (int)it.Tag)
+					SpecialEffect.Solgroup.Events.RemoveAt(i);
+
 				_sefer.BeginUpdating();
 
 				if (SceneData != null)
@@ -1271,6 +1268,8 @@ namespace SpecialEffectsViewer
 
 				CreateBasicEvents();
 
+				ClearScene();
+
 				if (lb_Effects.SelectedIndex != -1)
 				{
 					EnableControls(true);
@@ -1279,20 +1278,20 @@ namespace SpecialEffectsViewer
 
 					switch (Scenary)
 					{
-						case Scene.doublecharacter:	// the scene is ready - just apply and play a SEFGroup
+						case Scene.doublecharacter:
 							CreateDoubleCharacterEvents();
-							ApplySefgroup(SpecialEffect.Sefgroup);
 							break;
 
-						case Scene.singlecharacter:	// creature needs to be instantiated w/ an effect
-							CreateSingleCharacter();
+						case Scene.singlecharacter:
+							CreateSingleCharacterScene(false);
 							break;
 
-						case Scene.placedeffect:	// placedeffectobject needs to be instantiated w/ an effect
-							CreatePlacedObject();
+						case Scene.placedeffect:
+							CreatePlacedEffectScene(false);
 							break;
 					}
-					_sefer.BeginUpdating();
+
+					Play(false);
 				}
 				else
 				{
@@ -1304,7 +1303,7 @@ namespace SpecialEffectsViewer
 			}
 			else if (lb_Effects.SelectedIndex != -1)
 			{
-				_sefer.BeginUpdating();
+				Play();
 			}
 
 			if (SceneData != null)
@@ -1428,28 +1427,27 @@ namespace SpecialEffectsViewer
 		/// it's ready to play.</remarks>
 		void rb_Scene_checkedchanged(object sender, EventArgs e)
 		{
-			if (_sefer != null) // NetDisplay is null on launch.
-				_sefer.EndUpdating();
+			ClearScene();
 
 			CreateBasicEvents();
 
 			if (rb_DoubleCharacter.Checked)
 			{
 				SetSceneType(Scene.doublecharacter);
-				CreateDoubleCharacter();
+				CreateDoubleCharacterScene();
 
-				if (SpecialEffect.Sefgroup != null) // ie. an effect is currently selected in the effects-list
+				if (lb_Effects.SelectedIndex != -1)
 					CreateDoubleCharacterEvents();
 			}
 			else if (rb_SingleCharacter.Checked)
 			{
 				SetSceneType(Scene.singlecharacter);
-				CreateSingleCharacter();
+				CreateSingleCharacterScene();
 			}
 			else // rb_PlacedEffect.Checked
 			{
 				SetSceneType(Scene.placedeffect);
-				CreatePlacedObject();
+				CreatePlacedEffectScene();
 			}
 
 			if (SceneData != null)
@@ -1500,7 +1498,8 @@ namespace SpecialEffectsViewer
 				}
 				_init = false;
 
-				CreateScene_appearancechanged(co == co_Source);
+				if (Scenary != Scene.placedeffect)
+					CreateScene_appearancechanged(co == co_Source);
 			}
 		}
 
@@ -1511,7 +1510,8 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void cb_Fela_checkedchanged(object sender, EventArgs e)
 		{
-			if (!_init) CreateScene_appearancechanged(sender as CheckBox == cb_SourceF);
+			if (!_init && Scenary != Scene.placedeffect)
+				CreateScene_appearancechanged(sender as CheckBox == cb_SourceF);
 		}
 
 		/// <summary>
@@ -1520,17 +1520,19 @@ namespace SpecialEffectsViewer
 		/// <param name="source">true if the Source appearance or gender changed</param>
 		void CreateScene_appearancechanged(bool source)
 		{
-			_sefer.EndUpdating();
-
 			switch (Scenary)
 			{
 				case Scene.doublecharacter:
-					CreateDoubleCharacter();
+					ClearScene();
+					CreateDoubleCharacterScene();
 					break;
 
 				case Scene.singlecharacter:
 					if (source)
-						CreateSingleCharacter();
+					{
+						ClearScene();
+						CreateSingleCharacterScene();
+					}
 					break;
 			}
 
@@ -1553,7 +1555,7 @@ namespace SpecialEffectsViewer
 				SpecialEffectsViewerPreferences.that.Ground =
 				_itView_Ground.Checked = cb_Ground.Checked;
 
-				_sefer.EndUpdating();
+				ClearScene();
 
 				StoreCameraState();
 
@@ -1564,15 +1566,15 @@ namespace SpecialEffectsViewer
 				switch (Scenary)
 				{
 					case Scene.doublecharacter:
-						CreateDoubleCharacter();
+						CreateDoubleCharacterScene();
 						break;
 
 					case Scene.singlecharacter:
-						CreateSingleCharacter();
+						CreateSingleCharacterScene();
 						break;
 
 					case Scene.placedeffect:
-						CreatePlacedObject();
+						CreatePlacedEffectScene();
 						break;
 				}
 
@@ -1793,25 +1795,25 @@ namespace SpecialEffectsViewer
 			{
 				_sefer.EndUpdating();
 				_sefer.Groups.Clear();
+				_sefer.GroupsToRemove.Clear();
 
 				for (int i = _panel.Scene.Objects.Count - 1; i != -1; --i)
 					NWN2NetDisplayManager.Instance.RemoveObject(_panel.Scene.Objects[i]);
 			}
 		}
 
+
 		/// <summary>
-		/// Instantiates double-character NetDisplayObjects.
+		/// Creates double-character Instances w/out effect.
 		/// </summary>
 		/// <remarks>Idiots can stand around looking dorky. Only
 		/// double-characters play a SEFGroup. A single-character could play a
-		/// sefgroup I suppose, but prefer to use single-character to apply to
-		/// 'AppearanceSEF'.</remarks>
-		void CreateDoubleCharacter()
+		/// sefgroup I suppose, but prefer to use single-character to assign the
+		/// effect to 'AppearanceSEF'.</remarks>
+		void CreateDoubleCharacterScene()
 		{
-			ClearScene();
-
-			var iIdiot1 = new NWN2CreatureInstance();
-			var iIdiot2 = new NWN2CreatureInstance();
+			_iIdiot1 = new NWN2CreatureInstance();
+			_iIdiot2 = new NWN2CreatureInstance();
 
 			int id;
 			if (co_Source.SelectedIndex != -1)
@@ -1819,30 +1821,38 @@ namespace SpecialEffectsViewer
 			else
 				id = 5; // half-orc source
 
-			iIdiot1.AppearanceType.Row = id;
-			iIdiot1.AppearanceSEF = null;
+			_iIdiot1.AppearanceType.Row = id;
+			_iIdiot1.AppearanceSEF = null;
 
 			if (cb_SourceF.Checked)
-				iIdiot1.Gender = CreatureGender.Female;
+				_iIdiot1.Gender = CreatureGender.Female;
 			else
-				iIdiot1.Gender = CreatureGender.Male;
+				_iIdiot1.Gender = CreatureGender.Male;
 
 			if (co_Target.SelectedIndex != -1)
 				id = (co_Target.SelectedItem as apr).Id;
 			else
 				id = 2; // gnome target
 
-			iIdiot2.AppearanceType.Row = id;
-			iIdiot2.AppearanceSEF = null;
+			_iIdiot2.AppearanceType.Row = id;
+			_iIdiot2.AppearanceSEF = null;
 
 			if (cb_TargetF.Checked)
-				iIdiot2.Gender = CreatureGender.Female;
+				_iIdiot2.Gender = CreatureGender.Female;
 			else
-				iIdiot2.Gender = CreatureGender.Male;
+				_iIdiot2.Gender = CreatureGender.Male;
 
+			CreateDoubleCharacterObjects();
+		}
+
+		/// <summary>
+		/// Creates double-character NetDisplayObjects.
+		/// </summary>
+		void CreateDoubleCharacterObjects()
+		{
 			// the Idiots are class-vars so that a SEFGroup can be applied later
-			_oIdiot1 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot1, _panel.Scene, 0);
-			_oIdiot2 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot2, _panel.Scene, 0);
+			_oIdiot1 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(_iIdiot1, _panel.Scene, 0);
+			_oIdiot2 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(_iIdiot2, _panel.Scene, 0);
 
 			_oIdiot1.Position = new Vector3(103f,100f,0f);
 			_oIdiot2.Position = new Vector3( 97f,100f,0f);
@@ -1855,40 +1865,16 @@ namespace SpecialEffectsViewer
 			NWN2NetDisplayManager.Instance.MoveObjects(  col2, ChangeType.Absolute, false, _oIdiot2.Position);
 			NWN2NetDisplayManager.Instance.RotateObjects(col1, ChangeType.Absolute,        _oIdiot1.Orientation);
 			NWN2NetDisplayManager.Instance.RotateObjects(col2, ChangeType.Absolute,        _oIdiot2.Orientation);
-
-			ApplySefgroup(SpecialEffect.Sefgroup);
 		}
 
 		/// <summary>
-		/// Adds a specified SEFGroup to the SpecialEffectsManager for a
-		/// DoubleCharacter scene only.
+		/// Creates a single-character Instance w/ effect.
 		/// </summary>
-		/// <param name="sefgroup"></param>
-		void ApplySefgroup(SEFGroup sefgroup)
-		{
-			if (_sefer != null) // NetDisplay is null on launch.
-			{
-				_sefer.Groups.Clear();
-
-				if (sefgroup != null)
-				{
-					sefgroup.FirstObject  = _oIdiot1;
-					sefgroup.SecondObject = _oIdiot2;
-
-					_sefer.Groups.Add(sefgroup);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Creates a single-character NetDisplayObject w/ effect.
-		/// </summary>
+		/// <param name="createObject">true to also create the NetDisplayObject</param>
 		/// <remarks>Idiot must be recreated from scratch to apply an effect.</remarks>
-		void CreateSingleCharacter()
+		void CreateSingleCharacterScene(bool createObject = true)
 		{
-			ClearScene();
-
-			var iIdiot = new NWN2CreatureInstance();
+			_iIdiot = new NWN2CreatureInstance();
 
 			int id;
 			if (co_Source.SelectedIndex != -1)
@@ -1896,42 +1882,59 @@ namespace SpecialEffectsViewer
 			else
 				id = 4; // half-elf character
 
-			iIdiot.AppearanceType.Row = id;
-			iIdiot.AppearanceSEF = SpecialEffect.Resent;
+			_iIdiot.AppearanceType.Row = id;
+			_iIdiot.AppearanceSEF = SpecialEffect.Resent;
 
 			if (cb_SourceF.Checked)
-				iIdiot.Gender = CreatureGender.Female;
+				_iIdiot.Gender = CreatureGender.Female;
 			else
-				iIdiot.Gender = CreatureGender.Male;
+				_iIdiot.Gender = CreatureGender.Male;
 
-			NetDisplayObject oIdiot = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iIdiot, _panel.Scene, 0);
-
-			oIdiot.Position = new Vector3(100f,100f,0f);
-			NWN2NetDisplayManager.Instance.MoveObjects(new NetDisplayObjectCollection(oIdiot),
-													   ChangeType.Absolute,
-													   false,
-													   oIdiot.Position);
+			if (createObject)
+				CreateSingleCharacterObject();
 		}
 
 		/// <summary>
-		/// Creates a placed-effect NetDisplayObject w/ effect.
+		/// Creates a single-character NetDisplayObject.
 		/// </summary>
-		/// <remarks>Object must be recreated from scratch to apply an effect.</remarks>
-		void CreatePlacedObject()
+		void CreateSingleCharacterObject()
 		{
-			ClearScene();
+			_oIdiot = NWN2NetDisplayManager.Instance.CreateNDOForInstance(_iIdiot, _panel.Scene, 0);
 
-			var iPlacedEffect = new NWN2PlacedEffectInstance();
-			iPlacedEffect.Active = true;
-			iPlacedEffect.Effect = SpecialEffect.Resent;
-
-			NetDisplayObject oPlacedEffect = NWN2NetDisplayManager.Instance.CreateNDOForInstance(iPlacedEffect, _panel.Scene, 0);
-
-			oPlacedEffect.Position = new Vector3(100f,100f,0f);
-			NWN2NetDisplayManager.Instance.MoveObjects(new NetDisplayObjectCollection(oPlacedEffect),
+			_oIdiot.Position = new Vector3(100f,100f,0f);
+			NWN2NetDisplayManager.Instance.MoveObjects(new NetDisplayObjectCollection(_oIdiot),
 													   ChangeType.Absolute,
 													   false,
-													   oPlacedEffect.Position);
+													   _oIdiot.Position);
+		}
+
+		/// <summary>
+		/// Creates a placed-effect Instance w/ effect.
+		/// </summary>
+		/// <param name="createObject">true to also create the NetDisplayObject</param>
+		/// <remarks>Object must be recreated from scratch to apply an effect.</remarks>
+		void CreatePlacedEffectScene(bool createObject = true)
+		{
+			_iPlacedEffect = new NWN2PlacedEffectInstance();
+			_iPlacedEffect.Effect = SpecialEffect.Resent;
+			_iPlacedEffect.Active = true;
+
+			if (createObject)
+				CreatePlacedEffectObject();
+		}
+
+		/// <summary>
+		/// Creates a placed-effect NetDisplayObject.
+		/// </summary>
+		void CreatePlacedEffectObject()
+		{
+			_oPlacedEffect = NWN2NetDisplayManager.Instance.CreateNDOForInstance(_iPlacedEffect, _panel.Scene, 0);
+
+			_oPlacedEffect.Position = new Vector3(100f,100f,0f);
+			NWN2NetDisplayManager.Instance.MoveObjects(new NetDisplayObjectCollection(_oPlacedEffect),
+													   ChangeType.Absolute,
+													   false,
+													   _oPlacedEffect.Position);
 		}
 		#endregion Methods
 	}
