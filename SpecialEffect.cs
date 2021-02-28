@@ -61,6 +61,22 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
+		/// Clears the Altgroup SEFGroup of this SpecialEffect.
+		/// </summary>
+		internal static void ClearAltgroup()
+		{
+			Altgroup = null;
+		}
+
+		/// <summary>
+		/// Clears the Solgroup SEFGroup of this SpecialEffect.
+		/// </summary>
+		internal static void ClearSolgroup()
+		{
+			Solgroup = null;
+		}
+
+		/// <summary>
 		/// Sets the resource entry and creates a SEFGroup for it.
 		/// </summary>
 		/// <param name="resent"></param>

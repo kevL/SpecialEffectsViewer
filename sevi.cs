@@ -804,6 +804,9 @@ namespace SpecialEffectsViewer
 		{
 			if (!_itResrepo_all.Checked)
 			{
+				rb_Scene_checkedchanged(null, EventArgs.Empty);
+				EnableControls(false);
+
 				lb_Effects.BeginUpdate();
 
 				ClearEffectsList();
@@ -821,9 +824,6 @@ namespace SpecialEffectsViewer
 					}
 				}
 				lb_Effects.EndUpdate();
-
-				rb_Scene_checkedchanged(null, EventArgs.Empty);
-				EnableControls(false);
 			}
 
 			if (!_bypassSearchFocus)
@@ -839,6 +839,9 @@ namespace SpecialEffectsViewer
 		{
 			if (!_itResrepo_stock.Checked)
 			{
+				rb_Scene_checkedchanged(null, EventArgs.Empty);
+				EnableControls(false);
+
 				lb_Effects.BeginUpdate();
 
 				ClearEffectsList();
@@ -862,9 +865,6 @@ namespace SpecialEffectsViewer
 					}
 				}
 				lb_Effects.EndUpdate();
-
-				rb_Scene_checkedchanged(null, EventArgs.Empty);
-				EnableControls(false);
 			}
 
 			if (!_bypassSearchFocus)
@@ -880,6 +880,9 @@ namespace SpecialEffectsViewer
 		{
 			if (!_itResrepo_module.Checked)
 			{
+				rb_Scene_checkedchanged(null, EventArgs.Empty);
+				EnableControls(false);
+
 				lb_Effects.BeginUpdate();
 
 				ClearEffectsList();
@@ -898,9 +901,6 @@ namespace SpecialEffectsViewer
 					}
 				}
 				lb_Effects.EndUpdate();
-
-				rb_Scene_checkedchanged(null, EventArgs.Empty);
-				EnableControls(false);
 			}
 
 			if (!_bypassSearchFocus)
@@ -916,6 +916,9 @@ namespace SpecialEffectsViewer
 		{
 			if (!_itResrepo_campaign.Checked)
 			{
+				rb_Scene_checkedchanged(null, EventArgs.Empty);
+				EnableControls(false);
+
 				lb_Effects.BeginUpdate();
 
 				ClearEffectsList();
@@ -934,9 +937,6 @@ namespace SpecialEffectsViewer
 					}
 				}
 				lb_Effects.EndUpdate();
-
-				rb_Scene_checkedchanged(null, EventArgs.Empty);
-				EnableControls(false);
 			}
 
 			if (!_bypassSearchFocus)
@@ -952,6 +952,9 @@ namespace SpecialEffectsViewer
 		{
 			if (!_itResrepo_override.Checked)
 			{
+				rb_Scene_checkedchanged(null, EventArgs.Empty);
+				EnableControls(false);
+
 				lb_Effects.BeginUpdate();
 
 				ClearEffectsList();
@@ -970,9 +973,6 @@ namespace SpecialEffectsViewer
 					}
 				}
 				lb_Effects.EndUpdate();
-
-				rb_Scene_checkedchanged(null, EventArgs.Empty);
-				EnableControls(false);
 			}
 
 			if (!_bypassSearchFocus)
@@ -1045,24 +1045,25 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
-		/// Adds a SEFGroup to the SpecialEffectsManager for a DoubleCharacter
-		/// scene only.
+		/// Adds a SEFGroup to the SpecialEffectsManager.
 		/// </summary>
+		/// <remarks>Required by DoubleCharacter scene only.</remarks>
 		void ApplySefgroup()
 		{
 			_sefer.Groups.Clear();
 			_sefer.GroupsToRemove.Clear();
 
 			SEFGroup sefgroup;
-			if (SpecialEffect.Altgroup != null)
-				sefgroup = SpecialEffect.Altgroup;
-			else
-				sefgroup = SpecialEffect.Sefgroup;
+			if      (SpecialEffect.Solgroup != null) sefgroup = SpecialEffect.Solgroup;
+			else if (SpecialEffect.Altgroup != null) sefgroup = SpecialEffect.Altgroup;
+			else                                     sefgroup = SpecialEffect.Sefgroup; // SpecialEffect.Sefgroup != null
 
 			sefgroup.FirstObject  = _oIdiot1;
 			sefgroup.SecondObject = _oIdiot2;
 
 			_sefer.Groups.Add(sefgroup);
+
+			SpecialEffect.ClearSolgroup(); // 'SpecialEffect.Solgroup' plays once only.
 		}
 
 		/// <summary>
@@ -1094,9 +1095,7 @@ namespace SpecialEffectsViewer
 			if (it == _itEvents_Enable) // enable all events
 			{
 				SpecialEffect.ClearSubgroups();
-
-				for (int i = ItemsReserved; i != _itEvents.MenuItems.Count; ++i)
-					_itEvents.MenuItems[i].Checked = true;
+				EnableEvents();
 			}
 			else if (it == _itEvents_Disable) // disable all events
 			{
@@ -1105,16 +1104,19 @@ namespace SpecialEffectsViewer
 				for (int i = ItemsReserved; i != _itEvents.MenuItems.Count; ++i)
 					_itEvents.MenuItems[i].Checked = false;
 			}
-			else
+			else if (ModifierKeys != Keys.Shift)
 			{
-				if (ModifierKeys != Keys.Shift)
+				it.Checked = !it.Checked;
+
+				if (AllEventsEnabled())
 				{
-					it.Checked = !it.Checked;
-					SpecialEffect.CreateAltgroup();
+					SpecialEffect.ClearAltgroup(); // fallback on 'SpecialEffect.Sefgroup'
 				}
 				else
-					SpecialEffect.CreateSolgroup();
+					SpecialEffect.CreateAltgroup();
 			}
+			else
+				SpecialEffect.CreateSolgroup();
 
 
 			if (SpecialEffect.Altgroup != null)
@@ -1129,11 +1131,33 @@ namespace SpecialEffectsViewer
 				if (i != (int)it.Tag)
 					SpecialEffect.Solgroup.Events.RemoveAt(i);
 
-				_sefer.BeginUpdating();
+				Play();
 
 				if (SceneData != null)
 					SceneData.ResetDatatext();
 			}
+		}
+
+		/// <summary>
+		/// Enables all events on the Events menu.
+		/// </summary>
+		void EnableEvents()
+		{
+			for (int i = ItemsReserved; i != _itEvents.MenuItems.Count; ++i)
+				_itEvents.MenuItems[i].Checked = true;
+		}
+
+		/// <summary>
+		/// Checks if all events on the Events menu are enabled.
+		/// </summary>
+		/// <returns>true if all enabled</returns>
+		bool AllEventsEnabled()
+		{
+			for (int i = ItemsReserved; i != _itEvents.MenuItems.Count; ++i)
+			if (!_itEvents.MenuItems[i].Checked)
+				return false;
+
+			return true;
 		}
 		#endregion eventhandlers (events)
 
@@ -1340,14 +1364,19 @@ namespace SpecialEffectsViewer
 					}
 					else
 					{
-						EnableControls(false);
 						SpecialEffect.ClearEffect();
+						EnableControls(false);
 					}
 
 					PrintEffectData();
 				}
 				else if (lb_Effects.SelectedIndex != -1)
 				{
+					if (Scenary == Scene.doublecharacter)
+					{
+						SpecialEffect.ClearAltgroup();
+						EnableEvents();
+					}
 					Play();
 				}
 
@@ -1841,6 +1870,7 @@ namespace SpecialEffectsViewer
 			_iIdiot2 = new NWN2CreatureInstance();
 
 			int id;
+
 			if (co_Source.SelectedIndex != -1)
 				id = (co_Source.SelectedItem as apr).Id;
 			else
@@ -1854,6 +1884,7 @@ namespace SpecialEffectsViewer
 			else
 				_iIdiot1.Gender = CreatureGender.Male;
 
+
 			if (co_Target.SelectedIndex != -1)
 				id = (co_Target.SelectedItem as apr).Id;
 			else
@@ -1866,6 +1897,7 @@ namespace SpecialEffectsViewer
 				_iIdiot2.Gender = CreatureGender.Female;
 			else
 				_iIdiot2.Gender = CreatureGender.Male;
+
 
 			CreateDoubleCharacterObjects();
 		}
