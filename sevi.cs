@@ -207,7 +207,6 @@ namespace SpecialEffectsViewer
 			CreateElectronPanel();
 			PopulateAppearanceDropdowns();
 
-			mi_resrepo_All(null, EventArgs.Empty);
 			Show();
 		}
 
@@ -238,8 +237,6 @@ namespace SpecialEffectsViewer
 
 // Events ->
 			_itEvents = Menu.MenuItems.Add("&Events"); // 1
-
-			CreateBasicEvents();
 
 // View ->
 			 it = Menu.MenuItems.Add("&View"); // 2
@@ -301,6 +298,30 @@ namespace SpecialEffectsViewer
 
 			_itEvents_Play.Enabled =
 			_itEvents_Stop.Enabled = lb_Effects.SelectedIndex != -1;
+		}
+
+		/// <summary>
+		/// Populates extended its on the Events menu to toggle the events of
+		/// the current SEFGroup for a DoubleCharacter scene only.
+		/// </summary>
+		void CreateDoubleCharacterEvents()
+		{
+			_itEvents.MenuItems.Add("-");
+
+			_itEvents_Enable  = _itEvents.MenuItems.Add("&Enable all events",  mi_events_Event);
+			_itEvents_Disable = _itEvents.MenuItems.Add("&Disable all events", mi_events_Event);
+
+			_itEvents_Enable .Shortcut = Shortcut.F7;
+			_itEvents_Disable.Shortcut = Shortcut.F8;
+
+			_itEvents.MenuItems.Add("-");
+
+			for (int i = 0; i != SpecialEffect.Sefgroup.Events.Count; ++i)
+			{
+				var it = _itEvents.MenuItems.Add("event " + i, mi_events_Event);
+				it.Tag = i;
+				it.Checked = true;
+			}
 		}
 
 
@@ -464,6 +485,8 @@ namespace SpecialEffectsViewer
 		{
 			LoadPreferences(); // -> finalize initialization
 			InitializeReceiver();
+
+			mi_resrepo_All(null, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -518,6 +541,7 @@ namespace SpecialEffectsViewer
 
 
 			_init = true;
+
 			int id = SpecialEffectsViewerPreferences.that.AppearanceSource; // select Source ->
 			for (int i = 0; i != co_Source.Items.Count; ++i)
 			if ((co_Source.Items[i] as apr).Id == id)
@@ -575,11 +599,10 @@ namespace SpecialEffectsViewer
 					cb_TargetF.Checked = false;
 				}
 			}
-			_init = false;
 
 
-			switch (Scenary)	// LAST select Scene ->
-			{					// instantiate the scene using all sevi vars that were set above.
+			switch (Scenary)
+			{
 				case Scene.doublecharacter:
 					rb_DoubleCharacter.Checked = true;
 					break;
@@ -592,6 +615,8 @@ namespace SpecialEffectsViewer
 					rb_PlacedEffect.Checked = true;
 					break;
 			}
+
+			_init = false;
 		}
 
 		/// <summary>
@@ -796,6 +821,9 @@ namespace SpecialEffectsViewer
 					}
 				}
 				lb_Effects.EndUpdate();
+
+				rb_Scene_checkedchanged(null, EventArgs.Empty);
+				EnableControls(false);
 			}
 
 			if (!_bypassSearchFocus)
@@ -834,6 +862,9 @@ namespace SpecialEffectsViewer
 					}
 				}
 				lb_Effects.EndUpdate();
+
+				rb_Scene_checkedchanged(null, EventArgs.Empty);
+				EnableControls(false);
 			}
 
 			if (!_bypassSearchFocus)
@@ -867,6 +898,9 @@ namespace SpecialEffectsViewer
 					}
 				}
 				lb_Effects.EndUpdate();
+
+				rb_Scene_checkedchanged(null, EventArgs.Empty);
+				EnableControls(false);
 			}
 
 			if (!_bypassSearchFocus)
@@ -900,6 +934,9 @@ namespace SpecialEffectsViewer
 					}
 				}
 				lb_Effects.EndUpdate();
+
+				rb_Scene_checkedchanged(null, EventArgs.Empty);
+				EnableControls(false);
 			}
 
 			if (!_bypassSearchFocus)
@@ -933,6 +970,9 @@ namespace SpecialEffectsViewer
 					}
 				}
 				lb_Effects.EndUpdate();
+
+				rb_Scene_checkedchanged(null, EventArgs.Empty);
+				EnableControls(false);
 			}
 
 			if (!_bypassSearchFocus)
@@ -946,7 +986,10 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		void ClearEffectsList()
 		{
+			_init = true;
 			lb_Effects.SelectedIndex = -1;
+			_init = false;
+
 			lb_Effects.Items.Clear();
 
 			_itResrepo_all     .Checked =
@@ -1260,54 +1303,57 @@ namespace SpecialEffectsViewer
 		/// track the currently selected effects-list id</remarks>
 		void lb_Effects_selectedindexchanged(object sender, EventArgs e)
 		{
-			_sefer.EndUpdating();
-
-			if (lb_Effects.SelectedIndex != _efid)
+			if (!_init)
 			{
-				_efid = lb_Effects.SelectedIndex;
+				_sefer.EndUpdating();
 
-				CreateBasicEvents();
-
-				ClearScene();
-
-				if (lb_Effects.SelectedIndex != -1)
+				if (lb_Effects.SelectedIndex != _efid)
 				{
-					EnableControls(true);
+					_efid = lb_Effects.SelectedIndex;
 
-					SpecialEffect.CreateSefgroup(lb_Effects.SelectedItem as IResourceEntry);
+					CreateBasicEvents();
 
-					switch (Scenary)
+					ClearScene();
+
+					if (lb_Effects.SelectedIndex != -1)
 					{
-						case Scene.doublecharacter:
-							CreateDoubleCharacterEvents();
-							break;
+						EnableControls(true);
 
-						case Scene.singlecharacter:
-							CreateSingleCharacterScene(false);
-							break;
+						SpecialEffect.CreateSefgroup(lb_Effects.SelectedItem as IResourceEntry);
 
-						case Scene.placedeffect:
-							CreatePlacedEffectScene(false);
-							break;
+						switch (Scenary)
+						{
+							case Scene.doublecharacter:
+								CreateDoubleCharacterEvents();
+								break;
+
+							case Scene.singlecharacter:
+								CreateSingleCharacterScene(false);
+								break;
+
+							case Scene.placedeffect:
+								CreatePlacedEffectScene(false);
+								break;
+						}
+
+						Play(false);
+					}
+					else
+					{
+						EnableControls(false);
+						SpecialEffect.ClearEffect();
 					}
 
-					Play(false);
+					PrintEffectData();
 				}
-				else
+				else if (lb_Effects.SelectedIndex != -1)
 				{
-					EnableControls(false);
-					SpecialEffect.ClearEffect();
+					Play();
 				}
 
-				PrintEffectData();
+				if (SceneData != null)
+					SceneData.ResetDatatext();
 			}
-			else if (lb_Effects.SelectedIndex != -1)
-			{
-				Play();
-			}
-
-			if (SceneData != null)
-				SceneData.ResetDatatext();
 		}
 
 		/// <summary>
@@ -1324,30 +1370,6 @@ namespace SpecialEffectsViewer
 			bu_Copy       .Enabled = enabled;
 		}
 
-
-		/// <summary>
-		/// Populates extended its on the Events menu to toggle the events of
-		/// the current SEFGroup for a DoubleCharacter scene only.
-		/// </summary>
-		void CreateDoubleCharacterEvents()
-		{
-			_itEvents.MenuItems.Add("-");
-
-			_itEvents_Enable  = _itEvents.MenuItems.Add("&Enable all events",  mi_events_Event);
-			_itEvents_Disable = _itEvents.MenuItems.Add("&Disable all events", mi_events_Event);
-
-			_itEvents_Enable .Shortcut = Shortcut.F7;
-			_itEvents_Disable.Shortcut = Shortcut.F8;
-
-			_itEvents.MenuItems.Add("-");
-
-			for (int i = 0; i != SpecialEffect.Sefgroup.Events.Count; ++i)
-			{
-				var it = _itEvents.MenuItems.Add("event " + i, mi_events_Event);
-				it.Tag = i;
-				it.Checked = true;
-			}
-		}
 
 		/// <summary>
 		/// Prints the currently loaded effect-events to the Options panel. Also
@@ -1427,31 +1449,34 @@ namespace SpecialEffectsViewer
 		/// it's ready to play.</remarks>
 		void rb_Scene_checkedchanged(object sender, EventArgs e)
 		{
-			ClearScene();
-
-			CreateBasicEvents();
-
-			if (rb_DoubleCharacter.Checked)
+			if (!_init)
 			{
-				SetSceneType(Scene.doublecharacter);
-				CreateDoubleCharacterScene();
+				ClearScene();
 
-				if (lb_Effects.SelectedIndex != -1)
-					CreateDoubleCharacterEvents();
-			}
-			else if (rb_SingleCharacter.Checked)
-			{
-				SetSceneType(Scene.singlecharacter);
-				CreateSingleCharacterScene();
-			}
-			else // rb_PlacedEffect.Checked
-			{
-				SetSceneType(Scene.placedeffect);
-				CreatePlacedEffectScene();
-			}
+				CreateBasicEvents();
 
-			if (SceneData != null)
-				SceneData.ResetDatatext();
+				if (rb_DoubleCharacter.Checked)
+				{
+					SetSceneType(Scene.doublecharacter);
+					CreateDoubleCharacterScene();
+
+					if (lb_Effects.SelectedIndex != -1)
+						CreateDoubleCharacterEvents();
+				}
+				else if (rb_SingleCharacter.Checked)
+				{
+					SetSceneType(Scene.singlecharacter);
+					CreateSingleCharacterScene();
+				}
+				else // rb_PlacedEffect.Checked
+				{
+					SetSceneType(Scene.placedeffect);
+					CreatePlacedEffectScene();
+				}
+
+				if (SceneData != null)
+					SceneData.ResetDatatext();
+			}
 		}
 
 		/// <summary>
@@ -1515,7 +1540,7 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
-		/// Instantiates a scene but does not play any effect yet.
+		/// Instantiates a scene when character-appearance changes.
 		/// </summary>
 		/// <param name="source">true if the Source appearance or gender changed</param>
 		void CreateScene_appearancechanged(bool source)
@@ -1867,6 +1892,7 @@ namespace SpecialEffectsViewer
 			NWN2NetDisplayManager.Instance.RotateObjects(col2, ChangeType.Absolute,        _oIdiot2.Orientation);
 		}
 
+
 		/// <summary>
 		/// Creates a single-character Instance w/ effect.
 		/// </summary>
@@ -1907,6 +1933,7 @@ namespace SpecialEffectsViewer
 													   false,
 													   _oIdiot.Position);
 		}
+
 
 		/// <summary>
 		/// Creates a placed-effect Instance w/ effect.
