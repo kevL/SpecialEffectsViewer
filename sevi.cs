@@ -559,11 +559,8 @@ namespace SpecialEffectsViewer
 
 			if (SpecialEffectsViewerPreferences.that.Ground)
 			{
-				_itView_Ground.Checked = true;
-
-				_init = true;
+				_itView_Ground.Checked =
 				cb_Ground.Checked = true;
-				_init = false;
 			}
 
 			_itView_ExtendedInfo.Checked = SpecialEffectsViewerPreferences.that.ExtendedInfo;
@@ -1233,6 +1230,7 @@ namespace SpecialEffectsViewer
 		void mi_view_Ground(object sender, EventArgs e)
 		{
 			cb_Ground.Checked = !cb_Ground.Checked;
+			cb_Ground_click(null, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -1629,41 +1627,36 @@ namespace SpecialEffectsViewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		/// <remarks>Although PlacedEffectObjects are invisible wire one up so
-		/// it's ready to play.</remarks>
-		void cb_Ground_checkedchanged(object sender, EventArgs e)
+		void cb_Ground_click(object sender, EventArgs e)
 		{
-			if (!_init)
+			SpecialEffectsViewerPreferences.that.Ground =
+			_itView_Ground.Checked = cb_Ground.Checked;
+
+			ClearScene();
+
+			StoreCameraState();
+
+			_panel.Dispose();
+			CreateElectronPanel();
+			InitializeReceiver();
+
+			switch (Scenary)
 			{
-				SpecialEffectsViewerPreferences.that.Ground =
-				_itView_Ground.Checked = cb_Ground.Checked;
+				case Scene.doublecharacter:
+					CreateDoubleCharacterScene();
+					break;
 
-				ClearScene();
+				case Scene.singlecharacter:
+					CreateSingleCharacterScene();
+					break;
 
-				StoreCameraState();
-
-				_panel.Dispose();
-				CreateElectronPanel();
-				InitializeReceiver();
-
-				switch (Scenary)
-				{
-					case Scene.doublecharacter:
-						CreateDoubleCharacterScene();
-						break;
-
-					case Scene.singlecharacter:
-						CreateSingleCharacterScene();
-						break;
-
-					case Scene.placedeffect:
-						CreatePlacedEffectScene();
-						break;
-				}
-
-				if (SceneData != null)
-					SceneData.ResetDatatext();
+				case Scene.placedeffect:
+					CreatePlacedEffectScene();
+					break;
 			}
+
+			if (SceneData != null)
+				SceneData.ResetDatatext();
 		}
 
 		/// <summary>

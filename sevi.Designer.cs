@@ -233,7 +233,7 @@ namespace SpecialEffectsViewer
 			this.cb_Ground.TabIndex = 0;
 			this.cb_Ground.Text = "show Ground";
 			this.cb_Ground.UseVisualStyleBackColor = false;
-			this.cb_Ground.CheckedChanged += new System.EventHandler(this.cb_Ground_checkedchanged);
+			this.cb_Ground.Click += new System.EventHandler(this.cb_Ground_click);
 			// 
 			// gb_Appearance
 			// 
