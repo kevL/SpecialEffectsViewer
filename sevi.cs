@@ -1042,39 +1042,51 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
-		/// Plays the current effect.
+		/// Instantiates NetDisplayObjects and plays the current effect.
 		/// </summary>
-		/// <param name="clearScene"></param>
-		void Play(bool clearScene = true)
+		/// <param name="effectChanged">true to create extended events and
+		/// SEFGroup if double-character or recreate NWN2 Instances if
+		/// single-character or placed-effect</param>
+		void Play(bool effectChanged = false)
 		{
-			if (clearScene) ClearScene();
+			ClearScene(); // clear and recreate all NetDisplay objects (so they don't leak each time they're played)
 
-			if (lb_Effects.SelectedIndex != -1)
+			switch (Scenary)
 			{
-				switch (Scenary)
-				{
-					case Scene.doublecharacter:
-						CreateDoubleCharacterObjects();
-						ApplySefgroup();
-						break;
+				case Scene.doublecharacter:					// NWN2 Instances shall be valid
+					if (effectChanged)
+					{
+						CreateExtendedEvents();
+						SpecialEffect.CreateSefgroup();
+					}
+					CreateDoubleCharacterObjects();			// instantiate NetDisplayObjects
+					AddSefgroup();							// add the SEFGroup to the SEFManager
+					break;
 
-					case Scene.singlecharacter:
-						CreateSingleCharacterObject();
-						break;
+				case Scene.singlecharacter:
+					if (effectChanged)
+					{
+						CreateSingleCharacterScene(false);	// recreate NWN2 Instance w/ effect
+					}
+					CreateSingleCharacterObject();			// instantiate NetDisplayObject
+					break;
 
-					case Scene.placedeffect:
-						CreatePlacedEffectObject();
-						break;
-				}
-				_sefer.BeginUpdating();
+				case Scene.placedeffect:
+					if (effectChanged)
+					{
+						CreatePlacedEffectScene(false);		// recreate NWN2 Instance w/ effect
+					}
+					CreatePlacedEffectObject();				// instantiate NetDisplayObject
+					break;
 			}
+			_sefer.BeginUpdating();
 		}
 
 		/// <summary>
 		/// Adds a SEFGroup to the SpecialEffectsManager.
 		/// </summary>
 		/// <remarks>Required by DoubleCharacter scene only.</remarks>
-		void ApplySefgroup()
+		void AddSefgroup()
 		{
 			_sefer.Groups.Clear();
 			_sefer.GroupsToRemove.Clear();
@@ -1371,37 +1383,20 @@ namespace SpecialEffectsViewer
 				{
 					_efid = lb_Effects.SelectedIndex;
 
-					CreateBasicEvents();
-
 					ClearScene();
+
+					CreateBasicEvents();
 
 					if (lb_Effects.SelectedIndex != -1)
 					{
 						EnableControls(true);
-
-						SpecialEffect.CreateSefgroup(lb_Effects.SelectedItem as IResourceEntry);
-
-						switch (Scenary)
-						{
-							case Scene.doublecharacter:
-								CreateExtendedEvents();
-								break;
-
-							case Scene.singlecharacter:
-								CreateSingleCharacterScene(false);
-								break;
-
-							case Scene.placedeffect:
-								CreatePlacedEffectScene(false);
-								break;
-						}
-
-						Play(false);
+						SpecialEffect.SetResent(lb_Effects.SelectedItem as IResourceEntry);
+						Play(true);
 					}
 					else
 					{
-						SpecialEffect.ClearEffect();
 						EnableControls(false);
+						SpecialEffect.ClearEffect();
 					}
 
 					PrintEffectData();
@@ -1410,8 +1405,8 @@ namespace SpecialEffectsViewer
 				{
 					if (Scenary == Scene.doublecharacter)
 					{
-						SpecialEffect.ClearAltgroup();
 						EnableEvents();
+						SpecialEffect.ClearAltgroup();
 					}
 					Play();
 				}
@@ -1872,8 +1867,8 @@ namespace SpecialEffectsViewer
 
 		#region Methods
 		/// <summary>
-		/// Clears the scene. Stops playing the effect, clears the SEFGroups,
-		/// and removes all objects from the NetDisplay scene.
+		/// Stops playing the effect, clears the SEFGroups, and removes all
+		/// objects from the NetDisplay scene.
 		/// </summary>
 		void ClearScene()
 		{

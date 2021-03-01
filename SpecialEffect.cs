@@ -76,16 +76,23 @@ namespace SpecialEffectsViewer
 			Solgroup = null;
 		}
 
+
+		/// <summary>
+		/// Sets the resource entry.
+		/// </summary>
+		/// <param name="resent"></param>
+		internal static void SetResent(IResourceEntry resent)
+		{
+			Resent = resent;
+		}
+
 		/// <summary>
 		/// Sets the resource entry and creates a SEFGroup for it.
 		/// </summary>
-		/// <param name="resent"></param>
-		internal static void CreateSefgroup(IResourceEntry resent)
+		internal static void CreateSefgroup()
 		{
 			Altgroup = null;
 			Solgroup = null;
-
-			Resent = resent;
 
 			Sefgroup = new SEFGroup();
 
