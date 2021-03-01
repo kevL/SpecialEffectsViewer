@@ -183,6 +183,11 @@ namespace SpecialEffectsViewer
 		/// Set true to bypass handling events redundantly.
 		/// </summary>
 		bool _init;
+
+		/// <summary>
+		/// Tracks the currently selected effects-list id.
+		/// </summary>
+		int _efid = -1;
 		#endregion Fields
 
 
@@ -1101,7 +1106,7 @@ namespace SpecialEffectsViewer
 
 			_sefer.Groups.Add(sefgroup);
 
-			SpecialEffect.ClearSolgroup(); // 'SpecialEffect.Solgroup' plays once only.
+			SpecialEffect.Solgroup = null; // 'SpecialEffect.Solgroup' plays once only.
 		}
 
 		/// <summary>
@@ -1126,30 +1131,23 @@ namespace SpecialEffectsViewer
 		{
 			_sefer.EndUpdating();
 
-
 			var it = sender as MenuItem;
-
-			// set the it(s)' check
 			if (it == _itEvents_Enable) // enable all events
 			{
-				SpecialEffect.ClearSubgroups();
+				SpecialEffect.Altgroup = null;
 				EnableEvents();
 			}
 			else if (it == _itEvents_Disable) // disable all events
 			{
 				SpecialEffect.CreateAltgroup();
-
-				for (int i = ItemsReserved; i != _itEvents.MenuItems.Count; ++i)
-					_itEvents.MenuItems[i].Checked = false;
+				EnableEvents(false);
 			}
 			else if (ModifierKeys != Keys.Shift)
 			{
 				it.Checked = !it.Checked;
 
 				if (AllEventsEnabled())
-				{
-					SpecialEffect.ClearAltgroup(); // fallback on 'SpecialEffect.Sefgroup'
-				}
+					SpecialEffect.Altgroup = null; // fallback on 'SpecialEffect.Sefgroup'
 				else
 					SpecialEffect.CreateAltgroup();
 			}
@@ -1177,12 +1175,13 @@ namespace SpecialEffectsViewer
 		}
 
 		/// <summary>
-		/// Enables all events on the Events menu.
+		/// Dis/enables all events on the Events menu.
 		/// </summary>
-		void EnableEvents()
+		/// <param name="enabled">true to enable</param>
+		void EnableEvents(bool enabled = true)
 		{
 			for (int i = ItemsReserved; i != _itEvents.MenuItems.Count; ++i)
-				_itEvents.MenuItems[i].Checked = true;
+				_itEvents.MenuItems[i].Checked = enabled;
 		}
 
 		/// <summary>
@@ -1359,11 +1358,20 @@ namespace SpecialEffectsViewer
 		#endregion eventhandlers (help)
 
 
-		#region eventhandlers (controls)
+		#region eventhandlers (effects-list)
 		/// <summary>
-		/// Tracks the currently selected effects-list id.
+		/// Replays the currently selected effect.
 		/// </summary>
-		int _efid = -1;
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void lb_Effects_keydown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyData == Keys.Enter)
+			{
+				e.Handled = e.SuppressKeyPress = true;
+				mi_events_Play(null, EventArgs.Empty);
+			}
+		}
 
 		/// <summary>
 		/// Creates the selected effect and plays it.
@@ -1390,7 +1398,7 @@ namespace SpecialEffectsViewer
 					if (lb_Effects.SelectedIndex != -1)
 					{
 						EnableControls(true);
-						SpecialEffect.SetResent(lb_Effects.SelectedItem as IResourceEntry);
+						SpecialEffect.Resent = lb_Effects.SelectedItem as IResourceEntry;
 						Play(true);
 					}
 					else
@@ -1406,7 +1414,7 @@ namespace SpecialEffectsViewer
 					if (Scenary == Scene.doublecharacter)
 					{
 						EnableEvents();
-						SpecialEffect.ClearAltgroup();
+						SpecialEffect.Altgroup = null;
 					}
 					Play();
 				}
@@ -1429,7 +1437,6 @@ namespace SpecialEffectsViewer
 			bu_Stop       .Enabled =
 			bu_Copy       .Enabled = enabled;
 		}
-
 
 		/// <summary>
 		/// Prints the currently loaded effect-events to the Options panel. Also
@@ -1484,22 +1491,10 @@ namespace SpecialEffectsViewer
 
 			Text = TITLE + post;
 		}
-
-		/// <summary>
-		/// Replays the currently selected effect.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void lb_Effects_keydown(object sender, KeyEventArgs e)
-		{
-			if (e.KeyData == Keys.Enter)
-			{
-				e.Handled = e.SuppressKeyPress = true;
-				mi_events_Play(null, EventArgs.Empty);
-			}
-		}
+		#endregion eventhandlers (effects-list)
 
 
+		#region eventhandlers (scene-config)
 		/// <summary>
 		/// Creates objects in the NetDisplay according to the current
 		/// scene-configuration.
@@ -1550,8 +1545,10 @@ namespace SpecialEffectsViewer
 			_itView_SingleCharacter.Checked = (scene == Scene.singlecharacter);
 			_itView_PlacedEffect   .Checked = (scene == Scene.placedeffect);
 		}
+		#endregion eventhandlers (scene-config)
 
 
+		#region eventhandlers (appearance)
 		/// <summary>
 		/// Handles changing Source and Target appearance-types.
 		/// </summary>
@@ -1623,8 +1620,10 @@ namespace SpecialEffectsViewer
 			if (SceneData != null)
 				SceneData.ResetDatatext();
 		}
+		#endregion eventhandlers (appearance)
 
 
+		#region eventhandlers (ground)
 		/// <summary>
 		/// Reloads the ElectronPanel w/ or w/out ground as detered by the
 		/// checkstate.
@@ -1662,8 +1661,10 @@ namespace SpecialEffectsViewer
 			if (SceneData != null)
 				SceneData.ResetDatatext();
 		}
+		#endregion eventhandlers (ground)
 
 
+		#region eventhandlers (search/filter)
 		/// <summary>
 		/// Search on keydown event when control has focus.
 		/// </summary>
@@ -1758,29 +1759,10 @@ namespace SpecialEffectsViewer
 				cb_Filter.Checked = !cb_Filter.Checked;
 			}
 		}
+		#endregion eventhandlers (search/filter)
 
-		/// <summary>
-		/// Selects all text on [Ctrl+a].
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void tb_keydown(object sender, KeyEventArgs e)
-		{
-			switch (e.KeyData)
-			{
-				case Keys.Control | Keys.A:
-					e.Handled = e.SuppressKeyPress = true;
-					var tb = sender as TextBox;
-					tb.SelectionStart = 0;
-					tb.SelectionLength = tb.Text.Length;
-					break;
 
-				// NOTE: Don't bother trying to handle [Ctrl+c] (whether or not
-				// the toolset is set as the plugin's Owner ...) since the
-				// toolset will freeze.
-			}
-		}
-
+		#region eventhandlers (electron panel)
 		/// <summary>
 		/// Changes the mouse-cursor appropriately on mousedown event in the
 		/// ElectronPanel.
@@ -1846,8 +1828,10 @@ namespace SpecialEffectsViewer
 					Cursor.Current = Cursors.SizeAll;
 			}
 		}
+		#endregion eventhandlers (electron panel)
 
 
+		#region eventhandlers (buttons)
 		/// <summary>
 		/// Copies the currently selected special-effect string to the clipboard.
 		/// </summary>
@@ -1862,7 +1846,32 @@ namespace SpecialEffectsViewer
 				Clipboard.SetText(lb_Effects.SelectedItem.ToString());
 			}
 		}
-		#endregion eventhandlers (controls)
+		#endregion eventhandlers (buttons)
+
+
+		#region eventhandlers (general)
+		/// <summary>
+		/// Selects all text on [Ctrl+a].
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void tb_keydown(object sender, KeyEventArgs e)
+		{
+			switch (e.KeyData)
+			{
+				case Keys.Control | Keys.A:
+					e.Handled = e.SuppressKeyPress = true;
+					var tb = sender as TextBox;
+					tb.SelectionStart = 0;
+					tb.SelectionLength = tb.Text.Length;
+					break;
+
+				// NOTE: Don't bother trying to handle [Ctrl+c] (whether or not
+				// the toolset is set as the plugin's Owner ...) since the
+				// toolset will freeze.
+			}
+		}
+		#endregion eventhandlers (general)
 
 
 		#region Methods

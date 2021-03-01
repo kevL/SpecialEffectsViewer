@@ -17,7 +17,7 @@ namespace SpecialEffectsViewer
 		/// Pointer to the current resource entry.
 		/// </summary>
 		internal static IResourceEntry Resent
-		{ get; private set; }
+		{ get; set; }
 
 		/// <summary>
 		/// Pointer to the current SEFGroup.
@@ -29,65 +29,19 @@ namespace SpecialEffectsViewer
 		/// Pointer to the current alternate SEFGroup.
 		/// </summary>
 		internal static SEFGroup Altgroup
-		{ get; private set; }
+		{ get; set; }
 
 		/// <summary>
 		/// Pointer to the current solo SEFGroup.
 		/// </summary>
 		internal static SEFGroup Solgroup
-		{ get; private set; }
+		{ get; set; }
 		#endregion Properties (static)
 
 
 		#region Methods (static)
 		/// <summary>
-		/// Clears this SpecialEffect.
-		/// </summary>
-		internal static void ClearEffect()
-		{
-			Resent   = null;
-			Sefgroup =
-			Altgroup =
-			Solgroup = null;
-		}
-
-		/// <summary>
-		/// Clears the sub-SEFGroups of this SpecialEffect.
-		/// </summary>
-		internal static void ClearSubgroups()
-		{
-			Altgroup =
-			Solgroup = null;
-		}
-
-		/// <summary>
-		/// Clears the Altgroup SEFGroup of this SpecialEffect.
-		/// </summary>
-		internal static void ClearAltgroup()
-		{
-			Altgroup = null;
-		}
-
-		/// <summary>
-		/// Clears the Solgroup SEFGroup of this SpecialEffect.
-		/// </summary>
-		internal static void ClearSolgroup()
-		{
-			Solgroup = null;
-		}
-
-
-		/// <summary>
-		/// Sets the resource entry.
-		/// </summary>
-		/// <param name="resent"></param>
-		internal static void SetResent(IResourceEntry resent)
-		{
-			Resent = resent;
-		}
-
-		/// <summary>
-		/// Sets the resource entry and creates a SEFGroup for it.
+		/// Creates a SEFGroup for the current resource entry.
 		/// </summary>
 		internal static void CreateSefgroup()
 		{
@@ -130,6 +84,18 @@ namespace SpecialEffectsViewer
 				Solgroup.XmlUnserialize(bin);
 
 			Resent.Release();
+		}
+
+
+		/// <summary>
+		/// Clears this SpecialEffect.
+		/// </summary>
+		internal static void ClearEffect()
+		{
+			Resent   = null;
+			Sefgroup =
+			Altgroup =
+			Solgroup = null;
 		}
 		#endregion Methods (static)
 	}
