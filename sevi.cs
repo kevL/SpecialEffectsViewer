@@ -333,7 +333,7 @@ namespace SpecialEffectsViewer
 		/// Populates extended its on the Events menu to toggle the events of
 		/// the current SEFGroup for a DoubleCharacter scene only.
 		/// </summary>
-		void CreateDoubleCharacterEvents()
+		void CreateExtendedEvents()
 		{
 			_itEvents.MenuItems.Add("-");
 
@@ -626,6 +626,8 @@ namespace SpecialEffectsViewer
 				}
 			}
 
+			_init = false;
+
 
 			switch (Scenary)
 			{
@@ -641,8 +643,6 @@ namespace SpecialEffectsViewer
 					rb_PlacedEffect.Checked = true;
 					break;
 			}
-
-			_init = false;
 		}
 
 		/// <summary>
@@ -830,7 +830,7 @@ namespace SpecialEffectsViewer
 		{
 			if (!_itResrepo_all.Checked)
 			{
-				rb_Scene_checkedchanged(null, EventArgs.Empty);
+				rb_Scene_click(null, EventArgs.Empty);
 				EnableControls(false);
 
 				lb_Effects.BeginUpdate();
@@ -865,7 +865,7 @@ namespace SpecialEffectsViewer
 		{
 			if (!_itResrepo_stock.Checked)
 			{
-				rb_Scene_checkedchanged(null, EventArgs.Empty);
+				rb_Scene_click(null, EventArgs.Empty);
 				EnableControls(false);
 
 				lb_Effects.BeginUpdate();
@@ -906,7 +906,7 @@ namespace SpecialEffectsViewer
 		{
 			if (!_itResrepo_module.Checked)
 			{
-				rb_Scene_checkedchanged(null, EventArgs.Empty);
+				rb_Scene_click(null, EventArgs.Empty);
 				EnableControls(false);
 
 				lb_Effects.BeginUpdate();
@@ -942,7 +942,7 @@ namespace SpecialEffectsViewer
 		{
 			if (!_itResrepo_campaign.Checked)
 			{
-				rb_Scene_checkedchanged(null, EventArgs.Empty);
+				rb_Scene_click(null, EventArgs.Empty);
 				EnableControls(false);
 
 				lb_Effects.BeginUpdate();
@@ -978,7 +978,7 @@ namespace SpecialEffectsViewer
 		{
 			if (!_itResrepo_override.Checked)
 			{
-				rb_Scene_checkedchanged(null, EventArgs.Empty);
+				rb_Scene_click(null, EventArgs.Empty);
 				EnableControls(false);
 
 				lb_Effects.BeginUpdate();
@@ -1197,7 +1197,10 @@ namespace SpecialEffectsViewer
 		void mi_view_DoubleCharacter(object sender, EventArgs e)
 		{
 			if (!_itView_DoubleCharacter.Checked)
+			{
 				rb_DoubleCharacter.Checked = true;
+				rb_Scene_click(null, EventArgs.Empty);
+			}
 		}
 
 		/// <summary>
@@ -1208,7 +1211,10 @@ namespace SpecialEffectsViewer
 		void mi_view_SingleCharacter(object sender, EventArgs e)
 		{
 			if (!_itView_SingleCharacter.Checked)
+			{
 				rb_SingleCharacter.Checked = true;
+				rb_Scene_click(null, EventArgs.Empty);
+			}
 		}
 
 		/// <summary>
@@ -1219,7 +1225,10 @@ namespace SpecialEffectsViewer
 		void mi_view_PlacedEffect(object sender, EventArgs e)
 		{
 			if (!_itView_PlacedEffect.Checked)
+			{
 				rb_PlacedEffect.Checked = true;
+				rb_Scene_click(null, EventArgs.Empty);
+			}
 		}
 
 		/// <summary>
@@ -1375,7 +1384,7 @@ namespace SpecialEffectsViewer
 						switch (Scenary)
 						{
 							case Scene.doublecharacter:
-								CreateDoubleCharacterEvents();
+								CreateExtendedEvents();
 								break;
 
 							case Scene.singlecharacter:
@@ -1495,44 +1504,42 @@ namespace SpecialEffectsViewer
 			}
 		}
 
+
 		/// <summary>
 		/// Creates objects in the NetDisplay according to the current
 		/// scene-configuration.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		/// <remarks>Although PlacedEffectObjects are invisible wire one up so
-		/// it's ready to play.</remarks>
-		void rb_Scene_checkedchanged(object sender, EventArgs e)
+		/// <remarks>This is also used to re/create the scene when the resrepo
+		/// initializes or is changed.</remarks>
+		void rb_Scene_click(object sender, EventArgs e)
 		{
-			if (!_init)
+			ClearScene();
+
+			CreateBasicEvents();
+
+			if (rb_DoubleCharacter.Checked) // create entire scene ->
 			{
-				ClearScene();
+				SetSceneType(Scene.doublecharacter);
+				CreateDoubleCharacterScene();
 
-				CreateBasicEvents();
-
-				if (rb_DoubleCharacter.Checked)
-				{
-					SetSceneType(Scene.doublecharacter);
-					CreateDoubleCharacterScene();
-
-					if (lb_Effects.SelectedIndex != -1)
-						CreateDoubleCharacterEvents();
-				}
-				else if (rb_SingleCharacter.Checked)
-				{
-					SetSceneType(Scene.singlecharacter);
-					CreateSingleCharacterScene();
-				}
-				else // rb_PlacedEffect.Checked
-				{
-					SetSceneType(Scene.placedeffect);
-					CreatePlacedEffectScene();
-				}
-
-				if (SceneData != null)
-					SceneData.ResetDatatext();
+				if (lb_Effects.SelectedIndex != -1)
+					CreateExtendedEvents();
 			}
+			else if (rb_SingleCharacter.Checked)
+			{
+				SetSceneType(Scene.singlecharacter);
+				CreateSingleCharacterScene();
+			}
+			else // rb_PlacedEffect.Checked
+			{
+				SetSceneType(Scene.placedeffect);
+				CreatePlacedEffectScene();
+			}
+
+			if (SceneData != null)
+				SceneData.ResetDatatext();
 		}
 
 		/// <summary>
@@ -1548,6 +1555,7 @@ namespace SpecialEffectsViewer
 			_itView_SingleCharacter.Checked = (scene == Scene.singlecharacter);
 			_itView_PlacedEffect   .Checked = (scene == Scene.placedeffect);
 		}
+
 
 		/// <summary>
 		/// Handles changing Source and Target appearance-types.
@@ -1621,6 +1629,7 @@ namespace SpecialEffectsViewer
 				SceneData.ResetDatatext();
 		}
 
+
 		/// <summary>
 		/// Reloads the ElectronPanel w/ or w/out ground as detered by the
 		/// checkstate.
@@ -1640,7 +1649,7 @@ namespace SpecialEffectsViewer
 			CreateElectronPanel();
 			InitializeReceiver();
 
-			switch (Scenary)
+			switch (Scenary) // create entire scene ->
 			{
 				case Scene.doublecharacter:
 					CreateDoubleCharacterScene();
@@ -1658,6 +1667,7 @@ namespace SpecialEffectsViewer
 			if (SceneData != null)
 				SceneData.ResetDatatext();
 		}
+
 
 		/// <summary>
 		/// Search on keydown event when control has focus.

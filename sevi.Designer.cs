@@ -347,7 +347,7 @@ namespace SpecialEffectsViewer
 			this.rb_DoubleCharacter.TabIndex = 0;
 			this.rb_DoubleCharacter.Text = "Double character [source+target]";
 			this.rb_DoubleCharacter.UseVisualStyleBackColor = true;
-			this.rb_DoubleCharacter.CheckedChanged += new System.EventHandler(this.rb_Scene_checkedchanged);
+			this.rb_DoubleCharacter.Click += new System.EventHandler(this.rb_Scene_click);
 			// 
 			// rb_SingleCharacter
 			// 
@@ -358,7 +358,7 @@ namespace SpecialEffectsViewer
 			this.rb_SingleCharacter.TabIndex = 1;
 			this.rb_SingleCharacter.Text = "Single character [AppearanceSEF]";
 			this.rb_SingleCharacter.UseVisualStyleBackColor = true;
-			this.rb_SingleCharacter.CheckedChanged += new System.EventHandler(this.rb_Scene_checkedchanged);
+			this.rb_SingleCharacter.Click += new System.EventHandler(this.rb_Scene_click);
 			// 
 			// rb_PlacedEffect
 			// 
@@ -369,7 +369,7 @@ namespace SpecialEffectsViewer
 			this.rb_PlacedEffect.TabIndex = 2;
 			this.rb_PlacedEffect.Text = "placed effect object";
 			this.rb_PlacedEffect.UseVisualStyleBackColor = true;
-			this.rb_PlacedEffect.CheckedChanged += new System.EventHandler(this.rb_Scene_checkedchanged);
+			this.rb_PlacedEffect.Click += new System.EventHandler(this.rb_Scene_click);
 			// 
 			// tp_Events
 			// 
