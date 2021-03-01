@@ -11,8 +11,8 @@ namespace SpecialEffectsViewer
 
 		Panel pa_Search;
 		TextBox tb_Search;
-		Button bu_SearchD;
-		Button bu_SearchU;
+		Button bu_SearchUp;
+		Button bu_SearchDn;
 		CheckBox cb_Filter;
 
 		ListBox lb_Effects;
@@ -115,8 +115,8 @@ namespace SpecialEffectsViewer
 			this.lb_Effects = new System.Windows.Forms.ListBox();
 			this.pa_Search = new System.Windows.Forms.Panel();
 			this.tb_Search = new System.Windows.Forms.TextBox();
-			this.bu_SearchD = new System.Windows.Forms.Button();
-			this.bu_SearchU = new System.Windows.Forms.Button();
+			this.bu_SearchUp = new System.Windows.Forms.Button();
+			this.bu_SearchDn = new System.Windows.Forms.Button();
 			this.cb_Filter = new System.Windows.Forms.CheckBox();
 			this.pa_bot = new System.Windows.Forms.Panel();
 			this.bu_Play = new System.Windows.Forms.Button();
@@ -450,8 +450,8 @@ namespace SpecialEffectsViewer
 			// pa_Search
 			// 
 			this.pa_Search.Controls.Add(this.tb_Search);
-			this.pa_Search.Controls.Add(this.bu_SearchD);
-			this.pa_Search.Controls.Add(this.bu_SearchU);
+			this.pa_Search.Controls.Add(this.bu_SearchUp);
+			this.pa_Search.Controls.Add(this.bu_SearchDn);
 			this.pa_Search.Controls.Add(this.cb_Filter);
 			this.pa_Search.Dock = System.Windows.Forms.DockStyle.Top;
 			this.pa_Search.Location = new System.Drawing.Point(0, 0);
@@ -471,29 +471,29 @@ namespace SpecialEffectsViewer
 			this.tb_Search.WordWrap = false;
 			this.tb_Search.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tb_Search_keydown);
 			// 
-			// bu_SearchD
+			// bu_SearchUp
 			// 
-			this.bu_SearchD.Dock = System.Windows.Forms.DockStyle.Right;
-			this.bu_SearchD.Location = new System.Drawing.Point(122, 0);
-			this.bu_SearchD.Margin = new System.Windows.Forms.Padding(0);
-			this.bu_SearchD.Name = "bu_SearchD";
-			this.bu_SearchD.Size = new System.Drawing.Size(23, 20);
-			this.bu_SearchD.TabIndex = 1;
-			this.bu_SearchD.Text = "d";
-			this.bu_SearchD.UseVisualStyleBackColor = true;
-			this.bu_SearchD.Click += new System.EventHandler(this.bu_Search_click);
+			this.bu_SearchUp.Dock = System.Windows.Forms.DockStyle.Right;
+			this.bu_SearchUp.Location = new System.Drawing.Point(122, 0);
+			this.bu_SearchUp.Margin = new System.Windows.Forms.Padding(0);
+			this.bu_SearchUp.Name = "bu_SearchUp";
+			this.bu_SearchUp.Size = new System.Drawing.Size(23, 20);
+			this.bu_SearchUp.TabIndex = 1;
+			this.bu_SearchUp.Text = "u";
+			this.bu_SearchUp.UseVisualStyleBackColor = true;
+			this.bu_SearchUp.Click += new System.EventHandler(this.bu_Search_click);
 			// 
-			// bu_SearchU
+			// bu_SearchDn
 			// 
-			this.bu_SearchU.Dock = System.Windows.Forms.DockStyle.Right;
-			this.bu_SearchU.Location = new System.Drawing.Point(145, 0);
-			this.bu_SearchU.Margin = new System.Windows.Forms.Padding(0);
-			this.bu_SearchU.Name = "bu_SearchU";
-			this.bu_SearchU.Size = new System.Drawing.Size(23, 20);
-			this.bu_SearchU.TabIndex = 2;
-			this.bu_SearchU.Text = "u";
-			this.bu_SearchU.UseVisualStyleBackColor = true;
-			this.bu_SearchU.Click += new System.EventHandler(this.bu_Search_click);
+			this.bu_SearchDn.Dock = System.Windows.Forms.DockStyle.Right;
+			this.bu_SearchDn.Location = new System.Drawing.Point(145, 0);
+			this.bu_SearchDn.Margin = new System.Windows.Forms.Padding(0);
+			this.bu_SearchDn.Name = "bu_SearchDn";
+			this.bu_SearchDn.Size = new System.Drawing.Size(23, 20);
+			this.bu_SearchDn.TabIndex = 2;
+			this.bu_SearchDn.Text = "d";
+			this.bu_SearchDn.UseVisualStyleBackColor = true;
+			this.bu_SearchDn.Click += new System.EventHandler(this.bu_Search_click);
 			// 
 			// cb_Filter
 			// 

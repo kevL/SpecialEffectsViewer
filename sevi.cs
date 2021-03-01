@@ -38,25 +38,25 @@ namespace SpecialEffectsViewer
 	/// objects to play effects against shall always be instantiated. There are
 	/// however problems with merely keeping the same objects instantiated and
 	/// simply changing effects. The double-character config applies a SEFGroup
-	/// and *could* keep the same objects except that the SEFGroupManager holds
-	/// onto the SEF-objects which results in a memory leak (I haven't seen a
-	/// way to dispose them). This is worked around by clearing and
-	/// re-instantiating the objects and SEFGroups every time the effect plays.
-	/// The single-character and placed-effect-object configs don't use
-	/// SEFGroups at least not directly here. Effects are instead assigned to
-	/// their NWN2 Instances which are then instantiated into the ElectronPanel
-	/// Scene as NetDisplayObjects. The double-character objects similarly
-	/// instantiate as NetDisplayObjects but effects are NOT assigned directly
-	/// to their NWN2 Instances. So ... depending what operation the user is
-	/// invoking it's possible to retain the Instances but recreate the
-	/// NetDisplayObjects etc etc etc. Describing code-flow in detail is beyond
-	/// my lifespan. Suffice to say there's a fundamental difference between
-	/// keeping the scene displayed in its proper configuration and actually
-	/// playing the effect in the scene. At present there are only two ways to
-	/// play an effect: select it in the effects-list or click the Play button.
-	/// But there are many operations that need to reinstantiate the scene such
-	/// as changing the scene-config, changing the appearances of creatures in
-	/// the scene, showing/hiding ground-tiles, changing the resource-repository,
+	/// and *could* keep the same objects except that the SEFManager holds onto
+	/// the SEF-objects which results in a memory leak (I haven't seen a way to
+	/// dispose them). This is worked around by clearing and re-instantiating
+	/// the objects and SEFGroups every time the effect plays. The
+	/// single-character and placed-effect-object configs don't use SEFGroups at
+	/// least not directly here. Effects are instead assigned to their NWN2
+	/// Instances which are then instantiated into the ElectronPanel Scene as
+	/// NetDisplayObjects. The double-character objects similarly instantiate as
+	/// NetDisplayObjects but effects are NOT assigned directly to their NWN2
+	/// Instances. So ... depending what operation the user is invoking it's
+	/// possible to retain the Instances but recreate the NetDisplayObjects etc
+	/// etc etc. Describing code-flow in detail is beyond my lifespan. Suffice
+	/// to say there's a fundamental difference between keeping the scene
+	/// displayed in its user-chosen configuration and actually playing the
+	/// effect in the scene. At present there are only two ways to play an
+	/// effect: select it in the effects-list or click the Play button. But
+	/// there are many operations that need to reinstantiate the scene such as
+	/// changing the scene-config, changing the appearances of creatures in the
+	/// scene, showing/hiding ground-tiles, changing the resource-repository,
 	/// etc. Note that playing effects gets even more complicated when user
 	/// plays selected events of an effect under the double-character Events
 	/// menu ...
@@ -234,8 +234,8 @@ namespace SpecialEffectsViewer
 			sc2_Options.Panel1Collapsed = true;
 
 			// set unicode text on the up/down search-buttons
-			bu_SearchD.Text = "\u25bc"; // down triangle
-			bu_SearchU.Text = "\u25b2"; // up triangle
+			bu_SearchUp.Text = "\u25b2"; // up triangle
+			bu_SearchDn.Text = "\u25bc"; // down triangle
 
 			CreateMainMenu();
 			CreateElectronPanel();
@@ -735,13 +735,13 @@ namespace SpecialEffectsViewer
 
 				case Keys.Enter:
 					if (lb_Effects.SelectedIndex != -1
-						&& !tb_Search .Focused
-						&& !cb_Filter .Focused
-						&& !bu_SearchD.Focused
-						&& !bu_SearchU.Focused
-						&& !bu_Play   .Focused
-						&& !bu_Stop   .Focused
-						&& !bu_Copy   .Focused)
+						&& !tb_Search  .Focused
+						&& !cb_Filter  .Focused
+						&& !bu_SearchUp.Focused
+						&& !bu_SearchDn.Focused
+						&& !bu_Play    .Focused
+						&& !bu_Stop    .Focused
+						&& !bu_Copy    .Focused)
 					{
 						e.Handled = e.SuppressKeyPress = true;
 						mi_events_Play(null, EventArgs.Empty);
@@ -1680,12 +1680,12 @@ namespace SpecialEffectsViewer
 			{
 				case Keys.Enter:
 					e.SuppressKeyPress = e.Handled = true;
-					bu_Search_click(bu_SearchD, EventArgs.Empty);
+					bu_Search_click(bu_SearchDn, EventArgs.Empty);
 					break;
 
 				case Keys.Enter | Keys.Shift:
 					e.SuppressKeyPress = e.Handled = true;
-					bu_Search_click(bu_SearchU, EventArgs.Empty);
+					bu_Search_click(bu_SearchUp, EventArgs.Empty);
 					break;
 			}
 		}
@@ -1697,7 +1697,7 @@ namespace SpecialEffectsViewer
 		/// <param name="e"></param>
 		void bu_Search_click(object sender, EventArgs e)
 		{
-			int id = Search.SearchEffects(lb_Effects, tb_Search.Text, sender == bu_SearchD);
+			int id = Search.SearchEffects(lb_Effects, tb_Search.Text, sender == bu_SearchDn);
 			if (id != -1)
 				lb_Effects.SelectedIndex = id;
 		}
