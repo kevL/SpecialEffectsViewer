@@ -1507,7 +1507,12 @@ namespace SpecialEffectsViewer
 		/// initializes or is changed.</remarks>
 		void rb_Scene_click(object sender, EventArgs e)
 		{
-			if (sender == null || !(sender as RadioButton).Checked)
+			var rb = sender as RadioButton;
+
+			if (sender == null
+				|| (rb == rb_DoubleCharacter && Scenary != Scene.doublecharacter)
+				|| (rb == rb_SingleCharacter && Scenary != Scene.singlecharacter)
+				|| (rb == rb_PlacedEffect    && Scenary != Scene.placedeffect))
 			{
 				SetSceneType();
 
