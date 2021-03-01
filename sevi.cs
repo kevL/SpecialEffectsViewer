@@ -1509,13 +1509,15 @@ namespace SpecialEffectsViewer
 		{
 			if (sender == null || !(sender as RadioButton).Checked)
 			{
+				SetSceneType();
+
 				ClearScene();
 
 				CreateBasicEvents();
 
 				if (rb_DoubleCharacter.Checked) // create entire scene ->
 				{
-					SetSceneType(Scene.doublecharacter);
+					SpecialEffectsViewerPreferences.that.Scene = (int)Scene.doublecharacter;
 					CreateDoubleCharacterScene();
 
 					if (lb_Effects.SelectedIndex != -1)
@@ -1523,12 +1525,12 @@ namespace SpecialEffectsViewer
 				}
 				else if (rb_SingleCharacter.Checked)
 				{
-					SetSceneType(Scene.singlecharacter);
+					SpecialEffectsViewerPreferences.that.Scene = (int)Scene.singlecharacter;
 					CreateSingleCharacterScene();
 				}
 				else // rb_PlacedEffect.Checked
 				{
-					SetSceneType(Scene.placedeffect);
+					SpecialEffectsViewerPreferences.that.Scene = (int)Scene.placedeffect;
 					CreatePlacedEffectScene();
 				}
 
@@ -1541,14 +1543,11 @@ namespace SpecialEffectsViewer
 		/// Toggles scene-checks on the View menu to keep them synchronized with
 		/// the radio-buttons on the options-panel.
 		/// </summary>
-		/// <param name="scene"></param>
-		void SetSceneType(Scene scene)
+		void SetSceneType()
 		{
-			SpecialEffectsViewerPreferences.that.Scene = (int)scene;
-
-			_itView_DoubleCharacter.Checked = (scene == Scene.doublecharacter);
-			_itView_SingleCharacter.Checked = (scene == Scene.singlecharacter);
-			_itView_PlacedEffect   .Checked = (scene == Scene.placedeffect);
+			_itView_DoubleCharacter.Checked = rb_DoubleCharacter.Checked;
+			_itView_SingleCharacter.Checked = rb_SingleCharacter.Checked;
+			_itView_PlacedEffect   .Checked = rb_PlacedEffect   .Checked;
 		}
 		#endregion eventhandlers (scene-config)
 
