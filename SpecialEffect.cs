@@ -10,6 +10,10 @@ namespace SpecialEffectsViewer
 	/// <summary>
 	/// A static object that contains SEF-related pointers.
 	/// </summary>
+	/// <remarks><see cref="sevi"/> has only 1 effect selected at any time. This
+	/// is that effect. Although used only by DoubleCharacter config
+	/// <see cref="Sefgroup"/> needs to be kept updated no matter the current
+	/// scene in case user then selects the DoubleCharacter scene.</remarks>
 	static class SpecialEffect
 	{
 		#region Properties (static)
@@ -22,18 +26,23 @@ namespace SpecialEffectsViewer
 		/// <summary>
 		/// Pointer to the current SEFGroup.
 		/// </summary>
+		/// <remarks>This is used to display the full effect.</remarks>
 		internal static SEFGroup Sefgroup
 		{ get; private set; }
 
 		/// <summary>
 		/// Pointer to the current alternate SEFGroup.
 		/// </summary>
+		/// <remarks>This is used to display selected events of the effect per
+		/// the Events menu.</remarks>
 		internal static SEFGroup Altgroup
 		{ get; set; }
 
 		/// <summary>
 		/// Pointer to the current solo SEFGroup.
 		/// </summary>
+		/// <remarks>This is used to display a solo effect if [Shift] is
+		/// depressed when clicking an event on the Events menu.</remarks>
 		internal static SEFGroup Solgroup
 		{ get; set; }
 		#endregion Properties (static)
