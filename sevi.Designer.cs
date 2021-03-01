@@ -446,7 +446,6 @@ namespace SpecialEffectsViewer
 			this.lb_Effects.Sorted = true;
 			this.lb_Effects.TabIndex = 1;
 			this.lb_Effects.SelectedIndexChanged += new System.EventHandler(this.lb_Effects_selectedindexchanged);
-			this.lb_Effects.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lb_Effects_keydown);
 			// 
 			// pa_Search
 			// 

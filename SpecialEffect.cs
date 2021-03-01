@@ -41,10 +41,13 @@ namespace SpecialEffectsViewer
 
 		#region Methods (static)
 		/// <summary>
-		/// Creates a SEFGroup for the current resource entry.
+		/// Assigns an IResourceEntry and creates a SEFGroup for it.
 		/// </summary>
-		internal static void CreateSefgroup()
+		/// <param name="resent"></param>
+		internal static void CreateSefgroup(IResourceEntry resent)
 		{
+			Resent = resent;
+
 			Altgroup = null;
 			Solgroup = null;
 

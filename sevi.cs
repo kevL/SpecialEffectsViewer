@@ -366,9 +366,9 @@ namespace SpecialEffectsViewer
 		{
 			_panel = new ElectronPanel();
 
-			_panel.Dock = DockStyle.Fill;
+			_panel.Dock        = DockStyle.Fill;
 			_panel.BorderStyle = BorderStyle.FixedSingle;
-			_panel.MousePanel.KeyDown   += lb_Effects_keydown;
+
 			_panel.MousePanel.MouseDown += panel_mousedown;
 			_panel.MousePanel.MouseUp   += panel_mouseup;
 			_panel.MousePanel.KeyDown   += panel_keydown;
@@ -726,10 +726,27 @@ namespace SpecialEffectsViewer
 			// TODO: universal [Enter] to play effect if valid
 			// unless certain controls are focused
 
-			if (e.KeyData == Keys.Escape)
+			switch (e.KeyData)
 			{
-				e.Handled = e.SuppressKeyPress = true;
-				Close();
+				case Keys.Escape:
+					e.Handled = e.SuppressKeyPress = true;
+					Close();
+					break;
+
+				case Keys.Enter:
+					if (lb_Effects.SelectedIndex != -1
+						&& !tb_Search .Focused
+						&& !cb_Filter .Focused
+						&& !bu_SearchD.Focused
+						&& !bu_SearchU.Focused
+						&& !bu_Play   .Focused
+						&& !bu_Stop   .Focused
+						&& !bu_Copy   .Focused)
+					{
+						e.Handled = e.SuppressKeyPress = true;
+						mi_events_Play(null, EventArgs.Empty);
+					}
+					break;
 			}
 			base.OnKeyDown(e);
 		}
@@ -1062,7 +1079,6 @@ namespace SpecialEffectsViewer
 					if (effectChanged)
 					{
 						CreateExtendedEvents();
-						SpecialEffect.CreateSefgroup();
 					}
 					CreateDoubleCharacterObjects();			// instantiate NetDisplayObjects
 					AddSefgroup();							// add the SEFGroup to the SEFManager
@@ -1360,20 +1376,6 @@ namespace SpecialEffectsViewer
 
 		#region eventhandlers (effects-list)
 		/// <summary>
-		/// Replays the currently selected effect.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void lb_Effects_keydown(object sender, KeyEventArgs e)
-		{
-			if (e.KeyData == Keys.Enter)
-			{
-				e.Handled = e.SuppressKeyPress = true;
-				mi_events_Play(null, EventArgs.Empty);
-			}
-		}
-
-		/// <summary>
 		/// Creates the selected effect and plays it.
 		/// </summary>
 		/// <param name="sender"></param>
@@ -1398,7 +1400,7 @@ namespace SpecialEffectsViewer
 					if (lb_Effects.SelectedIndex != -1)
 					{
 						EnableControls(true);
-						SpecialEffect.Resent = lb_Effects.SelectedItem as IResourceEntry;
+						SpecialEffect.CreateSefgroup(lb_Effects.SelectedItem as IResourceEntry);
 						Play(true);
 					}
 					else
@@ -1505,31 +1507,34 @@ namespace SpecialEffectsViewer
 		/// initializes or is changed.</remarks>
 		void rb_Scene_click(object sender, EventArgs e)
 		{
-			ClearScene();
-
-			CreateBasicEvents();
-
-			if (rb_DoubleCharacter.Checked) // create entire scene ->
+			if (sender == null || !(sender as RadioButton).Checked)
 			{
-				SetSceneType(Scene.doublecharacter);
-				CreateDoubleCharacterScene();
+				ClearScene();
 
-				if (lb_Effects.SelectedIndex != -1)
-					CreateExtendedEvents();
-			}
-			else if (rb_SingleCharacter.Checked)
-			{
-				SetSceneType(Scene.singlecharacter);
-				CreateSingleCharacterScene();
-			}
-			else // rb_PlacedEffect.Checked
-			{
-				SetSceneType(Scene.placedeffect);
-				CreatePlacedEffectScene();
-			}
+				CreateBasicEvents();
 
-			if (SceneData != null)
-				SceneData.ResetDatatext();
+				if (rb_DoubleCharacter.Checked) // create entire scene ->
+				{
+					SetSceneType(Scene.doublecharacter);
+					CreateDoubleCharacterScene();
+
+					if (lb_Effects.SelectedIndex != -1)
+						CreateExtendedEvents();
+				}
+				else if (rb_SingleCharacter.Checked)
+				{
+					SetSceneType(Scene.singlecharacter);
+					CreateSingleCharacterScene();
+				}
+				else // rb_PlacedEffect.Checked
+				{
+					SetSceneType(Scene.placedeffect);
+					CreatePlacedEffectScene();
+				}
+
+				if (SceneData != null)
+					SceneData.ResetDatatext();
+			}
 		}
 
 		/// <summary>
