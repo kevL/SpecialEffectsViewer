@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -1132,10 +1133,48 @@ namespace specialeffectsviewer
 		/// <param name="e"></param>
 		void mi_events_Stop(object sender, EventArgs e)
 		{
-			_sefer.EndUpdating();
+			Stop();
 
 			if (SceneData != null)
 				SceneData.ResetDatatext();
+		}
+
+		/// <summary>
+		/// Stops rendering the current effect including audio.
+		/// </summary>
+		/// <param name="bypassRevert">true if the SEFGroup(s) are going to be
+		/// destroyed so don't bother reverting any 'SoundLoops' flags</param>
+		/// <remarks>(ISEFEvent as SEFSound).Deactivate() does not deactivate
+		/// non-looping sounds. To stop their audio, flag each as looping, then
+		/// call _sefer.EndUpdating(). Lastly deflag their 'SoundLoops' booleans
+		/// in case user replays the effect.</remarks>
+		void Stop(bool bypassRevert = false)
+		{
+			var reverts = new List<SEFSound>();
+
+			SEFGroup sefgroup; SEFSound sefsound;
+
+			for (int i = 0; i != _sefer.Groups.Count; ++i)
+			{
+				sefgroup = _sefer.Groups[i];
+				for (int j = 0; j != sefgroup.Events.Count; ++j)
+				{
+					if ((sefsound = sefgroup.Events[j] as SEFSound) != null
+						&& !sefsound.SoundLoops)
+					{
+						sefsound.SoundLoops = true;
+						reverts.Add(sefsound);
+					}
+				}
+			}
+
+			_sefer.EndUpdating();
+
+			if (!bypassRevert)
+			{
+				foreach (SEFSound revert in reverts)
+					revert.SoundLoops = false;
+			}
 		}
 
 
@@ -1148,7 +1187,7 @@ namespace specialeffectsviewer
 		/// <remarks>Event(s) operations are used by DoubleCharacter scene only.</remarks>
 		void mi_events_Event(object sender, EventArgs e)
 		{
-			_sefer.EndUpdating();
+			Stop();
 
 			var it = sender as MenuItem;
 			if (it == _itEvents_Enable) // enable all events
@@ -1390,13 +1429,9 @@ namespace specialeffectsviewer
 		{
 			if (!_init)
 			{
-				_sefer.EndUpdating();
-
 				if (lb_Effects.SelectedIndex != _efid)
 				{
 					_efid = lb_Effects.SelectedIndex;
-
-					ClearScene();
 
 					CreateBasicEvents();
 
@@ -1410,6 +1445,7 @@ namespace specialeffectsviewer
 					{
 						EnableControls(false);
 						SpecialEffect.ClearEffect();
+						ClearScene();
 					}
 
 					PrintEffectData();
@@ -1418,7 +1454,7 @@ namespace specialeffectsviewer
 				{
 					if (Scenary == Scene.doublecharacter)
 					{
-						EnableEvents();
+						EnableEvents(); // ensure all events get re-enabled when the effects-list is clicked
 						SpecialEffect.Altgroup = null;
 					}
 					Play();
@@ -1910,7 +1946,7 @@ namespace specialeffectsviewer
 		{
 			if (_sefer != null) // NetDisplay is null on launch
 			{
-				_sefer.EndUpdating();
+				Stop(true);
 				_sefer.Groups.Clear();
 				_sefer.GroupsToRemove.Clear();
 
