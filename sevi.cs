@@ -1142,13 +1142,11 @@ namespace specialeffectsviewer
 		/// <summary>
 		/// Stops rendering the current effect including audio.
 		/// </summary>
-		/// <param name="bypassRevert">true if the SEFGroup(s) are going to be
-		/// destroyed so don't bother reverting any 'SoundLoops' flags</param>
 		/// <remarks>(ISEFEvent as SEFSound).Deactivate() does not deactivate
 		/// non-looping sounds. To stop their audio, flag each as looping, then
 		/// call _sefer.EndUpdating(). Lastly deflag their 'SoundLoops' booleans
 		/// in case user replays the effect.</remarks>
-		void Stop(bool bypassRevert = false)
+		void Stop()
 		{
 			var reverts = new List<SEFSound>();
 
@@ -1170,11 +1168,8 @@ namespace specialeffectsviewer
 
 			_sefer.EndUpdating();
 
-			if (!bypassRevert)
-			{
-				foreach (SEFSound revert in reverts)
-					revert.SoundLoops = false;
-			}
+			foreach (SEFSound revert in reverts)	// WARNING: Don't try bypassing this even if Groups are going to
+				revert.SoundLoops = false;			// be destroyed, since things are getting so convuluted it'll ef.
 		}
 
 
@@ -1946,7 +1941,7 @@ namespace specialeffectsviewer
 		{
 			if (_sefer != null) // NetDisplay is null on launch
 			{
-				Stop(true);
+				Stop();
 				_sefer.Groups.Clear();
 				_sefer.GroupsToRemove.Clear();
 
