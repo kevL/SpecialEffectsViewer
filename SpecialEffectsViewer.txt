@@ -67,8 +67,10 @@ about - opens a dialog with version and date of build
 
 OPTIONS
 
-When View|show Options panel is activated, several options are shown at the top
-of the panel. The three radio-buttons select how the scene will be rendered:
+When View|show Options panel is activated, a panel is shown with two tabs:
+Options and Events.
+
+On the Options page three radio-buttons select how the scene will be rendered.
 
 Double character     - renders the scene with two NPCs. This creates source
                        and target creatures, and uses their attachment-nodes if
@@ -81,21 +83,35 @@ placed effect object - renders the effect on a placed-effect object
 Note: Deciding which option above to use depends on the special effect file and
 the usage that you intend to put it to for NwN2 play.
 
+Also on the Options page, the appearance for Source and Target creatures can be
+selected per Appearance.2da.
+
+Source - select the appearance for the source-creature in a Double character
+         scene or for the creature in a Single character scene
+Target - select the appearance for the target-creature in a Double character
+         scene
+
+To the right of Source and Target are checkboxes for the female variants of the
+selected appearances if they are available.
+
+Also, ground tiles can be toggled on and off on the Options page.
+
 show Ground - toggles the ground on and off. Some effect-events have textures
               that only render on the ground
 
-The currently selected effect's events will be listed beneath those options.
-They are simply informational and can't be edited here; if you want to edit a
-special effect or any of its events, breakout the files (they are listed) and
-open them in the stock VFXEditor plugin or other.
+The currently selected effect's events will be listed on the Events page. This
+is simply informational and can't be edited; if you want to edit a special
+effect or any of its events, breakout the files (they are listed in the events)
+and open them in the stock VFXEditor plugin or other.
 
 
 BUTTONS
 
-Copy  - copies the label of the currently selected special effect file to the
-        Windows clipboard
-Clear - clears the scene
-Close - closes the plugin
+Play - plays the currently selected effect
+Stop - stops the effect (note that sounds are handled elsewhere and won't be
+       stopped unless the sound-event is set to loop)
+Copy - copies the label of the currently selected special effect file to the
+       Windows clipboard
 
 filtr - toggles the effects-list filter on and off. Enter a string in search and
         click the filter button to set a filter-string. A filtered list can
@@ -115,9 +131,9 @@ Note: The display panel must be focused to adjust the camera.
 
 KEYBOARD
 
-Enter  - plays the currently selected effect if the effects list or the scene
-         panel has focus. Searches if search is focused (Shift+Enter to search
-         ascending), toggles the list filter if the filter button has focus
+Enter  - plays the currently selected effect if the currently focused control
+         doesn't handle [Enter] itself. Searches if search is focused (depress
+		 [Shift] to search ascending), or activates a button
 Escape - closes the plugin
 
 
@@ -164,12 +180,13 @@ under View|Options|Plugins|Special Effects Viewer|SceneData dialog:
 SceneDataDelay. Its default value is 350 milliseconds.
 
 It should be set as fast as possible without throwing an
-InvalidOperationException (see the description of the SceneDataDelay property).
-I believe it depends on how slow or fast your CPU is: faster CPUs can handle a
-shorter delay. I believe that there is an underlying issue with multi-threading
-in the toolset libraries (ie, a race condition). The very minimum value is 15
-milliseconds, which is a limitation of the .NET libraries (a standard Timer
-can't tick faster than about that).
+InvalidOperationException (see the description of the SceneDataDelay property
+under toolset|View|Options...|Plugins|Special Effects Viewer). I believe it
+depends on how slow or fast your CPU is: faster CPUs can handle a shorter delay.
+I believe that there is an underlying issue with multi-threading in the toolset
+libraries (ie, a race condition). The very minimum value is 15 milliseconds,
+which is a limitation of the .NET libraries (a standard Timer can't tick faster
+than about that).
 
 The most troublesome specialeffect I've found is fx_item_blood (SoZ) w/ 41
 objects. You can test your system by selecting it with the SceneData dialog
@@ -177,7 +194,7 @@ open.
 
 Note that you can manually update the SceneData dialog by pressing [F5] when the
 dialog has focus. Otherwise it updates auto (after the above described delay)
-when the SpecialEffectsViewer updates the current effect in its display-panel.
+when the SpecialEffectsViewer renders the current effect in its display-panel.
 The dialog will always open initially without showing any information since I
 couldn't get that to work reliably.
 
