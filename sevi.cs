@@ -753,6 +753,18 @@ namespace specialeffectsviewer
 		}
 
 		/// <summary>
+		/// Stops effect when the plugin is minimized.
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnResize(EventArgs e)
+		{
+			if (WindowState == FormWindowState.Minimized)
+				mi_events_Stop(null, EventArgs.Empty);
+
+			base.OnResize(e);
+		}
+
+		/// <summary>
 		/// Stores preferences and unsubscribes from toolset-events.
 		/// </summary>
 		/// <param name="e"></param>
