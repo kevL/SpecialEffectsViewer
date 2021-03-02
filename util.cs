@@ -8,7 +8,7 @@ using OEIShared.OEIMath;
 using OEIShared.Utils;
 
 
-namespace SpecialEffectsViewer
+namespace specialeffectsviewer
 {
 	/// <summary>
 	/// Static class of general utilities.

@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 
 
-namespace SpecialEffectsViewer
+namespace specialeffectsviewer
 {
 	sealed partial class sevi
 	{
@@ -23,7 +23,7 @@ namespace SpecialEffectsViewer
 		Button bu_Copy;
 
 		SplitContainer sc2_Options;
-		TabControl tc_Options;
+		CompositedTabControl tc_Options;
 
 		TabPage tp_Options;
 		GroupBox gb_Scene;
@@ -93,7 +93,7 @@ namespace SpecialEffectsViewer
 		{
 			this.sc1_Effects = new System.Windows.Forms.SplitContainer();
 			this.sc2_Options = new System.Windows.Forms.SplitContainer();
-			this.tc_Options = new System.Windows.Forms.TabControl();
+			this.tc_Options = new specialeffectsviewer.CompositedTabControl();
 			this.tp_Options = new System.Windows.Forms.TabPage();
 			this.gb_Ground = new System.Windows.Forms.GroupBox();
 			this.cb_Ground = new System.Windows.Forms.CheckBox();
@@ -198,6 +198,7 @@ namespace SpecialEffectsViewer
 			this.tc_Options.SelectedIndex = 0;
 			this.tc_Options.Size = new System.Drawing.Size(255, 454);
 			this.tc_Options.TabIndex = 0;
+			this.tc_Options.Click += new System.EventHandler(this.tc_click);
 			// 
 			// tp_Options
 			// 
@@ -588,5 +589,29 @@ namespace SpecialEffectsViewer
 
 		}
 		#endregion Designer
+	}
+
+
+
+	/// <summary>
+	/// Derived class for TabControl.
+	/// </summary>
+	public sealed class CompositedTabControl
+		: TabControl
+	{
+		#region Properties (override)
+		/// <summary>
+		/// Prevents flicker.
+		/// </summary>
+		protected override CreateParams CreateParams
+		{
+			get
+			{
+				CreateParams cp = base.CreateParams;
+				cp.ExStyle |= 0x02000000; // enable 'WS_EX_COMPOSITED'
+				return cp;
+			}
+		}
+		#endregion Properties (override)
 	}
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 
 
-namespace SpecialEffectsViewer
+namespace specialeffectsviewer
 {
 	static class BwResourceTypes
 	{

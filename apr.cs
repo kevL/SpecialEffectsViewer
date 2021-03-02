@@ -1,7 +1,7 @@
 ﻿using System;
 
 
-namespace SpecialEffectsViewer
+namespace specialeffectsviewer
 {
 	/// <summary>
 	/// An APpearance Row. (apr)

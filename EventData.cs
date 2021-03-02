@@ -4,7 +4,7 @@ using System.Text;
 using OEIShared.Effects;
 
 
-namespace SpecialEffectsViewer
+namespace specialeffectsviewer
 {
 	/// <summary>
 	/// Sef event data.

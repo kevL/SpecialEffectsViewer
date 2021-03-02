@@ -5,7 +5,7 @@ using NWN2Toolset.Plugins;
 using TD.SandBar;
 
 
-namespace SpecialEffectsViewer
+namespace specialeffectsviewer
 {
 	/// <summary>
 	/// NwN2 Electron toolset plugin.

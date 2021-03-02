@@ -3,7 +3,7 @@ using System.Media;
 using System.Windows.Forms;
 
 
-namespace SpecialEffectsViewer
+namespace specialeffectsviewer
 {
 	/// <summary>
 	/// Static class for searching the effects-list.

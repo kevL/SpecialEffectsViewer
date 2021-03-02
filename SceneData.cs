@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using OEIShared.NetDisplay;
 
 
-namespace SpecialEffectsViewer
+namespace specialeffectsviewer
 {
 	/// <summary>
 	/// Sef event data as applied to objects in the Scene.

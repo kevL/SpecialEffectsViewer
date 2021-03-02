@@ -3,7 +3,7 @@ using System.IO;
 using System.Windows.Forms;
 
 
-namespace SpecialEffectsViewer
+namespace specialeffectsviewer
 {
 	static class logger
 	{

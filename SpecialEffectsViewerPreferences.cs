@@ -2,7 +2,7 @@
 using System.ComponentModel;
 
 
-namespace SpecialEffectsViewer
+namespace specialeffectsviewer
 {
 	/// <summary>
 	/// Preferences per Electron toolset plugin interface.

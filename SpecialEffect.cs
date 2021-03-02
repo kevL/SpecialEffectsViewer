@@ -5,7 +5,7 @@ using OEIShared.Effects;
 using OEIShared.IO;
 
 
-namespace SpecialEffectsViewer
+namespace specialeffectsviewer
 {
 	/// <summary>
 	/// A static object that contains SEF-related pointers.

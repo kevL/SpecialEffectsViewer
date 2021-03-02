@@ -26,7 +26,7 @@ using OEIShared.UI.Input;
 using OEIShared.Utils;
 
 
-namespace SpecialEffectsViewer
+namespace specialeffectsviewer
 {
 	/// <summary>
 	/// The SpecialEffectsViewer window along with all of its mechanics - aka
@@ -1878,6 +1878,21 @@ namespace SpecialEffectsViewer
 				// NOTE: Don't bother trying to handle [Ctrl+c] (whether or not
 				// the toolset is set as the plugin's Owner ...) since the
 				// toolset will freeze.
+			}
+		}
+
+		/// <summary>
+		/// Focuses the event-data textbox when the Events page is clicked.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void tc_click(object sender, EventArgs e)
+		{
+			if (tc_Options.SelectedIndex == 1) // Events page
+			{
+				tb_EventData.Focus();
+				tb_EventData.SelectionStart =
+				tb_EventData.SelectionLength = 0;
 			}
 		}
 		#endregion eventhandlers (general)

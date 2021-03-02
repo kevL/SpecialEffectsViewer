@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Windows.Forms;
 
 
-namespace SpecialEffectsViewer
+namespace specialeffectsviewer
 {
 	sealed class AboutF
 		: Form
