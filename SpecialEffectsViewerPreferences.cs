@@ -130,7 +130,7 @@ namespace specialeffectsviewer
 
 		[Category("Camera")]
 		[Description("The degree in radians that the camera will start on the"
-				   + " x/y-plane clockwise from behind the Orc (ie, facing east).")]
+				   + " x/y-plane clockwise when facing east.")]
 		[DefaultValue(-util.pi_2)]
 		public float FocusTheta
 		{ get; set; }
