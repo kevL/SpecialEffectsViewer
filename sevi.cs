@@ -245,7 +245,7 @@ namespace specialeffectsviewer
 		}
 
 		/// <summary>
-		/// Instantiates the plugin's MainMenu.
+		/// Creates the plugin's MainMenu.
 		/// </summary>
 		void CreateMainMenu()
 		{
@@ -517,10 +517,10 @@ namespace specialeffectsviewer
 		/// <remarks>The camera-receiver goes borky if this is done in the cTor.</remarks>
 		protected override void OnLoad(EventArgs e)
 		{
-			LoadPreferences(); // -> finalize initialization
+			LoadPreferences();
 			InitializeReceiver();
 
-			mi_resrepo_All(null, EventArgs.Empty);
+			mi_resrepo_All(null, EventArgs.Empty); // -> finalize initialization
 		}
 
 		/// <summary>
@@ -1133,6 +1133,9 @@ namespace specialeffectsviewer
 		void mi_events_Stop(object sender, EventArgs e)
 		{
 			_sefer.EndUpdating();
+
+			if (SceneData != null)
+				SceneData.ResetDatatext();
 		}
 
 
