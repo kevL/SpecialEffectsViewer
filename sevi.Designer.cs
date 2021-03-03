@@ -230,7 +230,7 @@ namespace specialeffectsviewer
 			this.cb_Ground.Location = new System.Drawing.Point(7, 11);
 			this.cb_Ground.Margin = new System.Windows.Forms.Padding(0);
 			this.cb_Ground.Name = "cb_Ground";
-			this.cb_Ground.Size = new System.Drawing.Size(100, 20);
+			this.cb_Ground.Size = new System.Drawing.Size(92, 20);
 			this.cb_Ground.TabIndex = 0;
 			this.cb_Ground.Text = "show Ground";
 			this.cb_Ground.UseVisualStyleBackColor = false;
@@ -344,7 +344,7 @@ namespace specialeffectsviewer
 			this.rb_DoubleCharacter.Location = new System.Drawing.Point(6, 10);
 			this.rb_DoubleCharacter.Margin = new System.Windows.Forms.Padding(0);
 			this.rb_DoubleCharacter.Name = "rb_DoubleCharacter";
-			this.rb_DoubleCharacter.Size = new System.Drawing.Size(219, 16);
+			this.rb_DoubleCharacter.Size = new System.Drawing.Size(217, 16);
 			this.rb_DoubleCharacter.TabIndex = 0;
 			this.rb_DoubleCharacter.Text = "Double character [source+target]";
 			this.rb_DoubleCharacter.UseVisualStyleBackColor = true;
@@ -355,7 +355,7 @@ namespace specialeffectsviewer
 			this.rb_SingleCharacter.Location = new System.Drawing.Point(6, 26);
 			this.rb_SingleCharacter.Margin = new System.Windows.Forms.Padding(0);
 			this.rb_SingleCharacter.Name = "rb_SingleCharacter";
-			this.rb_SingleCharacter.Size = new System.Drawing.Size(219, 16);
+			this.rb_SingleCharacter.Size = new System.Drawing.Size(217, 16);
 			this.rb_SingleCharacter.TabIndex = 1;
 			this.rb_SingleCharacter.Text = "Single character [AppearanceSEF]";
 			this.rb_SingleCharacter.UseVisualStyleBackColor = true;
@@ -366,7 +366,7 @@ namespace specialeffectsviewer
 			this.rb_PlacedEffect.Location = new System.Drawing.Point(6, 42);
 			this.rb_PlacedEffect.Margin = new System.Windows.Forms.Padding(0);
 			this.rb_PlacedEffect.Name = "rb_PlacedEffect";
-			this.rb_PlacedEffect.Size = new System.Drawing.Size(149, 16);
+			this.rb_PlacedEffect.Size = new System.Drawing.Size(145, 16);
 			this.rb_PlacedEffect.TabIndex = 2;
 			this.rb_PlacedEffect.Text = "placed effect object";
 			this.rb_PlacedEffect.UseVisualStyleBackColor = true;
