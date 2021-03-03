@@ -95,6 +95,7 @@ namespace specialeffectsviewer
 	}
 
 
+	#region StringDecryptor
 	/// <summary>
 	/// Decrypts obfuscated strings in the toolset DLLs.
 	/// </summary>
@@ -119,4 +120,39 @@ namespace specialeffectsviewer
 			return String.Intern(new string(array1));
 		}
 	}
+	#endregion StringDecryptor
+
+
+	#region clipboard
+	/// <summary>
+	/// https://stackoverflow.com/questions/39832057/using-windows-clipboard#answer-39833879
+	/// </summary>
+	static class ClipboardAssistant
+	{
+#if !__MonoCS__
+		[System.Runtime.InteropServices.DllImport("user32.dll")]
+		static extern IntPtr GetOpenClipboardWindow();
+
+		[System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
+		static extern bool OpenClipboard(IntPtr hWndNewOwner);
+
+		[System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
+		static extern bool CloseClipboard();
+#endif
+		internal static void SetText(string text)
+		{
+#if !__MonoCS__
+			if (GetOpenClipboardWindow() != IntPtr.Zero)
+			{
+				OpenClipboard(IntPtr.Zero);
+				CloseClipboard();
+			}
+#endif
+			if (!String.IsNullOrEmpty(text))
+				Clipboard.SetText(text);
+			else
+				Clipboard.Clear();
+		}
+	}
+	#endregion clipboard
 }

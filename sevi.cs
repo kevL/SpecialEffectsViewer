@@ -1894,12 +1894,8 @@ namespace specialeffectsviewer
 		/// <param name="e"></param>
 		void bu_Copy_click(object sender, EventArgs e)
 		{
-			if (lb_Effects.SelectedIndex != -1)
-			{
-				// TODO: Ensure the clipboard is not locked by another process.
-				Clipboard.Clear();
-				Clipboard.SetText(lb_Effects.SelectedItem.ToString());
-			}
+			if (lb_Effects.SelectedIndex != -1) // safety.
+				ClipboardAssistant.SetText(lb_Effects.SelectedItem.ToString());
 		}
 		#endregion eventhandlers (buttons)
 
