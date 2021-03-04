@@ -386,6 +386,8 @@ namespace specialeffectsviewer
 			TwoDAFile appearances = TwoDAManager.Instance.Get("appearance");
 			if (appearances != null)
 			{
+				int width = co_Source.DropDownWidth, widthtest;
+
 				TwoDAColumn strrefs = appearances.Columns["STRING_REF"];
 				TwoDAColumn skels   = appearances.Columns["NWN2_Skeleton_File"];
 				TwoDAColumn bodies  = appearances.Columns["NWN2_Model_Body"]; // etc ...
@@ -469,12 +471,22 @@ namespace specialeffectsviewer
 								{
 									// 'strrefs[]' gets the Dialog.Tlk string auto. w/ fallthrough to "LABEL".
 									it = new apr(strrefs[i], i, (felaskel || felabody), (andrskel || andrbody));
+
+									if ((widthtest = TextRenderer.MeasureText(it.ToString(), co_Source.Font).Width) > width)
+										width = widthtest;
+
 									co_Source.Items.Add(it);
 									co_Target.Items.Add(it);
 								}
 							}
 						}
 					}
+				}
+
+				if (width != co_Source.DropDownWidth)
+				{
+					co_Source.DropDownWidth =
+					co_Target.DropDownWidth = width + 15;
 				}
 			}
 		}
