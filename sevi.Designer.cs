@@ -266,10 +266,10 @@ namespace specialeffectsviewer
 			// bu_SetDist
 			// 
 			this.bu_SetDist.Enabled = false;
-			this.bu_SetDist.Location = new System.Drawing.Point(105, 61);
+			this.bu_SetDist.Location = new System.Drawing.Point(87, 61);
 			this.bu_SetDist.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_SetDist.Name = "bu_SetDist";
-			this.bu_SetDist.Size = new System.Drawing.Size(100, 22);
+			this.bu_SetDist.Size = new System.Drawing.Size(118, 22);
 			this.bu_SetDist.TabIndex = 8;
 			this.bu_SetDist.Text = "set dist";
 			this.bu_SetDist.UseVisualStyleBackColor = true;
@@ -280,7 +280,7 @@ namespace specialeffectsviewer
 			this.tb_Dist.Location = new System.Drawing.Point(49, 62);
 			this.tb_Dist.Margin = new System.Windows.Forms.Padding(0);
 			this.tb_Dist.Name = "tb_Dist";
-			this.tb_Dist.Size = new System.Drawing.Size(50, 20);
+			this.tb_Dist.Size = new System.Drawing.Size(35, 20);
 			this.tb_Dist.TabIndex = 7;
 			this.tb_Dist.WordWrap = false;
 			this.tb_Dist.TextChanged += new System.EventHandler(this.tb_Distance_textchanged);
