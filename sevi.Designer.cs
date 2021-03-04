@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 
@@ -37,6 +38,8 @@ namespace specialeffectsviewer
 		ComboBox co_Target;
 		CheckBox cb_SourceF;
 		CheckBox cb_TargetF;
+		Label la_Dist;
+		TextBox tb_Dist;
 		GroupBox gb_Ground;
 		CheckBox cb_Ground;
 
@@ -44,6 +47,7 @@ namespace specialeffectsviewer
 		SplitContainer sc3_Events;
 		TextBox tb_SefData;
 		TextBox tb_EventData;
+		private System.Windows.Forms.Button bu_SetDist;
 
 
 		/// <summary>
@@ -98,6 +102,9 @@ namespace specialeffectsviewer
 			this.gb_Ground = new System.Windows.Forms.GroupBox();
 			this.cb_Ground = new System.Windows.Forms.CheckBox();
 			this.gb_Appearance = new System.Windows.Forms.GroupBox();
+			this.bu_SetDist = new System.Windows.Forms.Button();
+			this.tb_Dist = new System.Windows.Forms.TextBox();
+			this.la_Dist = new System.Windows.Forms.Label();
 			this.co_Source = new System.Windows.Forms.ComboBox();
 			this.co_Target = new System.Windows.Forms.ComboBox();
 			this.la_Source = new System.Windows.Forms.Label();
@@ -217,7 +224,7 @@ namespace specialeffectsviewer
 			// 
 			this.gb_Ground.Controls.Add(this.cb_Ground);
 			this.gb_Ground.Dock = System.Windows.Forms.DockStyle.Top;
-			this.gb_Ground.Location = new System.Drawing.Point(3, 133);
+			this.gb_Ground.Location = new System.Drawing.Point(3, 153);
 			this.gb_Ground.Margin = new System.Windows.Forms.Padding(0);
 			this.gb_Ground.Name = "gb_Ground";
 			this.gb_Ground.Padding = new System.Windows.Forms.Padding(0);
@@ -238,6 +245,9 @@ namespace specialeffectsviewer
 			// 
 			// gb_Appearance
 			// 
+			this.gb_Appearance.Controls.Add(this.bu_SetDist);
+			this.gb_Appearance.Controls.Add(this.tb_Dist);
+			this.gb_Appearance.Controls.Add(this.la_Dist);
 			this.gb_Appearance.Controls.Add(this.co_Source);
 			this.gb_Appearance.Controls.Add(this.co_Target);
 			this.gb_Appearance.Controls.Add(this.la_Source);
@@ -249,9 +259,40 @@ namespace specialeffectsviewer
 			this.gb_Appearance.Margin = new System.Windows.Forms.Padding(0);
 			this.gb_Appearance.Name = "gb_Appearance";
 			this.gb_Appearance.Padding = new System.Windows.Forms.Padding(0);
-			this.gb_Appearance.Size = new System.Drawing.Size(241, 67);
+			this.gb_Appearance.Size = new System.Drawing.Size(241, 87);
 			this.gb_Appearance.TabIndex = 1;
 			this.gb_Appearance.TabStop = false;
+			// 
+			// bu_SetDist
+			// 
+			this.bu_SetDist.Enabled = false;
+			this.bu_SetDist.Location = new System.Drawing.Point(105, 61);
+			this.bu_SetDist.Margin = new System.Windows.Forms.Padding(0);
+			this.bu_SetDist.Name = "bu_SetDist";
+			this.bu_SetDist.Size = new System.Drawing.Size(100, 22);
+			this.bu_SetDist.TabIndex = 8;
+			this.bu_SetDist.Text = "set dist";
+			this.bu_SetDist.UseVisualStyleBackColor = true;
+			this.bu_SetDist.Click += new System.EventHandler(this.bu_SetDist_click);
+			// 
+			// tb_Dist
+			// 
+			this.tb_Dist.Location = new System.Drawing.Point(49, 62);
+			this.tb_Dist.Margin = new System.Windows.Forms.Padding(0);
+			this.tb_Dist.Name = "tb_Dist";
+			this.tb_Dist.Size = new System.Drawing.Size(50, 20);
+			this.tb_Dist.TabIndex = 7;
+			this.tb_Dist.WordWrap = false;
+			this.tb_Dist.TextChanged += new System.EventHandler(this.tb_Distance_textchanged);
+			// 
+			// la_Dist
+			// 
+			this.la_Dist.Location = new System.Drawing.Point(3, 65);
+			this.la_Dist.Margin = new System.Windows.Forms.Padding(0);
+			this.la_Dist.Name = "la_Dist";
+			this.la_Dist.Size = new System.Drawing.Size(40, 16);
+			this.la_Dist.TabIndex = 6;
+			this.la_Dist.Text = "dist";
 			// 
 			// co_Source
 			// 
@@ -574,6 +615,7 @@ namespace specialeffectsviewer
 			this.tp_Options.ResumeLayout(false);
 			this.gb_Ground.ResumeLayout(false);
 			this.gb_Appearance.ResumeLayout(false);
+			this.gb_Appearance.PerformLayout();
 			this.gb_Scene.ResumeLayout(false);
 			this.tp_Events.ResumeLayout(false);
 			this.sc3_Events.Panel1.ResumeLayout(false);

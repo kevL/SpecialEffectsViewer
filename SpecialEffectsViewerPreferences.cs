@@ -127,6 +127,13 @@ namespace specialeffectsviewer
 		public int AppearanceTarget
 		{ get; set; }
 
+		[Category("Options")]
+		[Description("The distance between creatures in the DoubleCharacter"
+				   + " scene. Min 1 Max 100 Default 6")]
+		[DefaultValue(6)]
+		public int DoubleCharacterDistance
+		{ get; set; }
+
 
 		[Category("Camera")]
 		[Description("The degree in radians that the camera will start on the"
@@ -247,6 +254,8 @@ namespace specialeffectsviewer
 
 			AppearanceSource =
 			AppearanceTarget = 0;
+
+			DoubleCharacterDistance = 6;
 		}
 		#endregion cTor
 
@@ -298,6 +307,9 @@ namespace specialeffectsviewer
 
 			if (AppearanceSource < 0) AppearanceSource = 0;
 			if (AppearanceTarget < 0) AppearanceTarget = 0;
+
+			if      (DoubleCharacterDistance <   1) DoubleCharacterDistance =   1;
+			else if (DoubleCharacterDistance > 100) DoubleCharacterDistance = 100;
 		}
 		#endregion Methods
 	}

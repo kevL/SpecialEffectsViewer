@@ -632,6 +632,8 @@ namespace specialeffectsviewer
 				}
 			}
 
+			tb_Dist.Text = SpecialEffectsViewerPreferences.that.DoubleCharacterDistance.ToString();
+
 			_init = false;
 
 
@@ -740,13 +742,19 @@ namespace specialeffectsviewer
 						e.Handled = e.SuppressKeyPress = true;
 						cb_Filter.Checked = !cb_Filter.Checked;
 					}
+					else if (tb_Dist.Focused)
+					{
+						e.Handled = e.SuppressKeyPress = true;
+						bu_SetDist_click(null, EventArgs.Empty);
+					}
 					else if (lb_Effects.SelectedIndex != -1
 						&& !tb_Search  .Focused
 						&& !bu_SearchUp.Focused
 						&& !bu_SearchDn.Focused
 						&& !bu_Play    .Focused
 						&& !bu_Stop    .Focused
-						&& !bu_Copy    .Focused)
+						&& !bu_Copy    .Focused
+						&& !bu_SetDist .Focused)
 					{
 						e.Handled = e.SuppressKeyPress = true;
 						mi_events_Play(null, EventArgs.Empty);
@@ -1604,6 +1612,58 @@ namespace specialeffectsviewer
 			_itView_SingleCharacter.Checked = rb_SingleCharacter.Checked;
 			_itView_PlacedEffect   .Checked = rb_PlacedEffect   .Checked;
 		}
+
+
+		/// <summary>
+		/// Ensures that DoubleCharacter distance is within limits.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void tb_Distance_textchanged(object sender, EventArgs e)
+		{
+			if (!_init)
+			{
+				int result;
+				if (!Int32.TryParse(tb_Dist.Text, out result)
+					|| result < 1 || result > 100)
+				{
+					tb_Dist.Text = SpecialEffectsViewerPreferences.that.DoubleCharacterDistance.ToString(); // recurse
+
+					tb_Dist.SelectionLength = 0;
+					tb_Dist.SelectionStart  = tb_Dist.Text.Length;
+				}
+				else
+					bu_SetDist.Enabled = (Int32.Parse(tb_Dist.Text) != SpecialEffectsViewerPreferences.that.DoubleCharacterDistance);
+			}
+		}
+
+		/// <summary>
+		/// Applies DoubleCharacter distance to the scene.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void bu_SetDist_click(object sender, EventArgs e)
+		{
+			ActiveControl = tb_Search;
+			bu_SetDist.Enabled = false;
+
+			SpecialEffectsViewerPreferences.that.DoubleCharacterDistance = Int32.Parse(tb_Dist.Text); // incl. [Enter] on 'tb_Dist'
+
+			if (Scenary == Scene.doublecharacter)
+			{
+				mi_events_Stop(null, EventArgs.Empty);
+
+				float dist = SpecialEffectsViewerPreferences.that.DoubleCharacterDistance / 2f;
+
+				_oIdiot1.Position = new Vector3(100f + dist, 100f, 0f);
+				_oIdiot2.Position = new Vector3(100f - dist, 100f, 0f);
+
+				var col1 = new NetDisplayObjectCollection(_oIdiot1);
+				var col2 = new NetDisplayObjectCollection(_oIdiot2);
+				NWN2NetDisplayManager.Instance.MoveObjects(  col1, ChangeType.Absolute, false, _oIdiot1.Position);
+				NWN2NetDisplayManager.Instance.MoveObjects(  col2, ChangeType.Absolute, false, _oIdiot2.Position);
+			}
+		}
 		#endregion eventhandlers (scene-config)
 
 
@@ -2006,8 +2066,10 @@ namespace specialeffectsviewer
 			_oIdiot1 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(_iIdiot1, _panel.Scene, 0);
 			_oIdiot2 = NWN2NetDisplayManager.Instance.CreateNDOForInstance(_iIdiot2, _panel.Scene, 0);
 
-			_oIdiot1.Position = new Vector3(103f,100f,0f);
-			_oIdiot2.Position = new Vector3( 97f,100f,0f);
+			float dist = SpecialEffectsViewerPreferences.that.DoubleCharacterDistance / 2f;
+
+			_oIdiot1.Position = new Vector3(100f + dist, 100f, 0f);
+			_oIdiot2.Position = new Vector3(100f - dist, 100f, 0f);
 			_oIdiot1.Orientation = RHQuaternion.RotationZ(-util.pi_2);
 			_oIdiot2.Orientation = RHQuaternion.RotationZ( util.pi_2);
 
