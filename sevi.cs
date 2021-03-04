@@ -386,15 +386,15 @@ namespace specialeffectsviewer
 			TwoDAFile appearances = TwoDAManager.Instance.Get("appearance");
 			if (appearances != null)
 			{
-				TwoDAColumn labels = appearances.Columns["LABEL"];
-				TwoDAColumn skels  = appearances.Columns["NWN2_Skeleton_File"];
-				TwoDAColumn bodies = appearances.Columns["NWN2_Model_Body"]; // etc ...
+				TwoDAColumn strrefs = appearances.Columns["STRING_REF"];
+				TwoDAColumn skels   = appearances.Columns["NWN2_Skeleton_File"];
+				TwoDAColumn bodies  = appearances.Columns["NWN2_Model_Body"]; // etc ...
 
 				IResourceEntry resent;
 				string skel, body;
 
 				apr it;
-				for (int i = 0; i != labels.Count; ++i)
+				for (int i = 0; i != strrefs.Count; ++i)
 				{
 					skel = skels[i];
 					if (!String.IsNullOrEmpty(skel))
@@ -467,7 +467,8 @@ namespace specialeffectsviewer
 
 								if (resent != null && !(resent is MissingResourceEntry)) // check that a body-file exists
 								{
-									it = new apr(labels[i], i, (felaskel || felabody), (andrskel || andrbody));
+									// 'strrefs[]' gets the Dialog.Tlk string auto. w/ fallthrough to "LABEL".
+									it = new apr(strrefs[i], i, (felaskel || felabody), (andrskel || andrbody));
 									co_Source.Items.Add(it);
 									co_Target.Items.Add(it);
 								}
