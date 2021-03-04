@@ -40,6 +40,7 @@ namespace specialeffectsviewer
 		CheckBox cb_TargetF;
 		Label la_Dist;
 		TextBox tb_Dist;
+		Button bu_SetDist;
 		GroupBox gb_Ground;
 		CheckBox cb_Ground;
 
@@ -47,7 +48,6 @@ namespace specialeffectsviewer
 		SplitContainer sc3_Events;
 		TextBox tb_SefData;
 		TextBox tb_EventData;
-		private System.Windows.Forms.Button bu_SetDist;
 
 
 		/// <summary>
