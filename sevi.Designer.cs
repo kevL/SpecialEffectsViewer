@@ -507,9 +507,8 @@ namespace specialeffectsviewer
 			this.cb_Filter.TabIndex = 3;
 			this.cb_Filter.Text = "filtr";
 			this.cb_Filter.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this.cb_Filter.UseVisualStyleBackColor = true;
+			this.cb_Filter.UseVisualStyleBackColor = false;
 			this.cb_Filter.CheckedChanged += new System.EventHandler(this.cb_Filter_checkedchanged);
-			this.cb_Filter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.cb_Filter_keydown);
 			// 
 			// pa_bot
 			// 

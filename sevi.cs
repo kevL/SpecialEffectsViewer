@@ -735,9 +735,13 @@ namespace specialeffectsviewer
 					break;
 
 				case Keys.Enter:
-					if (lb_Effects.SelectedIndex != -1
+					if (cb_Filter.Focused)
+					{
+						e.Handled = e.SuppressKeyPress = true;
+						cb_Filter.Checked = !cb_Filter.Checked;
+					}
+					else if (lb_Effects.SelectedIndex != -1
 						&& !tb_Search  .Focused
-						&& !cb_Filter  .Focused
 						&& !bu_SearchUp.Focused
 						&& !bu_SearchDn.Focused
 						&& !bu_Play    .Focused
@@ -1767,9 +1771,13 @@ namespace specialeffectsviewer
 					cb_Filter.Checked = false;	// recurse
 					return;						// but don't run twice.
 				}
+				cb_Filter.BackColor = Color.SkyBlue; // <- win10 workaround.
 			}
 			else
+			{
 				_filtr = String.Empty;
+				cb_Filter.BackColor = SystemColors.Control;
+			}
 
 			_bypassSearchFocus = true;
 			if (_itResrepo_all.Checked)
@@ -1798,21 +1806,6 @@ namespace specialeffectsviewer
 				mi_resrepo_Override(null, EventArgs.Empty);
 			}
 			_bypassSearchFocus = false;
-		}
-
-		/// <summary>
-		/// [Enter] toggles the search-filter.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// <remarks>Spacebar also toggles the filter on/off.</remarks>
-		void cb_Filter_keydown(object sender, KeyEventArgs e)
-		{
-			if (e.KeyData == Keys.Enter)
-			{
-				e.Handled = e.SuppressKeyPress = true;
-				cb_Filter.Checked = !cb_Filter.Checked;
-			}
 		}
 		#endregion eventhandlers (search/filter)
 
