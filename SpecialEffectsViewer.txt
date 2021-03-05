@@ -73,7 +73,7 @@ Options and Events.
 On the Options page three radio-buttons select how the scene will be rendered.
 
 Double character     - renders the scene with two NPCs. This creates source
-                       and target creatures, and uses their attachment-nodes if
+                       and target creatures, and uses their attachment-nodes as
                        appropriate.
 Single character     - renders the scene with a single NPC. This applies the
                        currently selected effect to a single creature using its
@@ -91,8 +91,15 @@ Source - select the appearance for the source-creature in a Double character
 Target - select the appearance for the target-creature in a Double character
          scene
 
+Note: Only appearances that have valid skeleton- and body-files will be listed.
+
 To the right of Source and Target are checkboxes for the female variants of the
 selected appearances if they are available.
+
+Note: Creatures are very basic. Wings and tail, etc, are not displayed.
+
+Beneath the Source and Target dropdowns is a field to set the distance between
+source and target creatures. Allowed value is 1..100.
 
 Also, ground tiles can be toggled on and off on the Options page.
 
