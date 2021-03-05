@@ -733,15 +733,12 @@ namespace specialeffectsviewer
 		}
 
 		/// <summary>
-		/// [Esc] closes the plugin.
+		/// Handles keyboard events at the form level.
 		/// </summary>
 		/// <param name="e"></param>
 		/// <remarks>Requires 'KeyPreview' true.</remarks>
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			// TODO: universal [Enter] to play effect if valid
-			// unless certain controls are focused
-
 			switch (e.KeyData)
 			{
 				case Keys.Escape:
@@ -1673,8 +1670,8 @@ namespace specialeffectsviewer
 
 				var col1 = new NetDisplayObjectCollection(_oIdiot1);
 				var col2 = new NetDisplayObjectCollection(_oIdiot2);
-				NWN2NetDisplayManager.Instance.MoveObjects(  col1, ChangeType.Absolute, false, _oIdiot1.Position);
-				NWN2NetDisplayManager.Instance.MoveObjects(  col2, ChangeType.Absolute, false, _oIdiot2.Position);
+				NWN2NetDisplayManager.Instance.MoveObjects(col1, ChangeType.Absolute, false, _oIdiot1.Position);
+				NWN2NetDisplayManager.Instance.MoveObjects(col2, ChangeType.Absolute, false, _oIdiot2.Position);
 			}
 		}
 		#endregion eventhandlers (scene-config)

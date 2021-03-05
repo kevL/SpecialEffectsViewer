@@ -88,9 +88,9 @@ namespace specialeffectsviewer
 
 		/// <summary>
 		/// Closes this dialog on [Esc] [Enter] or [Ctrl+n]. Refresh on [F5].
-		/// @note Requires 'KeyPreview' true.
 		/// </summary>
 		/// <param name="e"></param>
+		/// <remarks>Requires 'KeyPreview' true.</remarks>
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			switch (e.KeyData)
