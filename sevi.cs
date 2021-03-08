@@ -241,6 +241,7 @@ namespace specialeffectsviewer
 			CreateMainMenu();
 			CreateElectronPanel();
 			PopulateAppearanceDropdowns();
+			LoadPreferences();
 
 			Show();
 		}
@@ -520,74 +521,57 @@ namespace specialeffectsviewer
 		{
 			return resref + "_cl_body01";
 		}
-		#endregion cTor
-
-
-		#region eventhandlers (override)
-		/// <summary>
-		/// Prepares the ElectronPanel.
-		/// </summary>
-		/// <param name="e"></param>
-		/// <remarks>The camera-receiver goes borky if this is done in the cTor.</remarks>
-		protected override void OnLoad(EventArgs e)
-		{
-			LoadPreferences();
-			InitializeReceiver();
-
-			mi_resrepo_All(null, EventArgs.Empty); // -> finalize initialization
-		}
 
 		/// <summary>
 		/// Loads preferences.
 		/// </summary>
 		void LoadPreferences()
 		{
-			SpecialEffectsViewerPreferences.that.ValidatePreferences();
+			SpecialEffectsViewerPreferences prefs = SpecialEffectsViewerPreferences.that;
 
-			int x = SpecialEffectsViewerPreferences.that.x;
-			if (x > -1)
+			prefs.ValidatePreferences();
+
+			if (prefs.x != Int32.MinValue)
 			{
-				int y = SpecialEffectsViewerPreferences.that.y;
-				if (y > -1 && util.checklocation(x,y))
+				if (prefs.y != Int32.MinValue && util.checklocation(prefs.x, prefs.y))
 				{
 					StartPosition = FormStartPosition.Manual;
-					SetDesktopLocation(x,y);
+					SetDesktopLocation(prefs.x, prefs.y);
 				}
-				ClientSize = new Size(SpecialEffectsViewerPreferences.that.w,
-									  SpecialEffectsViewerPreferences.that.h);
+				ClientSize = new Size(prefs.w, prefs.h);
 			}
 
-			if (SpecialEffectsViewerPreferences.that.OptionsPanel)
+			if (prefs.OptionsPanel)
 			{
 				_itView_Options.Checked = true;
 				sc2_Options.Panel1Collapsed = false;
 			}
 
-			sc1_Effects.SplitterDistance = SpecialEffectsViewerPreferences.that.SplitterDistanceEffects;
-			sc2_Options.SplitterDistance = SpecialEffectsViewerPreferences.that.SplitterDistanceOptions;
-			sc3_Events .SplitterDistance = SpecialEffectsViewerPreferences.that.SplitterDistanceEvents;
+			sc1_Effects.SplitterDistance = prefs.SplitterDistanceEffects;
+			sc2_Options.SplitterDistance = prefs.SplitterDistanceOptions;
+			sc3_Events .SplitterDistance = prefs.SplitterDistanceEvents;
 
-			if (!SpecialEffectsViewerPreferences.that.StayOnTop)
+			if (!prefs.StayOnTop)
 			{
 				_itView_StayOnTop.Checked = false;
 				Owner = null;
 			}
 
-			if (SpecialEffectsViewerPreferences.that.Maximized)
+			if (prefs.Maximized)
 				WindowState = FormWindowState.Maximized;
 
-			if (SpecialEffectsViewerPreferences.that.Ground)
+			if (prefs.Ground)
 			{
 				_itView_Ground.Checked =
 				cb_Ground.Checked = true;
 			}
 
-			_itView_ExtendedInfo.Checked = SpecialEffectsViewerPreferences.that.ExtendedInfo;
+			_itView_ExtendedInfo.Checked = prefs.ExtendedInfo;
 
 
 			_init = true;
 
-			int id = SpecialEffectsViewerPreferences.that.AppearanceSource; // select Source ->
+			int id = prefs.AppearanceSource; // select Source ->
 			for (int i = 0; i != co_Source.Items.Count; ++i)
 			if ((co_Source.Items[i] as apr).Id == id)
 			{
@@ -601,7 +585,7 @@ namespace specialeffectsviewer
 
 			if (co_Source.SelectedIndex == -1) // failed ->
 			{
-				SpecialEffectsViewerPreferences.that.AppearanceSource = 0;
+				prefs.AppearanceSource = 0;
 				if (co_Source.Items.Count != 0)
 				{
 					co_Source.SelectedIndex = 0;
@@ -616,7 +600,7 @@ namespace specialeffectsviewer
 				}
 			}
 
-			id = SpecialEffectsViewerPreferences.that.AppearanceTarget; // select Target ->
+			id = prefs.AppearanceTarget; // select Target ->
 			for (int i = 0; i != co_Target.Items.Count; ++i)
 			if ((co_Target.Items[i] as apr).Id == id)
 			{
@@ -630,7 +614,7 @@ namespace specialeffectsviewer
 
 			if (co_Target.SelectedIndex == -1) // failed ->
 			{
-				SpecialEffectsViewerPreferences.that.AppearanceTarget = 0;
+				prefs.AppearanceTarget = 0;
 				if (co_Target.Items.Count != 0)
 				{
 					co_Target.SelectedIndex = 0;
@@ -645,7 +629,7 @@ namespace specialeffectsviewer
 				}
 			}
 
-			tb_Dist.Text = SpecialEffectsViewerPreferences.that.DoubleCharacterDistance.ToString();
+			tb_Dist.Text = prefs.DoubleCharacterDistance.ToString();
 
 			_init = false;
 
@@ -665,10 +649,26 @@ namespace specialeffectsviewer
 					break;
 			}
 		}
+		#endregion cTor
+
+
+		#region eventhandlers (override)
+		/// <summary>
+		/// Prepares the ElectronPanel, and loads a resrepo to instantiate the
+		/// initial scene.
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnLoad(EventArgs e)
+		{
+			InitializeReceiver();
+
+			mi_resrepo_All(null, EventArgs.Empty); // -> finalize initialization
+		}
 
 		/// <summary>
 		/// Initializes the camera-receiver.
 		/// </summary>
+		/// <remarks>The camera-receiver goes borky if this is done in the cTor.</remarks>
 		void InitializeReceiver()
 		{
 			_sefer = _panel.Scene.SpecialEffectsManager;
@@ -1652,26 +1652,31 @@ namespace specialeffectsviewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
+		/// <remarks>Also handles [Enter] on <see cref="tb_Dist"/>.</remarks>
 		void bu_SetDist_click(object sender, EventArgs e)
 		{
 			ActiveControl = tb_Search;
-			bu_SetDist.Enabled = false;
 
-			SpecialEffectsViewerPreferences.that.DoubleCharacterDistance = Int32.Parse(tb_Dist.Text); // incl. [Enter] on 'tb_Dist'
-
-			if (Scenary == Scene.doublecharacter)
+			if (bu_SetDist.Enabled)
 			{
-				mi_events_Stop(null, EventArgs.Empty);
+				bu_SetDist.Enabled = false;
 
-				float dist = SpecialEffectsViewerPreferences.that.DoubleCharacterDistance / 2f;
+				SpecialEffectsViewerPreferences.that.DoubleCharacterDistance = Int32.Parse(tb_Dist.Text);
 
-				_oIdiot1.Position = new Vector3(100f + dist, 100f, 0f);
-				_oIdiot2.Position = new Vector3(100f - dist, 100f, 0f);
+				if (Scenary == Scene.doublecharacter)
+				{
+					mi_events_Stop(null, EventArgs.Empty);
 
-				var col1 = new NetDisplayObjectCollection(_oIdiot1);
-				var col2 = new NetDisplayObjectCollection(_oIdiot2);
-				NWN2NetDisplayManager.Instance.MoveObjects(col1, ChangeType.Absolute, false, _oIdiot1.Position);
-				NWN2NetDisplayManager.Instance.MoveObjects(col2, ChangeType.Absolute, false, _oIdiot2.Position);
+					float dist = SpecialEffectsViewerPreferences.that.DoubleCharacterDistance / 2f;
+
+					_oIdiot1.Position = new Vector3(100f + dist, 100f, 0f);
+					_oIdiot2.Position = new Vector3(100f - dist, 100f, 0f);
+
+					var col1 = new NetDisplayObjectCollection(_oIdiot1);
+					var col2 = new NetDisplayObjectCollection(_oIdiot2);
+					NWN2NetDisplayManager.Instance.MoveObjects(col1, ChangeType.Absolute, false, _oIdiot1.Position);
+					NWN2NetDisplayManager.Instance.MoveObjects(col2, ChangeType.Absolute, false, _oIdiot2.Position);
+				}
 			}
 		}
 		#endregion eventhandlers (scene-config)
