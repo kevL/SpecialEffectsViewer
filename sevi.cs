@@ -1906,20 +1906,17 @@ namespace specialeffectsviewer
 		/// <param name="e"></param>
 		void panel_mousedown(object sender, MouseEventArgs e)
 		{
-			if (_panel != null)
+			switch (e.Button)
 			{
-				switch (e.Button)
-				{
-					case MouseButtons.Right:
-					case MouseButtons.Middle:
-						_Right = true;
+				case MouseButtons.Right:
+				case MouseButtons.Middle:
+					_Right = true;
 
-						if ((ModifierKeys & Keys.Control) != 0)
-							Cursor.Current = Cursors.Cross;
-						else
-							Cursor.Current = Cursors.SizeAll;
-						break;
-				}
+					if ((ModifierKeys & Keys.Control) != 0)
+						Cursor.Current = Cursors.Cross;
+					else
+						Cursor.Current = Cursors.SizeAll;
+					break;
 			}
 		}
 
