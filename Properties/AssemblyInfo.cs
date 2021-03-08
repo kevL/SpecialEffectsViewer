@@ -12,8 +12,8 @@ using System.Runtime.InteropServices;
 #endif
 [assembly: AssemblyCompany("kL")]
 [assembly: AssemblyProduct("SpecialEffectsViewer")]
-[assembly: AssemblyCopyright("copyleft 2021 mar 5")]
+[assembly: AssemblyCopyright("copyleft 2021 mar 8")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
-[assembly: AssemblyVersion("1.0.9.1")]
+[assembly: AssemblyVersion("1.1.0.0")]

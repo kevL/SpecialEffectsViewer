@@ -1,8 +1,8 @@
 Special Effects Viewer
 - nwn2 toolset plugin
 
-ver 1.0.9.1
-2021 mar 5
+ver 1.1.0.0
+2021 mar 8
 kevL's
 
 
@@ -24,6 +24,8 @@ CREDIT
 ------
 codepoetz' PowerBar plugin for getting the code started.
 The stock VFXEditor plugin for helping things along.
+
+4760 - for extensive testing and explaining default skeletons and models.
 
 and whoever obfuscated all strings and private identifiers in the toolset DLLs -
 you did a really good job.
