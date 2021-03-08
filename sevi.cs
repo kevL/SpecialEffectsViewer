@@ -853,14 +853,17 @@ namespace specialeffectsviewer
 		/// <remarks>Ensure that the ElectronPanel (etc) is valid before call.</remarks>
 		void StoreCameraState()
 		{
+			SpecialEffectsViewerPreferences prefs = SpecialEffectsViewerPreferences.that;
+
 			var receiver = (_panel.CameraMovementReceiver as ModelViewerInputCameraReceiver);
 			var state = (receiver.CameraState as ModelViewerInputCameraReceiverState);
-			SpecialEffectsViewerPreferences.that.FocusPhi     = state.FocusPhi;
-			SpecialEffectsViewerPreferences.that.FocusTheta   = state.FocusTheta;
-			SpecialEffectsViewerPreferences.that.Distance     = state.Distance;
-			SpecialEffectsViewerPreferences.that.FocusPoint_x = state.FocusPoint.X;
-			SpecialEffectsViewerPreferences.that.FocusPoint_y = state.FocusPoint.Y;
-			SpecialEffectsViewerPreferences.that.FocusPoint_z = state.FocusPoint.Z;
+
+			prefs.FocusPhi     = state.FocusPhi;
+			prefs.FocusTheta   = state.FocusTheta;
+			prefs.Distance     = state.Distance;
+			prefs.FocusPoint_x = state.FocusPoint.X;
+			prefs.FocusPoint_y = state.FocusPoint.Y;
+			prefs.FocusPoint_z = state.FocusPoint.Z;
 		}
 		#endregion eventhandlers (override)
 
@@ -1422,13 +1425,10 @@ namespace specialeffectsviewer
 		/// <param name="e"></param>
 		void mi_view_Refocus(object sender, EventArgs e)
 		{
-			if (_panel != null)
-			{
-				var receiver = _panel.CameraMovementReceiver as ModelViewerInputCameraReceiver; // is null on Load
-				var state = (receiver.CameraState as ModelViewerInputCameraReceiverState);
-				state.FocusPoint = new Vector3(100f, 100f, 1f);
-				receiver.UpdateCamera();
-			}
+			var receiver = _panel.CameraMovementReceiver as ModelViewerInputCameraReceiver;
+			var state = (receiver.CameraState as ModelViewerInputCameraReceiverState);
+			state.FocusPoint = new Vector3(100f, 100f, 1f);
+			receiver.UpdateCamera();
 		}
 		#endregion eventhandlers (view)
 
