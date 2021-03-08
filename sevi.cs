@@ -758,13 +758,7 @@ namespace specialeffectsviewer
 						bu_SetDist_click(null, EventArgs.Empty);
 					}
 					else if (lb_Effects.SelectedIndex != -1
-						&& !tb_Search  .Focused
-						&& !bu_SearchUp.Focused
-						&& !bu_SearchDn.Focused
-						&& !bu_Play    .Focused
-						&& !bu_Stop    .Focused
-						&& !bu_Copy    .Focused
-						&& !bu_SetDist .Focused)
+						&& isPlayControlFocused())
 					{
 						e.Handled = e.SuppressKeyPress = true;
 						mi_events_Play(null, EventArgs.Empty);
@@ -772,6 +766,23 @@ namespace specialeffectsviewer
 					break;
 			}
 			base.OnKeyDown(e);
+		}
+
+		/// <summary>
+		/// The listed controls shall not attempt to play an effect on keydown
+		/// [Enter].
+		/// </summary>
+		/// <returns>true if a valid play-control has current focus or no
+		/// control has focus (which I don't believe is possible)</returns>
+		bool isPlayControlFocused()
+		{
+			return !tb_Search  .Focused
+				&& !bu_SearchUp.Focused
+				&& !bu_SearchDn.Focused
+				&& !bu_Play    .Focused
+				&& !bu_Stop    .Focused
+				&& !bu_Copy    .Focused
+				&& !bu_SetDist .Focused;
 		}
 
 		/// <summary>
