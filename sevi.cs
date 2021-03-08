@@ -122,8 +122,6 @@ namespace specialeffectsviewer
 
 		NetDisplayObject _oIdiot1;
 		NetDisplayObject _oIdiot2;
-		NetDisplayObject _oIdiot;
-		NetDisplayObject _oPlacedEffect;
 
 		MenuItem _itResrepo_all;
 		MenuItem _itResrepo_stock;
@@ -1969,6 +1967,8 @@ namespace specialeffectsviewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
+		/// <remarks>The Copy button shall not be enabled unless an effect is
+		/// currently selected.</remarks>
 		void bu_Copy_click(object sender, EventArgs e)
 		{
 			if (lb_Effects.SelectedIndex != -1) // safety.
@@ -2138,13 +2138,13 @@ namespace specialeffectsviewer
 		/// </summary>
 		void CreateSingleCharacterObject()
 		{
-			_oIdiot = NWN2NetDisplayManager.Instance.CreateNDOForInstance(_iIdiot, _panel.Scene, 0);
+			NetDisplayObject idiot = NWN2NetDisplayManager.Instance.CreateNDOForInstance(_iIdiot, _panel.Scene, 0);
 
-			_oIdiot.Position = new Vector3(100f,100f,0f);
-			NWN2NetDisplayManager.Instance.MoveObjects(new NetDisplayObjectCollection(_oIdiot),
+			idiot.Position = new Vector3(100f,100f,0f);
+			NWN2NetDisplayManager.Instance.MoveObjects(new NetDisplayObjectCollection(idiot),
 													   ChangeType.Absolute,
 													   false,
-													   _oIdiot.Position);
+													   idiot.Position);
 		}
 
 
@@ -2168,13 +2168,13 @@ namespace specialeffectsviewer
 		/// </summary>
 		void CreatePlacedEffectObject()
 		{
-			_oPlacedEffect = NWN2NetDisplayManager.Instance.CreateNDOForInstance(_iPlacedEffect, _panel.Scene, 0);
+			NetDisplayObject placedeffect = NWN2NetDisplayManager.Instance.CreateNDOForInstance(_iPlacedEffect, _panel.Scene, 0);
 
-			_oPlacedEffect.Position = new Vector3(100f,100f,0f);
-			NWN2NetDisplayManager.Instance.MoveObjects(new NetDisplayObjectCollection(_oPlacedEffect),
+			placedeffect.Position = new Vector3(100f,100f,0f);
+			NWN2NetDisplayManager.Instance.MoveObjects(new NetDisplayObjectCollection(placedeffect),
 													   ChangeType.Absolute,
 													   false,
-													   _oPlacedEffect.Position);
+													   placedeffect.Position);
 		}
 		#endregion Methods
 	}
