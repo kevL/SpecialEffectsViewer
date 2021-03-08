@@ -12,6 +12,11 @@ namespace specialeffectsviewer
 	[Serializable]
 	public class SpecialEffectsViewerPreferences
 	{
+		#region Fields (static)
+		internal const int DIST_Min =   1;
+		internal const int DIST_Max = 100;
+		#endregion Fields (static)
+
 		#region Properties (static)
 		static SpecialEffectsViewerPreferences _that;
 		public static SpecialEffectsViewerPreferences that
@@ -308,8 +313,8 @@ namespace specialeffectsviewer
 			if (AppearanceSource < 0) AppearanceSource = 0;
 			if (AppearanceTarget < 0) AppearanceTarget = 0;
 
-			if      (DoubleCharacterDistance <   1) DoubleCharacterDistance =   1;
-			else if (DoubleCharacterDistance > 100) DoubleCharacterDistance = 100;
+			if      (DoubleCharacterDistance < DIST_Min) DoubleCharacterDistance = DIST_Min;
+			else if (DoubleCharacterDistance > DIST_Max) DoubleCharacterDistance = DIST_Max;
 		}
 		#endregion Methods
 	}

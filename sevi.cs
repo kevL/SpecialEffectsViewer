@@ -1582,8 +1582,8 @@ namespace specialeffectsviewer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		/// <remarks>This is also used to re/create the scene when the resrepo
-		/// initializes or is changed.</remarks>
+		/// <remarks>This is also used to re/create the scene when any resrepo
+		/// initializes.</remarks>
 		void rb_Scene_click(object sender, EventArgs e)
 		{
 			var rb = sender as RadioButton;
@@ -1646,7 +1646,8 @@ namespace specialeffectsviewer
 			{
 				int result;
 				if (!Int32.TryParse(tb_Dist.Text, out result)
-					|| result < 1 || result > 100)
+					|| result < SpecialEffectsViewerPreferences.DIST_Min
+					|| result > SpecialEffectsViewerPreferences.DIST_Max)
 				{
 					tb_Dist.Text = SpecialEffectsViewerPreferences.that.DoubleCharacterDistance.ToString(); // recurse
 
