@@ -1726,7 +1726,7 @@ namespace specialeffectsviewer
 				_init = false;
 
 				if (Scenary != Scene.placedeffect)
-					CreateScene_appearancechanged(co == co_Source);
+					CreateScene_appearancechanged(sender == co_Source);
 			}
 		}
 
@@ -1738,7 +1738,7 @@ namespace specialeffectsviewer
 		void cb_Fela_checkedchanged(object sender, EventArgs e)
 		{
 			if (!_init && Scenary != Scene.placedeffect)
-				CreateScene_appearancechanged(sender as CheckBox == cb_SourceF);
+				CreateScene_appearancechanged(sender == cb_SourceF);
 		}
 
 		/// <summary>
