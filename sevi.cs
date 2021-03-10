@@ -287,6 +287,7 @@ namespace specialeffectsviewer
 
 // Events ->
 			_itEvents = Menu.MenuItems.Add("&Events"); // 1
+			CreateBasicEvents();
 
 // View ->
 			 it = Menu.MenuItems.Add("&View"); // 2
@@ -677,6 +678,8 @@ namespace specialeffectsviewer
 			InitializeReceiver();
 
 			mi_resrepo_All(null, EventArgs.Empty); // -> finalize initialization
+
+			rb_Scene_click(null, EventArgs.Empty); // -> create a scene
 		}
 
 		/// <summary>
@@ -915,9 +918,6 @@ namespace specialeffectsviewer
 		{
 			if (!_itResrepo_all.Checked)
 			{
-				rb_Scene_click(null, EventArgs.Empty);
-				EnableControls(false);
-
 				lb_Effects.BeginUpdate();
 
 				ClearEffectsList();
@@ -950,9 +950,6 @@ namespace specialeffectsviewer
 		{
 			if (!_itResrepo_stock.Checked)
 			{
-				rb_Scene_click(null, EventArgs.Empty);
-				EnableControls(false);
-
 				lb_Effects.BeginUpdate();
 
 				ClearEffectsList();
@@ -991,9 +988,6 @@ namespace specialeffectsviewer
 		{
 			if (!_itResrepo_module.Checked)
 			{
-				rb_Scene_click(null, EventArgs.Empty);
-				EnableControls(false);
-
 				lb_Effects.BeginUpdate();
 
 				ClearEffectsList();
@@ -1027,9 +1021,6 @@ namespace specialeffectsviewer
 		{
 			if (!_itResrepo_campaign.Checked)
 			{
-				rb_Scene_click(null, EventArgs.Empty);
-				EnableControls(false);
-
 				lb_Effects.BeginUpdate();
 
 				ClearEffectsList();
@@ -1063,9 +1054,6 @@ namespace specialeffectsviewer
 		{
 			if (!_itResrepo_override.Checked)
 			{
-				rb_Scene_click(null, EventArgs.Empty);
-				EnableControls(false);
-
 				lb_Effects.BeginUpdate();
 
 				ClearEffectsList();
@@ -1097,6 +1085,8 @@ namespace specialeffectsviewer
 		/// </summary>
 		void ClearEffectsList()
 		{
+			EnableControls(false);
+
 			_init = true;
 			lb_Effects.SelectedIndex = -1;
 			_init = false;
