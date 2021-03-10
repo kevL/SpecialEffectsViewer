@@ -1087,8 +1087,9 @@ namespace specialeffectsviewer
 		{
 			EnableControls(false);
 
+			SpecialEffect.ClearEffect();
 			_init = true;
-			lb_Effects.SelectedIndex = -1;
+			lb_Effects.SelectedIndex = _efid = -1;
 			_init = false;
 
 			lb_Effects.Items.Clear();
@@ -1793,23 +1794,34 @@ namespace specialeffectsviewer
 			CreateElectronPanel();
 			InitializeReceiver();
 
-			switch (Scenari) // create entire scene ->
-			{
-				case Scene.doublecharacter:
-					CreateDoubleCharacterScene();
-					break;
+			// NOTE: For whatever whacky reason rb_Scene_click() behaves
+			// properly - by not playing the effect auto - but if instead
+			// CreateSingleCharacterScene() or CreatePlacedEffectScene() are
+			// called - since that's all that should be needed here - the
+			// effect will play auto.
+			//
+			// CreateDoubleCharacterScene() does not play of course since it
+			// does not apply an effect - unlike Sc or Pe.
 
-				case Scene.singlecharacter:
-					CreateSingleCharacterScene();
-					break;
+			rb_Scene_click(null, EventArgs.Empty);
 
-				case Scene.placedeffect:
-					CreatePlacedEffectScene();
-					break;
-			}
-
-			if (SceneData != null)
-				SceneData.ResetDatatext();
+//			switch (Scenari) // create entire scene ->
+//			{
+//				case Scene.doublecharacter:
+//					CreateDoubleCharacterScene();
+//					break;
+//
+//				case Scene.singlecharacter:
+//					CreateSingleCharacterScene();
+//					break;
+//
+//				case Scene.placedeffect:
+//					CreatePlacedEffectScene();
+//					break;
+//			}
+//
+//			if (SceneData != null)
+//				SceneData.ResetDatatext();
 		}
 		#endregion eventhandlers (ground)
 
