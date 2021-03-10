@@ -232,6 +232,11 @@ namespace specialeffectsviewer
 		/// </summary>
 		internal sevi()
 		{
+			// Re. Logger - the logfile will preserve and append text if
+			// create() is NOT called. create() is required only to overrwite
+			// a previous logfile.
+			//logger.create();
+
 			Owner = NWN2ToolsetMainForm.App;
 			that = this;
 
