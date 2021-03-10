@@ -233,7 +233,7 @@ namespace specialeffectsviewer
 		internal sevi()
 		{
 			// Re. Logger - the logfile will preserve and append text if
-			// create() is NOT called. create() is required only to overrwite
+			// create() is NOT called. create() is required only to overwrite
 			// a previous logfile.
 			//logger.create();
 
