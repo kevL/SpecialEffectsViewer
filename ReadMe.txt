@@ -2,7 +2,7 @@ Special Effects Viewer
 - nwn2 toolset plugin
 
 ver 1.1.0.0
-2021 mar 8
+2021 mar 10
 kevL's
 
 

@@ -139,8 +139,8 @@ Note: The display panel must be focused to adjust the camera.
 KEYBOARD
 
 Enter  - plays the currently selected effect if the currently focused control
-         doesn't handle [Enter] itself. Searches if search is focused (depress
-		 [Shift] to search ascending), or activates a button
+         doesn't handle the [Enter] key itself. Searches if search is focused
+         (depress [Shift] to search ascending), or activates a button
 Escape - closes the plugin
 
 
@@ -164,29 +164,32 @@ SPECIALEFFECT_TYPE_TRAIL
 
 the SceneData dialog
 --------------------
+kL_note: I don't really understand the finer details of objects as they are
+rendered to the [NetDisplayPanel]. Take what follows with a grain of salt ...
+
 The SceneData dialog can be opened under View|scene data [Ctrl+n]. It's a
 readonly dialog that's intended to show information about objects in the scene.
 For the SpecialEffectsViewer, the objects are models and specialeffects. The
 options DoubleCharacter, SingleCharacter, and PlacedEffectObject handle
-specialeffects differently: the DoubleCharacter option leverages toolset-code
+effects differently: the DoubleCharacter option leverages toolset-code
 [SEFGroup] which creates source and target creatures and can therefore handle
-specialeffects that require a target-creature; the SingleCharacter option
-creates only 1 creature and applies a specialeffect only to its AppearanceSEF
-property; the PlacedEffectOption merely creates a generic PlacedEffect and
-applies a specialeffect to it.
+effects that require a target-creature; the SingleCharacter option creates only
+1 creature and applies an effect only to its [AppearanceSEF] property; the
+PlacedEffectOption merely creates a generic PlacedEffect and applies an effect
+to it.
 
 See OPTIONS above.
 
-This gets tricky because specialeffects are objects in the display-panel also -
-but only while they are being actively updated by the panel. If information
-about them is gathered too quickly, it will be incomplete since it takes a
-fraction of a second for the panel to instantiate them; if too slowly, the
-objects will have disappeared from the panel. So, to get complete information
-about the scene including its specialeffects, there is an option in the toolset
-under View|Options|Plugins|Special Effects Viewer|SceneData dialog:
-SceneDataDelay. Its default value is 350 milliseconds.
+This gets tricky because effects are objects in the display-panel also - but
+only while they are being actively updated by the panel. If information about
+them is gathered too quickly, it will be incomplete since it takes a fraction of
+a second for the panel to instantiate them; if too slowly, the objects will have
+disappeared from the panel. So, to get complete information about the scene
+including any effects, there is an option in the toolset under
+View|Options...|Plugins|Special Effects Viewer|SceneData dialog: SceneDataDelay.
+Its default value is 350 milliseconds.
 
-It should be set as fast as possible without throwing an
+I believe it should be set as fast as possible without throwing an
 InvalidOperationException (see the description of the SceneDataDelay property
 under toolset|View|Options...|Plugins|Special Effects Viewer). I believe it
 depends on how slow or fast your CPU is: faster CPUs can handle a shorter delay.
@@ -195,20 +198,18 @@ libraries (ie, a race condition). The very minimum value is 15 milliseconds,
 which is a limitation of the .NET libraries (a standard Timer can't tick faster
 than about that).
 
-The most troublesome specialeffect I've found is fx_item_blood (SoZ) w/ 41
-objects. You can test your system by selecting it with the SceneData dialog
-open.
+The most troublesome effect I've found is fx_item_blood (SoZ) w/ 41 objects. You
+can test your system by selecting it with the SceneData dialog open.
 
-Note that you can manually update the SceneData dialog by pressing [F5] when the
-dialog has focus. Otherwise it updates auto (after the above described delay)
-when the SpecialEffectsViewer renders the current effect in its display-panel.
-The dialog will always open initially without showing any information since I
-couldn't get that to work reliably.
+Also note that you can manually update the SceneData dialog by pressing [F5]
+when the dialog has focus. Otherwise it updates auto (after the above described
+delay) when the SpecialEffectsViewer renders the current effect. The dialog will
+always open initially without showing any information since I couldn't get that
+to work reliably.
 
-Note also that not all events in a specialeffect are actually instantiated as
-objects in the display-panel, and that conversely an event can instantiate into
-several objects. That is the relation of events to objects is not necessarily
-1:1 ...
+Note also that not all events in an effect are actually instantiated as objects
+in the display-panel, and that conversely an event can instantiate into several
+objects. That is the relation of events to objects is not necessarily 1:1 ...
 
 
 Preferences
