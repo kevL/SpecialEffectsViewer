@@ -1079,15 +1079,23 @@ namespace specialeffectsviewer
 		}
 
 		/// <summary>
-		/// Clears the scene, the events-list, and the effects-list, then
-		/// unchecks the repo-list so things are ready for the effects in a repo
-		/// to be listed.
+		/// Stops the effect, disables controls, resets the effects-list id and
+		/// clears the list, then unchecks the all repo-its so that things are
+		/// ready for the effects of another repo to be listed.
 		/// </summary>
+		/// <remarks>Stop the effect but leave the NWN2 Instances and NetDisplayObjects
+		/// intact (w/ or w/out their current effects). Rely on user selecting
+		/// an effect in the list - lb_Effects_selectedindexchanged() - to clear
+		/// and recreate the scene with another effect. Note there are several
+		/// other ways to create or recreate the Instances and Objects: rb_Scene_click()
+		/// cb_Ground_click() CreateScene_appearancechanged().
+		/// </remarks>
 		void ClearEffectsList()
 		{
+			Stop();
+
 			EnableControls(false);
 
-			SpecialEffect.ClearEffect();
 			_init = true;
 			lb_Effects.SelectedIndex = _efid = -1;
 			_init = false;
@@ -1222,7 +1230,7 @@ namespace specialeffectsviewer
 			_sefer.EndUpdating();
 
 			foreach (SEFSound revert in reverts)	// WARNING: Don't try bypassing this even if Groups are going to
-				revert.SoundLoops = false;			// be destroyed, since things are getting so convuluted it'll ef.
+				revert.SoundLoops = false;			// be destroyed, since things are getting so convoluted it'll ef.
 		}
 
 
@@ -1386,7 +1394,7 @@ namespace specialeffectsviewer
 			SpecialEffectsViewerPreferences.that.ExtendedInfo =
 			(_itView_ExtendedInfo.Checked = !_itView_ExtendedInfo.Checked);
 
-			PrintEffectData();
+			PrintEffectData(false);
 		}
 
 		/// <summary>
@@ -1522,60 +1530,6 @@ namespace specialeffectsviewer
 			bu_Play       .Enabled =
 			bu_Stop       .Enabled =
 			bu_Copy       .Enabled = enabled;
-		}
-
-		/// <summary>
-		/// Prints the currently loaded effect-events to the Options panel. Also
-		/// adds items to the Events menu iff scene is DoubleCharacter.
-		/// </summary>
-		void PrintEffectData()
-		{
-			SetTitle();
-
-			if (SpecialEffect.Sefgroup != null)
-			{
-				var sb = new StringBuilder();
-
-				sb.Append("[" + SpecialEffect.Sefgroup.Name + "]"                      + util.L);
-				sb.Append("pos - " + util.Get3dString(SpecialEffect.Sefgroup.Position) + util.L);
-//				sb.Append("1st - " + SpecialEffect.Sefgroup.FirstObject                + util.L);
-//				sb.Append("2nd - " + SpecialEffect.Sefgroup.SecondObject               + util.L);
-				sb.Append("fog - " + SpecialEffect.Sefgroup.FogMultiplier              + util.L);
-				sb.Append("dur - " + SpecialEffect.Sefgroup.HasMaximumDuration         + util.L);
-				sb.Append("dur - " + SpecialEffect.Sefgroup.MaximumDuration            + util.L);
-				sb.Append(SpecialEffect.Sefgroup.SpecialTargetPosition);
-
-				tb_SefData.Text = sb.ToString();
-
-				sb.Length = 0;
-				for (int i = 0; i != SpecialEffect.Sefgroup.Events.Count; ++i)
-				{
-					// NOTE: a line is 13 px high (+5 pad total)
-					if (sb.Length != 0) sb.Append(util.L + util.L);
-
-					sb.Append(EventData.GetEventData(SpecialEffect.Sefgroup.Events[i], i, _itView_ExtendedInfo.Checked));
-				}
-				tb_EventData.Text = sb.ToString();
-			}
-			else
-			{
-				tb_SefData  .Text =
-				tb_EventData.Text = String.Empty;
-			}
-		}
-
-		/// <summary>
-		/// Sets text on the titlebar.
-		/// </summary>
-		void SetTitle()
-		{
-			string post;
-			if (SpecialEffect.Resent != null)
-				post = " - " + SpecialEffect.Resent.Repository.Name;
-			else
-				post = String.Empty;
-
-			Text = TITLE + post;
 		}
 		#endregion eventhandlers (effects-list)
 
@@ -2205,6 +2159,61 @@ namespace specialeffectsviewer
 													   ChangeType.Absolute,
 													   false,
 													   placedeffect.Position);
+		}
+
+		/// <summary>
+		/// Prints the currently loaded effect-events to the Options panel. Also
+		/// adds items to the Events menu iff scene is DoubleCharacter.
+		/// </summary>
+		/// <param name="setTitle"></param>"
+		void PrintEffectData(bool setTitle = true)
+		{
+			if (setTitle) SetTitle();
+
+			if (SpecialEffect.Sefgroup != null)
+			{
+				var sb = new StringBuilder();
+
+				sb.Append("[" + SpecialEffect.Sefgroup.Name + "]"                      + util.L);
+				sb.Append("pos - " + util.Get3dString(SpecialEffect.Sefgroup.Position) + util.L);
+//				sb.Append("1st - " + SpecialEffect.Sefgroup.FirstObject                + util.L);
+//				sb.Append("2nd - " + SpecialEffect.Sefgroup.SecondObject               + util.L);
+				sb.Append("fog - " + SpecialEffect.Sefgroup.FogMultiplier              + util.L);
+				sb.Append("dur - " + SpecialEffect.Sefgroup.HasMaximumDuration         + util.L);
+				sb.Append("dur - " + SpecialEffect.Sefgroup.MaximumDuration            + util.L);
+				sb.Append(SpecialEffect.Sefgroup.SpecialTargetPosition);
+
+				tb_SefData.Text = sb.ToString();
+
+				sb.Length = 0;
+				for (int i = 0; i != SpecialEffect.Sefgroup.Events.Count; ++i)
+				{
+					// NOTE: a line is 13 px high (+5 pad total)
+					if (sb.Length != 0) sb.Append(util.L + util.L);
+
+					sb.Append(EventData.GetEventData(SpecialEffect.Sefgroup.Events[i], i, _itView_ExtendedInfo.Checked));
+				}
+				tb_EventData.Text = sb.ToString();
+			}
+			else
+			{
+				tb_SefData  .Text =
+				tb_EventData.Text = String.Empty;
+			}
+		}
+
+		/// <summary>
+		/// Sets text on the titlebar.
+		/// </summary>
+		void SetTitle()
+		{
+			string post;
+			if (SpecialEffect.Resent != null)
+				post = " - " + SpecialEffect.Resent.Repository.Name;
+			else
+				post = String.Empty;
+
+			Text = TITLE + post;
 		}
 		#endregion Methods
 	}
