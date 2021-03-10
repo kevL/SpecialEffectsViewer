@@ -145,13 +145,34 @@ namespace specialeffectsviewer
 		MenuItem _itView_StayOnTop;
 		MenuItem _itView_Refocus;
 
-		string _filtr = String.Empty;
-
 		/// <summary>
 		/// A bitwise var that can repopulate the effects-list when the toolset
 		/// changes its currently loaded Module or Campaign.
 		/// </summary>
 		Stale _isListStale;
+
+		/// <summary>
+		/// Tracks the currently selected effects-list id.
+		/// </summary>
+		int _efid = -1;
+
+		/// <summary>
+		/// Set true to bypass handling events redundantly.
+		/// </summary>
+		bool _init;
+
+		/// <summary>
+		/// A string to filter the effects-list against.
+		/// </summary>
+		string _filtr = String.Empty;
+
+		/// <summary>
+		/// If the filter-button is checked when there is no text in the
+		/// search-textbox AND the filter itself is already blank do not run
+		/// the recursion that sets the filter blank - just toggle the
+		/// filter-button off pronto.
+		/// </summary>
+		bool _bypassFiltrRecursion;
 
 		/// <summary>
 		/// The search-textbox is usually focused after the effects-list is
@@ -160,11 +181,6 @@ namespace specialeffectsviewer
 		/// re-toggled.
 		/// </summary>
 		bool _bypassSearchFocus;
-
-		/// <summary>
-		/// Fullpath to the helpfile if it exists.
-		/// </summary>
-		string _pfe_helpfile;
 
 		/// <summary>
 		/// True when the RMB or MMB is down in the ElectronPanel. Is used to
@@ -179,14 +195,9 @@ namespace specialeffectsviewer
 		bool _Ctrl;
 
 		/// <summary>
-		/// Set true to bypass handling events redundantly.
+		/// Fullpath to the helpfile if it exists.
 		/// </summary>
-		bool _init;
-
-		/// <summary>
-		/// Tracks the currently selected effects-list id.
-		/// </summary>
-		int _efid = -1;
+		string _pfe_helpfile;
 		#endregion Fields
 
 
@@ -1843,54 +1854,66 @@ namespace specialeffectsviewer
 		}
 
 		/// <summary>
-		/// Applies the search-filter to the effects list.
+		/// Applies the search-filter to the effects-list.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		void cb_Filter_checkedchanged(object sender, EventArgs e)
 		{
-			if (cb_Filter.Checked)
+			if (!_bypassFiltrRecursion)
 			{
-				if ((_filtr = tb_Search.Text.ToLower()) == String.Empty)
+				if (cb_Filter.Checked)
 				{
-					cb_Filter.Checked = false;	// recurse
-					return;						// but don't run twice.
+					if (tb_Search.Text == String.Empty)
+					{
+						if (_filtr == String.Empty)
+							_bypassFiltrRecursion = true;
+
+						cb_Filter.Checked = false;	// recurse
+						return;						// but don't run twice.
+					}
+					else
+					{
+						_filtr = tb_Search.Text.ToLower();
+						cb_Filter.BackColor = Color.SkyBlue; // <- win10 workaround.
+					}
 				}
-				cb_Filter.BackColor = Color.SkyBlue; // <- win10 workaround.
+				else
+				{
+					_filtr = String.Empty;
+					cb_Filter.BackColor = SystemColors.Control;
+				}
+
+				_bypassSearchFocus = true;
+				if (_itResrepo_all.Checked)
+				{
+					_itResrepo_all.Checked = false;
+					mi_resrepo_All(null, EventArgs.Empty);
+				}
+				else if (_itResrepo_stock.Checked)
+				{
+					_itResrepo_stock.Checked = false;
+					mi_resrepo_Stock(null, EventArgs.Empty);
+				}
+				else if (_itResrepo_module.Checked)
+				{
+					_itResrepo_module.Checked = false;
+					mi_resrepo_Module(null, EventArgs.Empty);
+				}
+				else if (_itResrepo_campaign.Checked)
+				{
+					_itResrepo_campaign.Checked = false;
+					mi_resrepo_Campaign(null, EventArgs.Empty);
+				}
+				else // _itFxList_override.Checked
+				{
+					_itResrepo_override.Checked = false;
+					mi_resrepo_Override(null, EventArgs.Empty);
+				}
+				_bypassSearchFocus = false;
 			}
 			else
-			{
-				_filtr = String.Empty;
-				cb_Filter.BackColor = SystemColors.Control;
-			}
-
-			_bypassSearchFocus = true;
-			if (_itResrepo_all.Checked)
-			{
-				_itResrepo_all.Checked = false;
-				mi_resrepo_All(null, EventArgs.Empty);
-			}
-			else if (_itResrepo_stock.Checked)
-			{
-				_itResrepo_stock.Checked = false;
-				mi_resrepo_Stock(null, EventArgs.Empty);
-			}
-			else if (_itResrepo_module.Checked)
-			{
-				_itResrepo_module.Checked = false;
-				mi_resrepo_Module(null, EventArgs.Empty);
-			}
-			else if (_itResrepo_campaign.Checked)
-			{
-				_itResrepo_campaign.Checked = false;
-				mi_resrepo_Campaign(null, EventArgs.Empty);
-			}
-			else // _itFxList_override.Checked
-			{
-				_itResrepo_override.Checked = false;
-				mi_resrepo_Override(null, EventArgs.Empty);
-			}
-			_bypassSearchFocus = false;
+				_bypassFiltrRecursion = false;
 		}
 		#endregion eventhandlers (search/filter)
 
