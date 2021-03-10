@@ -219,7 +219,7 @@ namespace specialeffectsviewer
 		/// <summary>
 		/// A convenient getter for the user-selected scene in Preferences.
 		/// </summary>
-		internal Scene Scenary
+		internal Scene Scenari
 		{
 			get { return (Scene)SpecialEffectsViewerPreferences.that.Scene; }
 		}
@@ -648,7 +648,7 @@ namespace specialeffectsviewer
 			_init = false;
 
 
-			switch (Scenary)
+			switch (Scenari)
 			{
 				case Scene.doublecharacter:
 					rb_DoubleCharacter.Checked = true;
@@ -1136,7 +1136,7 @@ namespace specialeffectsviewer
 		{
 			ClearScene(); // clear and recreate all NetDisplay objects (so they don't leak each time they're played)
 
-			switch (Scenary)
+			switch (Scenari)
 			{
 				case Scene.doublecharacter:					// NWN2 Instances shall be valid
 					if (effectChanged)
@@ -1506,7 +1506,7 @@ namespace specialeffectsviewer
 				}
 				else if (lb_Effects.SelectedIndex != -1)
 				{
-					if (Scenary == Scene.doublecharacter)
+					if (Scenari == Scene.doublecharacter)
 					{
 						EnableEvents(); // ensure all events get re-enabled when the effects-list is clicked
 						SpecialEffect.Altgroup = null;
@@ -1603,9 +1603,9 @@ namespace specialeffectsviewer
 			var rb = sender as RadioButton;
 
 			if (sender == null
-				|| (rb == rb_DoubleCharacter && Scenary != Scene.doublecharacter)
-				|| (rb == rb_SingleCharacter && Scenary != Scene.singlecharacter)
-				|| (rb == rb_PlacedEffect    && Scenary != Scene.placedeffect))
+				|| (rb == rb_DoubleCharacter && Scenari != Scene.doublecharacter)
+				|| (rb == rb_SingleCharacter && Scenari != Scene.singlecharacter)
+				|| (rb == rb_PlacedEffect    && Scenari != Scene.placedeffect))
 			{
 				SetSceneType();
 
@@ -1689,7 +1689,7 @@ namespace specialeffectsviewer
 
 				SpecialEffectsViewerPreferences.that.DoubleCharacterDistance = Int32.Parse(tb_Dist.Text);
 
-				if (Scenary == Scene.doublecharacter)
+				if (Scenari == Scene.doublecharacter)
 				{
 					mi_events_Stop(null, EventArgs.Empty);
 
@@ -1739,7 +1739,7 @@ namespace specialeffectsviewer
 				}
 				_init = false;
 
-				if (Scenary != Scene.placedeffect)
+				if (Scenari != Scene.placedeffect)
 					CreateScene_appearancechanged(sender == co_Source);
 			}
 		}
@@ -1751,7 +1751,7 @@ namespace specialeffectsviewer
 		/// <param name="e"></param>
 		void cb_Fela_checkedchanged(object sender, EventArgs e)
 		{
-			if (!_init && Scenary != Scene.placedeffect)
+			if (!_init && Scenari != Scene.placedeffect)
 				CreateScene_appearancechanged(sender == cb_SourceF);
 		}
 
@@ -1761,7 +1761,7 @@ namespace specialeffectsviewer
 		/// <param name="source">true if the Source appearance or gender changed</param>
 		void CreateScene_appearancechanged(bool source)
 		{
-			switch (Scenary)
+			switch (Scenari)
 			{
 				case Scene.doublecharacter:
 					ClearScene();
@@ -1803,7 +1803,7 @@ namespace specialeffectsviewer
 			CreateElectronPanel();
 			InitializeReceiver();
 
-			switch (Scenary) // create entire scene ->
+			switch (Scenari) // create entire scene ->
 			{
 				case Scene.doublecharacter:
 					CreateDoubleCharacterScene();

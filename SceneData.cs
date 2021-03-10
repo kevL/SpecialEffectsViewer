@@ -141,7 +141,7 @@ namespace specialeffectsviewer
 		/// </summary>
 		void SetDatatext()
 		{
-			switch (_f.Scenary)
+			switch (_f.Scenari)
 			{
 				case sevi.Scene.doublecharacter: Text = TITLE + " - Double character";     break;
 				case sevi.Scene.singlecharacter: Text = TITLE + " - Single character";     break;
