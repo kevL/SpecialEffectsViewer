@@ -1586,7 +1586,7 @@ namespace specialeffectsviewer
 
 		#region eventhandlers (scene-config)
 		/// <summary>
-		/// Creates objects in the NetDisplay according to the current
+		/// Creates objects in the Electron Panel according to the current
 		/// scene-configuration.
 		/// </summary>
 		/// <param name="sender"></param>
