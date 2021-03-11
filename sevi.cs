@@ -152,14 +152,20 @@ namespace specialeffectsviewer
 		Stale _isListStale;
 
 		/// <summary>
+		/// Set true to bypass handling events redundantly.
+		/// </summary>
+		bool _init;
+
+		/// <summary>
 		/// Tracks the currently selected effects-list id.
 		/// </summary>
 		int _efid = -1;
 
 		/// <summary>
-		/// Set true to bypass handling events redundantly.
+		/// Tracks the label of the currently selected effect for search after
+		/// a resrepo loads.
 		/// </summary>
-		bool _init;
+		string _lastEffectLabel = String.Empty;
 
 		/// <summary>
 		/// A string to filter the effects-list against.
@@ -935,6 +941,8 @@ namespace specialeffectsviewer
 					}
 				}
 				lb_Effects.EndUpdate();
+
+				SearchLastEffectLabel();
 			}
 
 			if (!_bypassSearchFocus)
@@ -973,6 +981,8 @@ namespace specialeffectsviewer
 					}
 				}
 				lb_Effects.EndUpdate();
+
+				SearchLastEffectLabel();
 			}
 
 			if (!_bypassSearchFocus)
@@ -1006,6 +1016,8 @@ namespace specialeffectsviewer
 					}
 				}
 				lb_Effects.EndUpdate();
+
+				SearchLastEffectLabel();
 			}
 
 			if (!_bypassSearchFocus)
@@ -1039,6 +1051,8 @@ namespace specialeffectsviewer
 					}
 				}
 				lb_Effects.EndUpdate();
+
+				SearchLastEffectLabel();
 			}
 
 			if (!_bypassSearchFocus)
@@ -1072,6 +1086,8 @@ namespace specialeffectsviewer
 					}
 				}
 				lb_Effects.EndUpdate();
+
+				SearchLastEffectLabel();
 			}
 
 			if (!_bypassSearchFocus)
@@ -1107,6 +1123,17 @@ namespace specialeffectsviewer
 			_itResrepo_module  .Checked =
 			_itResrepo_campaign.Checked =
 			_itResrepo_override.Checked = false;
+		}
+
+		/// <summary>
+		/// Searches the effects-list for the previously selected effect after a
+		/// resrepo loads.
+		/// </summary>
+		void SearchLastEffectLabel()
+		{
+			int id = Search.SearchEffects(lb_Effects, _lastEffectLabel, true);
+			if (id != -1)
+				lb_Effects.SelectedIndex = id;
 		}
 		#endregion eventhandlers (resrepo)
 
@@ -1488,18 +1515,22 @@ namespace specialeffectsviewer
 
 					CreateBasicEvents();
 
-					if (lb_Effects.SelectedIndex != -1)
-					{
-						EnableControls(true);
-						SpecialEffect.CreateSefgroup(lb_Effects.SelectedItem as IResourceEntry);
-						Play(true);
-					}
-					else
-					{
-						EnableControls(false);
-						SpecialEffect.ClearEffect();
-						ClearScene();
-					}
+//					if (lb_Effects.SelectedIndex != -1)
+//					{
+					_lastEffectLabel = lb_Effects.SelectedItem.ToString();
+
+					EnableControls(true);
+					SpecialEffect.CreateSefgroup(lb_Effects.SelectedItem as IResourceEntry);
+					Play(true);
+//					}
+//					else // TODO: Does this ever fire -> no.
+//					{
+//						_lastEffectLabel = String.Empty;
+//
+//						EnableControls(false);
+//						SpecialEffect.ClearEffect();
+//						ClearScene();
+//					}
 
 					PrintEffectData();
 				}
