@@ -31,7 +31,8 @@ effect-events. The following items appear on the menu only if DoubleCharacter
 has been selected:
 
 Disable all events [F7] - disables all events
-Enable all events  [F8] - re-enables all events
+Enable all events  [F8] - re-enables all events. Re-selecting the effect in the
+                          list also re-enables all its events
 
 If and only if the DoubleCharacter option is selected does a list of events
 appear in the menu. The events can be toggled on or off with a click. Keypress
