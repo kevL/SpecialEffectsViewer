@@ -25,7 +25,5 @@ CREDIT
 codepoetz' PowerBar plugin for getting the code started.
 The stock VFXEditor plugin for helping things along.
 
-4760 - for extensive testing and explaining default skeletons and models.
-
-and whoever obfuscated all strings and private identifiers in the toolset DLLs -
-you did a really good job.
+4760 - for extensive testing during a rework of the code, and for explaining
+       default skeletons etc.
