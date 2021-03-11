@@ -169,6 +169,11 @@ namespace specialeffectsviewer
 		string _lastEffectLabel = String.Empty;
 
 		/// <summary>
+		/// Do not play an effect if it gets reselected after a resrepo changes.
+		/// </summary>
+		bool _bypassPlay;
+
+		/// <summary>
 		/// A string to filter the effects-list against.
 		/// </summary>
 		string _filtr = String.Empty;
@@ -1134,7 +1139,11 @@ namespace specialeffectsviewer
 		{
 			int id = Search.SearchEffects(lb_Effects, _lastEffectLabel, true);
 			if (id != -1)
+			{
+				_bypassPlay = true;
 				lb_Effects.SelectedIndex = id;
+				_bypassPlay = false;
+			}
 		}
 		#endregion eventhandlers (resrepo)
 
@@ -1510,38 +1519,39 @@ namespace specialeffectsviewer
 		{
 			if (!_init)
 			{
+				// NOTE: The id shall never be -1 here. The only way that id can
+				// be set to -1 is by initialization or resrepo-load but both
+				// are conditioned by '_init'. -1 would need to be handled here
+				// if that behavior is altered ...
+
 				if (lb_Effects.SelectedIndex != _efid)
 				{
 					_efid = lb_Effects.SelectedIndex;
 
 					CreateBasicEvents();
 
-//					if (lb_Effects.SelectedIndex != -1)
-//					{
 					_lastEffectLabel = lb_Effects.SelectedItem.ToString();
 
 					EnableControls(true);
 					SpecialEffect.CreateSefgroup(lb_Effects.SelectedItem as IResourceEntry);
-					Play(true);
-//					}
-//					else // TODO: Does this ever fire -> no.
-//					{
-//						_lastEffectLabel = String.Empty;
-//
-//						EnableControls(false);
-//						SpecialEffect.ClearEffect();
-//						ClearScene();
-//					}
+
+					if (!_bypassPlay)
+					{
+						Play(true);
+					}
+					else if (Scenari == Scene.doublecharacter)
+						CreateExtendedEvents();
 
 					PrintEffectData();
 				}
-				else if (lb_Effects.SelectedIndex != -1)
+				else
 				{
 					if (Scenari == Scene.doublecharacter)
 					{
 						EnableEvents(); // ensure all events get re-enabled when the effects-list is clicked
 						SpecialEffect.Altgroup = null;
 					}
+
 					Play();
 				}
 
