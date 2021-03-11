@@ -3,6 +3,10 @@ The repository of the currently selected effect is shown on the titlebar.
 The special effect file (.sef) without extension is listed in the rightside
 panel. Click a file in the list to play or replay it.
 
+Note: Creatures can disappear briefly before effects play. They are being
+reinstantiated. Also, the "Missing 2da texture" colors can appear briefly as
+the toolset is trying to find the texture to render. Don't panic.
+
 
 MENUS
 
@@ -20,6 +24,11 @@ merely for a substring in each effect's path: "modules", "campaigns", or
 "override" respectively. Stock checks merely for the absence of those strings.
 
 I might try to figure it out for real later ...
+
+Note: There is an option available in the toolset under
+View|Options...|Plugins|Special Effects Viewer|Options that can be enabled:
+LastEffect. If it is set to anything other than a blank string (or whitespace)
+the plugin will try to find that effect when it loads.
 
 Events
 ------
@@ -94,7 +103,8 @@ Source - select the appearance for the source-creature in a Double character
 Target - select the appearance for the target-creature in a Double character
          scene
 
-Note: Only appearances that have valid skeleton- and body-files will be listed.
+Note: Only appearances that have valid default skeleton- and body-files will be
+listed.
 
 To the right of Source and Target are checkboxes for the female variants of the
 selected appearances if they are available.

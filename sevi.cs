@@ -180,9 +180,11 @@ namespace specialeffectsviewer
 
 		/// <summary>
 		/// Tracks the label of the currently selected effect for search after
-		/// a resrepo loads.
+		/// a resrepo loads. The value will be stored in
+		/// <see cref="SpecialEffectsViewerPreferences.LastEffect"/> when the
+		/// plugin closes if appropriate.
 		/// </summary>
-		string _lastEffectLabel = String.Empty;
+		string _lastEffectLabel;
 
 		/// <summary>
 		/// Do not play an effect if it gets reselected after a resrepo changes.
@@ -720,6 +722,8 @@ namespace specialeffectsviewer
 					rb_PlacedEffect.Checked = true;
 					break;
 			}
+
+			_lastEffectLabel = SpecialEffectsViewerPreferences.that.LastEffect;
 		}
 		#endregion cTor
 
@@ -902,6 +906,12 @@ namespace specialeffectsviewer
 
 			if (!sc2_Options.Panel1Collapsed)
 				SpecialEffectsViewerPreferences.that.SplitterDistanceEvents = sc3_Events.SplitterDistance;
+
+			if (SpecialEffectsViewerPreferences.that.LastEffect != String.Empty
+				&& _lastEffectLabel.Trim() != String.Empty)
+			{
+				SpecialEffectsViewerPreferences.that.LastEffect = _lastEffectLabel;
+			}
 
 			StoreCameraState();
 
