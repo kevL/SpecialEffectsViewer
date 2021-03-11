@@ -5,6 +5,9 @@ using System.Drawing;
 using System.IO;
 using System.Media;
 using System.Reflection;
+#if !__MonoCS__
+using System.Runtime.InteropServices;
+#endif
 using System.Text;
 using System.Windows.Forms;
 
@@ -65,7 +68,20 @@ namespace specialeffectsviewer
 	/// </remarks>
 	sealed partial class sevi
 		: Form
+#if !__MonoCS__
+		, IMessageFilter
+#endif
 	{
+#if !__MonoCS__
+		#region P/Invoke declarations
+		[DllImport("user32.dll")]
+		static extern IntPtr WindowFromPoint(Point pt);
+
+		[DllImport("user32.dll")]
+		static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
+		#endregion P/Invoke declarations
+#endif
+
 		#region enums
 		/// <summary>
 		/// pick a Scene, any scene
@@ -237,6 +253,33 @@ namespace specialeffectsviewer
 		}
 		#endregion Properties
 
+#if !__MonoCS__
+		#region IMessageFilter
+		/// <summary>
+		/// Sends mousewheel messages to the control that the mouse-cursor is
+		/// hovering over.
+		/// </summary>
+		/// <param name="m">the message</param>
+		/// <returns>true if a mousewheel message was handled successfully</returns>
+		/// <remarks>https://stackoverflow.com/questions/4769854/windows-forms-capturing-mousewheel#4769961</remarks>
+		public bool PreFilterMessage(ref Message m)
+		{
+			if (m.Msg == 0x20a)
+			{
+				// WM_MOUSEWHEEL - find the control at screen position m.LParam
+				var pos = new Point(m.LParam.ToInt32());
+
+				IntPtr hWnd = WindowFromPoint(pos);
+				if (hWnd != IntPtr.Zero && hWnd != m.HWnd && Control.FromHandle(hWnd) != null)
+				{
+					SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
+					return true;
+				}
+			}
+			return false;
+		}
+		#endregion IMessageFilter
+#endif
 
 		#region cTor
 		/// <summary>
@@ -253,7 +296,9 @@ namespace specialeffectsviewer
 			that = this;
 
 			InitializeComponent();
-
+#if !__MonoCS__
+			Application.AddMessageFilter(this);
+#endif
 			NWN2ToolsetMainForm.ModuleChanged                  += OnModuleChanged;
 			NWN2CampaignManager.Instance.ActiveCampaignChanged += OnActiveCampaignChanged;
 
@@ -762,6 +807,18 @@ namespace specialeffectsviewer
 		}
 
 		/// <summary>
+		/// Stops effect when the plugin is minimized.
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnResize(EventArgs e)
+		{
+			if (WindowState == FormWindowState.Minimized)
+				mi_events_Stop(null, EventArgs.Empty);
+
+			base.OnResize(e);
+		}
+
+		/// <summary>
 		/// Handles keyboard events at the form level.
 		/// </summary>
 		/// <param name="e"></param>
@@ -812,18 +869,6 @@ namespace specialeffectsviewer
 				&& !bu_Stop    .Focused
 				&& !bu_Copy    .Focused
 				&& !bu_SetDist .Focused;
-		}
-
-		/// <summary>
-		/// Stops effect when the plugin is minimized.
-		/// </summary>
-		/// <param name="e"></param>
-		protected override void OnResize(EventArgs e)
-		{
-			if (WindowState == FormWindowState.Minimized)
-				mi_events_Stop(null, EventArgs.Empty);
-
-			base.OnResize(e);
 		}
 
 		/// <summary>

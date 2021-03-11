@@ -136,7 +136,8 @@ RMB-drag          - pans the camera up/down/left/right
 RMB-drag + [Ctrl] - rotates the camera around its focal point
 Mousewheel        - zooms the camera in/out
 
-Note: The display panel must be focused to adjust the camera.
+Note: Controls ought take input from the mousewheel when the cursor is hovered -
+depends whether Windows feels like it.
 
 
 KEYBOARD
