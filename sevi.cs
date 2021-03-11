@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Media;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
@@ -1843,6 +1844,8 @@ namespace specialeffectsviewer
 			int id = Search.SearchEffects(lb_Effects, tb_Search.Text, sender == bu_SearchDn);
 			if (id != -1)
 				lb_Effects.SelectedIndex = id;
+			else
+				SystemSounds.Beep.Play();
 		}
 
 		/// <summary>

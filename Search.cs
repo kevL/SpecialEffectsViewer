@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Media;
 using System.Windows.Forms;
 
 
@@ -86,9 +85,6 @@ namespace specialeffectsviewer
 					}
 				}
 			}
-
-			if (id == -1)
-				SystemSounds.Beep.Play();
 
 			return id;
 		}
