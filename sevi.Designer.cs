@@ -503,6 +503,7 @@ namespace specialeffectsviewer
 			// 
 			// co_Search
 			// 
+			this.co_Search.BackColor = System.Drawing.Color.PaleGoldenrod;
 			this.co_Search.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.co_Search.Location = new System.Drawing.Point(0, 0);
 			this.co_Search.Margin = new System.Windows.Forms.Padding(0);
