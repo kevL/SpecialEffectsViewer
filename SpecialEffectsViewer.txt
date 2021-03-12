@@ -152,10 +152,13 @@ depends whether Windows feels like it.
 
 KEYBOARD
 
-Enter  - plays the currently selected effect if the currently focused control
-         doesn't handle the [Enter] key itself. Searches if search is focused
-         (depress [Shift] to search ascending), or activates a button
-Escape - closes the plugin
+[Enter]  - plays the currently selected effect if the currently focused control
+           doesn't handle the [Enter] key itself. Searches if search is focused
+           (depress [Shift] to search ascending), or activates a button
+[Escape] - closes the plugin
+
+[F3]         - search descending
+[F3 + Shift] - search ascending
 
 
 General Info
