@@ -228,48 +228,56 @@ namespace specialeffectsviewer
 		{ get; set; }
 
 
+		[Browsable(false)]
 		[Category("Search")]
 		[Description("string in the Search dropdown")]
 		[DefaultValue("")]
 		public string search0
 		{ get; set; }
 
+		[Browsable(false)]
 		[Category("Search")]
 		[Description("string in the Search dropdown")]
 		[DefaultValue("")]
 		public string search1
 		{ get; set; }
 
+		[Browsable(false)]
 		[Category("Search")]
 		[Description("string in the Search dropdown")]
 		[DefaultValue("")]
 		public string search2
 		{ get; set; }
 
+		[Browsable(false)]
 		[Category("Search")]
 		[Description("string in the Search dropdown")]
 		[DefaultValue("")]
 		public string search3
 		{ get; set; }
 
+		[Browsable(false)]
 		[Category("Search")]
 		[Description("string in the Search dropdown")]
 		[DefaultValue("")]
 		public string search4
 		{ get; set; }
 
+		[Browsable(false)]
 		[Category("Search")]
 		[Description("string in the Search dropdown")]
 		[DefaultValue("")]
 		public string search5
 		{ get; set; }
 
+		[Browsable(false)]
 		[Category("Search")]
 		[Description("string in the Search dropdown")]
 		[DefaultValue("")]
 		public string search6
 		{ get; set; }
 
+		[Browsable(false)]
 		[Category("Search")]
 		[Description("string in the Search dropdown")]
 		[DefaultValue("")]
