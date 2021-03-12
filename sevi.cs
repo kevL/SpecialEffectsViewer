@@ -1950,20 +1950,29 @@ namespace specialeffectsviewer
 		}
 
 		/// <summary>
-		/// Tidies the search-dropdown.
+		/// Adds the current string to the search-dropdown.
 		/// </summary>
 		void UpdateSearchDropdown()
 		{
-			co_Search.Items.Insert(0, co_Search.Text);
+			if (   co_Search.Text != String.Empty
+				&& co_Search.Text != co_Search.Items[0].ToString())
+			{
+				co_Search.Items.Insert(0, co_Search.Text);
 
-			if (co_Search.Items.Count > 8)
-				for (int i = co_Search.Items.Count - 1; i != 7; --i)
-					co_Search.Items.RemoveAt(i);
-
-			if (co_Search.Items.Count > 1)
-				for (int i = co_Search.Items.Count - 1; i != 0; --i)
+				if (co_Search.Items.Count > 1)
+				{
+					for (int i = co_Search.Items.Count - 1; i != 0; --i)
 					if (co_Search.Items[i].ToString() == co_Search.Text)
+					{
 						co_Search.Items.RemoveAt(i);
+						break;
+					}
+
+					if (co_Search.Items.Count == 9)
+						co_Search.Items.RemoveAt(9);
+				}
+				co_Search.SelectedIndex = 0; // else text gets cleared
+			}
 		}
 
 		/// <summary>
