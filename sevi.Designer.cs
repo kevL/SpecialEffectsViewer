@@ -10,7 +10,7 @@ namespace specialeffectsviewer
 		SplitContainer sc1_Effects;
 
 		Panel pa_Search;
-		TextBox tb_Search;
+		ComboBox co_Search;
 		Button bu_SearchUp;
 		Button bu_SearchDn;
 		CheckBox cb_Filter;
@@ -120,7 +120,7 @@ namespace specialeffectsviewer
 			this.tb_EventData = new System.Windows.Forms.TextBox();
 			this.lb_Effects = new System.Windows.Forms.ListBox();
 			this.pa_Search = new System.Windows.Forms.Panel();
-			this.tb_Search = new System.Windows.Forms.TextBox();
+			this.co_Search = new System.Windows.Forms.ComboBox();
 			this.bu_SearchUp = new System.Windows.Forms.Button();
 			this.bu_SearchDn = new System.Windows.Forms.Button();
 			this.cb_Filter = new System.Windows.Forms.CheckBox();
@@ -490,7 +490,7 @@ namespace specialeffectsviewer
 			// 
 			// pa_Search
 			// 
-			this.pa_Search.Controls.Add(this.tb_Search);
+			this.pa_Search.Controls.Add(this.co_Search);
 			this.pa_Search.Controls.Add(this.bu_SearchUp);
 			this.pa_Search.Controls.Add(this.bu_SearchDn);
 			this.pa_Search.Controls.Add(this.cb_Filter);
@@ -501,15 +501,14 @@ namespace specialeffectsviewer
 			this.pa_Search.Size = new System.Drawing.Size(213, 20);
 			this.pa_Search.TabIndex = 0;
 			// 
-			// tb_Search
+			// co_Search
 			// 
-			this.tb_Search.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tb_Search.Location = new System.Drawing.Point(0, 0);
-			this.tb_Search.Margin = new System.Windows.Forms.Padding(0);
-			this.tb_Search.Name = "tb_Search";
-			this.tb_Search.Size = new System.Drawing.Size(122, 20);
-			this.tb_Search.TabIndex = 0;
-			this.tb_Search.WordWrap = false;
+			this.co_Search.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.co_Search.Location = new System.Drawing.Point(0, 0);
+			this.co_Search.Margin = new System.Windows.Forms.Padding(0);
+			this.co_Search.Name = "co_Search";
+			this.co_Search.Size = new System.Drawing.Size(122, 21);
+			this.co_Search.TabIndex = 0;
 			// 
 			// bu_SearchUp
 			// 
@@ -621,7 +620,6 @@ namespace specialeffectsviewer
 			this.sc3_Events.Panel2.PerformLayout();
 			this.sc3_Events.ResumeLayout(false);
 			this.pa_Search.ResumeLayout(false);
-			this.pa_Search.PerformLayout();
 			this.pa_bot.ResumeLayout(false);
 			this.ResumeLayout(false);
 

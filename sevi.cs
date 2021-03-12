@@ -838,7 +838,7 @@ namespace specialeffectsviewer
 					return true;
 
 				case Keys.Enter:
-					if (tb_Search.Focused)
+					if (co_Search.Focused)
 					{
 						bu_Search_click(bu_SearchDn, EventArgs.Empty);
 						lb_Effects.Select();
@@ -865,7 +865,7 @@ namespace specialeffectsviewer
 					break;
 
 				case Keys.Enter | Keys.Shift:
-					if (tb_Search.Focused)
+					if (co_Search.Focused)
 					{
 						bu_Search_click(bu_SearchUp, EventArgs.Empty);
 						lb_Effects.Select();
@@ -1035,7 +1035,7 @@ namespace specialeffectsviewer
 			}
 
 			if (!_bypassSearchFocus)
-				ActiveControl = tb_Search;
+				ActiveControl = co_Search;
 		}
 
 		/// <summary>
@@ -1075,7 +1075,7 @@ namespace specialeffectsviewer
 			}
 
 			if (!_bypassSearchFocus)
-				ActiveControl = tb_Search;
+				ActiveControl = co_Search;
 		}
 
 		/// <summary>
@@ -1110,7 +1110,7 @@ namespace specialeffectsviewer
 			}
 
 			if (!_bypassSearchFocus)
-				ActiveControl = tb_Search;
+				ActiveControl = co_Search;
 		}
 
 		/// <summary>
@@ -1145,7 +1145,7 @@ namespace specialeffectsviewer
 			}
 
 			if (!_bypassSearchFocus)
-				ActiveControl = tb_Search;
+				ActiveControl = co_Search;
 		}
 
 		/// <summary>
@@ -1180,7 +1180,7 @@ namespace specialeffectsviewer
 			}
 
 			if (!_bypassSearchFocus)
-				ActiveControl = tb_Search;
+				ActiveControl = co_Search;
 		}
 
 		/// <summary>
@@ -1751,7 +1751,7 @@ namespace specialeffectsviewer
 		/// <remarks>Also handles [Enter] on <see cref="tb_Dist"/>.</remarks>
 		void bu_SetDist_click(object sender, EventArgs e)
 		{
-			ActiveControl = tb_Search;
+			ActiveControl = co_Search;
 
 			if (bu_SetDist.Enabled)
 			{
@@ -1907,17 +1907,36 @@ namespace specialeffectsviewer
 
 		#region eventhandlers (search/filter)
 		/// <summary>
-		/// Search the Fx-list.
+		/// Search the effects-list.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		void bu_Search_click(object sender, EventArgs e)
 		{
-			int id = Search.SearchEffects(lb_Effects, tb_Search.Text, sender == bu_SearchDn);
+			int id = Search.SearchEffects(lb_Effects, co_Search.Text, sender == bu_SearchDn);
 			if (id != -1)
 				lb_Effects.SelectedIndex = id;
 			else
 				SystemSounds.Beep.Play();
+
+			UpdateSearchDropdown();
+		}
+
+		/// <summary>
+		/// Tidies the search-dropdown.
+		/// </summary>
+		void UpdateSearchDropdown()
+		{
+			co_Search.Items.Insert(0, co_Search.Text);
+
+			if (co_Search.Items.Count > 8)
+				for (int i = co_Search.Items.Count - 1; i != 7; --i)
+					co_Search.Items.RemoveAt(i);
+
+			if (co_Search.Items.Count > 1)
+				for (int i = co_Search.Items.Count - 1; i != 0; --i)
+					if (co_Search.Items[i].ToString() == co_Search.Text)
+						co_Search.Items.RemoveAt(i);
 		}
 
 		/// <summary>
@@ -1931,7 +1950,7 @@ namespace specialeffectsviewer
 			{
 				if (cb_Filter.Checked)
 				{
-					if (tb_Search.Text == String.Empty)
+					if (co_Search.Text == String.Empty)
 					{
 						if (_filtr == String.Empty)
 							_bypassFiltrRecursion = true;
@@ -1941,7 +1960,7 @@ namespace specialeffectsviewer
 					}
 					else
 					{
-						_filtr = tb_Search.Text.ToLower();
+						_filtr = co_Search.Text.ToLower();
 						cb_Filter.BackColor = Color.SkyBlue; // <- win10 workaround.
 					}
 				}
