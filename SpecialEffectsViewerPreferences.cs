@@ -149,14 +149,14 @@ namespace specialeffectsviewer
 
 
 		[Category("Camera")]
-		[Description("The degree in radians that the camera will start on the"
+		[Description("The angle in radians that the camera will start on the"
 				   + " x/y-plane clockwise when facing east.")]
 		[DefaultValue(-util.pi_2)]
 		public float FocusTheta
 		{ get; set; }
 
 		[Category("Camera")]
-		[Description("The degree of elevation in radians that the camera will start.")]
+		[Description("The angle of elevation in radians that the camera will start.")]
 		[DefaultValue(0f)]
 		public float FocusPhi
 		{ get; set; }
