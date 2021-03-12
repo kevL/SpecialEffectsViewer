@@ -822,40 +822,66 @@ namespace specialeffectsviewer
 			base.OnResize(e);
 		}
 
+
 		/// <summary>
-		/// Handles keyboard events at the form level.
+		/// Handles keyboard events at the Form level.
 		/// </summary>
-		/// <param name="e"></param>
-		/// <remarks>Requires 'KeyPreview' true.</remarks>
-		protected override void OnKeyDown(KeyEventArgs e)
+		/// <param name="msg"></param>
+		/// <param name="keyData"></param>
+		/// <returns>true if the event gets handled</returns>
+		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
 		{
-			switch (e.KeyData)
+			switch (keyData)
 			{
 				case Keys.Escape:
-					e.Handled = e.SuppressKeyPress = true;
 					Close();
-					break;
+					return true;
 
 				case Keys.Enter:
+					if (tb_Search.Focused)
+					{
+						bu_Search_click(bu_SearchDn, EventArgs.Empty);
+						lb_Effects.Select();
+						return true;
+					}
+
 					if (cb_Filter.Focused)
 					{
-						e.Handled = e.SuppressKeyPress = true;
 						cb_Filter.Checked = !cb_Filter.Checked;
+						return true;
 					}
-					else if (tb_Dist.Focused)
+
+					if (tb_Dist.Focused)
 					{
-						e.Handled = e.SuppressKeyPress = true;
 						bu_SetDist_click(null, EventArgs.Empty);
+						return true;
 					}
-					else if (lb_Effects.SelectedIndex != -1
-						&& isPlayControlFocused())
+
+					if (lb_Effects.SelectedIndex != -1 && isPlayControlFocused())
 					{
-						e.Handled = e.SuppressKeyPress = true;
 						mi_events_Play(null, EventArgs.Empty);
+						return true;
 					}
 					break;
+
+				case Keys.Enter | Keys.Shift:
+					if (tb_Search.Focused)
+					{
+						bu_Search_click(bu_SearchUp, EventArgs.Empty);
+						lb_Effects.Select();
+						return true;
+					}
+					break;
+
+				case Keys.F3:
+					bu_Search_click(bu_SearchDn, EventArgs.Empty);
+					return true;
+
+				case Keys.F3 | Keys.Shift:
+					bu_Search_click(bu_SearchUp, EventArgs.Empty);
+					return true;
 			}
-			base.OnKeyDown(e);
+			return base.ProcessCmdKey(ref msg, keyData);
 		}
 
 		/// <summary>
@@ -864,16 +890,18 @@ namespace specialeffectsviewer
 		/// </summary>
 		/// <returns>true if a valid play-control has current focus or no
 		/// control has focus (which I don't believe is possible)</returns>
+		/// <remarks>The events for these buttons could/should probably be
+		/// handled by <see cref="ProcessCmdKey"/> directly.</remarks>
 		bool isPlayControlFocused()
 		{
-			return !tb_Search  .Focused
-				&& !bu_SearchUp.Focused
+			return !bu_SearchUp.Focused
 				&& !bu_SearchDn.Focused
 				&& !bu_Play    .Focused
 				&& !bu_Stop    .Focused
 				&& !bu_Copy    .Focused
 				&& !bu_SetDist .Focused;
 		}
+
 
 		/// <summary>
 		/// Stores preferences and unsubscribes from toolset-events.
@@ -1192,7 +1220,7 @@ namespace specialeffectsviewer
 		/// </summary>
 		void SearchLastEffectLabel()
 		{
-			int id = Search.SearchEffects(lb_Effects, _lastEffectLabel, true);
+			int id = Search.SearchEffects(lb_Effects, _lastEffectLabel, true, true);
 			if (id != -1)
 			{
 				_bypassPlay = true;
@@ -1878,27 +1906,6 @@ namespace specialeffectsviewer
 
 
 		#region eventhandlers (search/filter)
-		/// <summary>
-		/// Search on keydown event when control has focus.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void tb_Search_keydown(object sender, KeyEventArgs e)
-		{
-			switch (e.KeyData)
-			{
-				case Keys.Enter:
-					e.SuppressKeyPress = e.Handled = true;
-					bu_Search_click(bu_SearchDn, EventArgs.Empty);
-					break;
-
-				case Keys.Enter | Keys.Shift:
-					e.SuppressKeyPress = e.Handled = true;
-					bu_Search_click(bu_SearchUp, EventArgs.Empty);
-					break;
-			}
-		}
-
 		/// <summary>
 		/// Search the Fx-list.
 		/// </summary>

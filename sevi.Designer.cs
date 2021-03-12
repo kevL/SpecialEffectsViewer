@@ -510,7 +510,6 @@ namespace specialeffectsviewer
 			this.tb_Search.Size = new System.Drawing.Size(122, 20);
 			this.tb_Search.TabIndex = 0;
 			this.tb_Search.WordWrap = false;
-			this.tb_Search.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tb_Search_keydown);
 			// 
 			// bu_SearchUp
 			// 
@@ -601,7 +600,6 @@ namespace specialeffectsviewer
 			this.ClientSize = new System.Drawing.Size(792, 454);
 			this.Controls.Add(this.sc1_Effects);
 			this.Font = new System.Drawing.Font("Consolas", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.KeyPreview = true;
 			this.Name = "sevi";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = " Special Effects Viewer";

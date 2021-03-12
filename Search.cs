@@ -15,8 +15,10 @@ namespace specialeffectsviewer
 		/// <param name="effects">the effects-list</param>
 		/// <param name="text">the text to search for</param>
 		/// <param name="descend">true if search-descending, false if ascending</param>
+		/// <param name="wholeword">true for wholeword, false for substring</param>
 		/// <returns>the effect-id found or -1 if not found</returns>
-		internal static int SearchEffects(ListBox effects, string text, bool descend)
+		/// <remarks>The search is case-insensitive.</remarks>
+		internal static int SearchEffects(ListBox effects, string text, bool descend, bool wholeword = false)
 		{
 			int id = -1;
 
@@ -36,7 +38,9 @@ namespace specialeffectsviewer
 						else
 							id = effects.SelectedIndex + 1;
 
-						while (!effects.Items[id].ToString().ToLower().Contains(text))
+						string label = effects.Items[id].ToString().ToLower();
+						while (( wholeword || !label.Contains(text))
+							&& (!wholeword ||  label != text))
 						{
 							if (id == effects.SelectedIndex) // not found.
 							{
@@ -53,6 +57,7 @@ namespace specialeffectsviewer
 								}
 								id = 0;
 							}
+							label = effects.Items[id].ToString().ToLower();
 						}
 					}
 					else
@@ -64,7 +69,9 @@ namespace specialeffectsviewer
 						else
 							id = effects.SelectedIndex - 1;
 
-						while (!effects.Items[id].ToString().ToLower().Contains(text))
+						string label = effects.Items[id].ToString().ToLower();
+						while (( wholeword || !label.Contains(text))
+							&& (!wholeword ||  label != text))
 						{
 							if (id == effects.SelectedIndex) // not found.
 							{
@@ -81,6 +88,7 @@ namespace specialeffectsviewer
 								}
 								id = its - 1;
 							}
+							label = effects.Items[id].ToString().ToLower();
 						}
 					}
 				}
