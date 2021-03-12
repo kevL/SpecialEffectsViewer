@@ -226,6 +226,55 @@ namespace specialeffectsviewer
 		[DefaultValue(Int32.MinValue)]
 		public int SceneData_h
 		{ get; set; }
+
+
+		[Category("Search")]
+		[Description("string in the Search dropdown")]
+		[DefaultValue("")]
+		public string search0
+		{ get; set; }
+
+		[Category("Search")]
+		[Description("string in the Search dropdown")]
+		[DefaultValue("")]
+		public string search1
+		{ get; set; }
+
+		[Category("Search")]
+		[Description("string in the Search dropdown")]
+		[DefaultValue("")]
+		public string search2
+		{ get; set; }
+
+		[Category("Search")]
+		[Description("string in the Search dropdown")]
+		[DefaultValue("")]
+		public string search3
+		{ get; set; }
+
+		[Category("Search")]
+		[Description("string in the Search dropdown")]
+		[DefaultValue("")]
+		public string search4
+		{ get; set; }
+
+		[Category("Search")]
+		[Description("string in the Search dropdown")]
+		[DefaultValue("")]
+		public string search5
+		{ get; set; }
+
+		[Category("Search")]
+		[Description("string in the Search dropdown")]
+		[DefaultValue("")]
+		public string search6
+		{ get; set; }
+
+		[Category("Search")]
+		[Description("string in the Search dropdown")]
+		[DefaultValue("")]
+		public string search7
+		{ get; set; }
 		#endregion Properties
 
 
@@ -272,6 +321,9 @@ namespace specialeffectsviewer
 			DoubleCharacterDistance = 6;
 
 			LastEffect = String.Empty;
+
+			search0 = search1 = search2 = search3 =
+			search4 = search5 = search6 = search7 = String.Empty;
 		}
 		#endregion cTor
 
@@ -329,6 +381,8 @@ namespace specialeffectsviewer
 
 			if (LastEffect.Trim() == String.Empty)
 				LastEffect = String.Empty;
+
+			// search0..7
 		}
 		#endregion Methods
 	}

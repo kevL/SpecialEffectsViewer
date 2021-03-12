@@ -723,7 +723,16 @@ namespace specialeffectsviewer
 					break;
 			}
 
-			_lastEffectLabel = SpecialEffectsViewerPreferences.that.LastEffect;
+			_lastEffectLabel = prefs.LastEffect;
+
+			if (prefs.search0 != String.Empty) co_Search.Items.Add(prefs.search0);
+			if (prefs.search1 != String.Empty) co_Search.Items.Add(prefs.search1);
+			if (prefs.search2 != String.Empty) co_Search.Items.Add(prefs.search2);
+			if (prefs.search3 != String.Empty) co_Search.Items.Add(prefs.search3);
+			if (prefs.search4 != String.Empty) co_Search.Items.Add(prefs.search4);
+			if (prefs.search5 != String.Empty) co_Search.Items.Add(prefs.search5);
+			if (prefs.search6 != String.Empty) co_Search.Items.Add(prefs.search6);
+			if (prefs.search7 != String.Empty) co_Search.Items.Add(prefs.search7);
 		}
 		#endregion cTor
 
@@ -917,28 +926,46 @@ namespace specialeffectsviewer
 			if (SceneData != null)
 				SceneData.Close();
 
+			SpecialEffectsViewerPreferences prefs = SpecialEffectsViewerPreferences.that;
+
 			if (WindowState == FormWindowState.Maximized)
-				SpecialEffectsViewerPreferences.that.Maximized = true;
+				prefs.Maximized = true;
 			else
-				SpecialEffectsViewerPreferences.that.Maximized = false;
+				prefs.Maximized = false;
 
 			WindowState = FormWindowState.Normal;
 
-			SpecialEffectsViewerPreferences.that.x = DesktopLocation.X;
-			SpecialEffectsViewerPreferences.that.y = DesktopLocation.Y;
-			SpecialEffectsViewerPreferences.that.w = ClientSize.Width;
-			SpecialEffectsViewerPreferences.that.h = ClientSize.Height;
+			prefs.x = DesktopLocation.X;
+			prefs.y = DesktopLocation.Y;
+			prefs.w = ClientSize.Width;
+			prefs.h = ClientSize.Height;
 
-			SpecialEffectsViewerPreferences.that.SplitterDistanceEffects = sc1_Effects.SplitterDistance;
-			SpecialEffectsViewerPreferences.that.SplitterDistanceOptions = sc2_Options.SplitterDistance;
+			prefs.SplitterDistanceEffects = sc1_Effects.SplitterDistance;
+			prefs.SplitterDistanceOptions = sc2_Options.SplitterDistance;
 
 			if (!sc2_Options.Panel1Collapsed)
-				SpecialEffectsViewerPreferences.that.SplitterDistanceEvents = sc3_Events.SplitterDistance;
+				prefs.SplitterDistanceEvents = sc3_Events.SplitterDistance;
 
-			if (SpecialEffectsViewerPreferences.that.LastEffect != String.Empty
+			if (prefs.LastEffect != String.Empty
 				&& _lastEffectLabel.Trim() != String.Empty)
 			{
-				SpecialEffectsViewerPreferences.that.LastEffect = _lastEffectLabel;
+				prefs.LastEffect = _lastEffectLabel;
+			}
+
+			for (int i = 0; i != co_Search.Items.Count; ++i)
+			{
+				string search = co_Search.Items[i].ToString();
+				switch (i)
+				{
+					case 0: prefs.search0 = search; break;
+					case 1: prefs.search1 = search; break;
+					case 2: prefs.search2 = search; break;
+					case 3: prefs.search3 = search; break;
+					case 4: prefs.search4 = search; break;
+					case 5: prefs.search5 = search; break;
+					case 6: prefs.search6 = search; break;
+					case 7: prefs.search7 = search; break;
+				}
 			}
 
 			StoreCameraState();
