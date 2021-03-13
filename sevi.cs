@@ -1228,6 +1228,8 @@ namespace specialeffectsviewer
 
 			EnableControls(false);
 
+			SpecialEffect.ClearEffect();
+
 			_init = true;
 			lb_Effects.SelectedIndex = _efid = -1;
 			_init = false;
@@ -1254,6 +1256,11 @@ namespace specialeffectsviewer
 				lb_Effects.SelectedIndex = id;
 				_bypassPlay = false;
 			}
+
+			PrintEffectData();
+
+			if (SceneData != null)
+				SceneData.ResetDatatext();
 		}
 		#endregion eventhandlers (resrepo)
 
@@ -1627,12 +1634,16 @@ namespace specialeffectsviewer
 		/// track the currently selected effects-list id</remarks>
 		void lb_Effects_selectedindexchanged(object sender, EventArgs e)
 		{
-			if (!_init)
+			if (!_init && lb_Effects.SelectedIndex != -1)
 			{
 				// NOTE: The id shall never be -1 here. The only way that id can
-				// be set to -1 is by initialization or resrepo-load but both
-				// are conditioned by '_init'. -1 would need to be handled here
-				// if that behavior is altered ...
+				// be set to -1 is by initialization or resrepo-load - incl/
+				// filter - but those are conditioned by '_init'. -1 would need
+				// to be handled here if that behavior is altered ...
+				//
+				// however, since selectedindexchanged fires whenever the list
+				// is clicked - EVEN WHEN NO ITEM IS SELECTED OR CLICKED ON -
+				// -1 needs to be bypassed.
 
 				if (lb_Effects.SelectedIndex != _efid)
 				{
@@ -1996,13 +2007,14 @@ namespace specialeffectsviewer
 					}
 					else
 					{
-						_filtr = co_Search.Text.ToLower();
+						cb_Filter.Text = _filtr = co_Search.Text.ToLower();
 						cb_Filter.BackColor = Color.SkyBlue; // <- win10 workaround.
 					}
 				}
 				else
 				{
 					_filtr = String.Empty;
+					cb_Filter.Text = "filtr";
 					cb_Filter.BackColor = SystemColors.Control;
 				}
 
@@ -2323,8 +2335,7 @@ namespace specialeffectsviewer
 		}
 
 		/// <summary>
-		/// Prints the currently loaded effect-events to the Options panel. Also
-		/// adds items to the Events menu iff scene is DoubleCharacter.
+		/// Prints the currently loaded effect-events to the Options panel.
 		/// </summary>
 		/// <param name="setTitle"></param>"
 		void PrintEffectData(bool setTitle = true)
