@@ -1969,8 +1969,9 @@ namespace specialeffectsviewer
 		/// </summary>
 		void UpdateSearchDropdown()
 		{
-			if (   co_Search.Text != String.Empty
-				&& co_Search.Text != co_Search.Items[0].ToString())
+			if (co_Search.Text != String.Empty
+				&& (   co_Search.Items.Count == 0
+					|| co_Search.Items[0].ToString() != co_Search.Text))
 			{
 				co_Search.Items.Insert(0, co_Search.Text);
 
