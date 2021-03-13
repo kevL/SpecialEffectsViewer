@@ -127,7 +127,7 @@ namespace specialeffectsviewer
 	/// <summary>
 	/// https://stackoverflow.com/questions/39832057/using-windows-clipboard#answer-39833879
 	/// </summary>
-	static class ClipboardAssistant
+	static class ClipperShip
 	{
 #if !__MonoCS__
 		[System.Runtime.InteropServices.DllImport("user32.dll")]

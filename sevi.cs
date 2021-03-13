@@ -2130,7 +2130,7 @@ namespace specialeffectsviewer
 		void bu_Copy_click(object sender, EventArgs e)
 		{
 			if (lb_Effects.SelectedIndex != -1) // safety.
-				ClipboardAssistant.SetText(lb_Effects.SelectedItem.ToString());
+				ClipperShip.SetText(lb_Effects.SelectedItem.ToString());
 		}
 		#endregion eventhandlers (buttons)
 
