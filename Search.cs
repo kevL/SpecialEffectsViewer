@@ -39,8 +39,8 @@ namespace specialeffectsviewer
 							id = effects.SelectedIndex + 1;
 
 						string label = effects.Items[id].ToString().ToLower();
-						while (( wholeword || !label.Contains(text))
-							&& (!wholeword ||  label != text))
+						while (( wholeword &&  label != text)
+							|| (!wholeword && !label.Contains(text)))
 						{
 							if (id == effects.SelectedIndex) // not found.
 							{
@@ -70,8 +70,8 @@ namespace specialeffectsviewer
 							id = effects.SelectedIndex - 1;
 
 						string label = effects.Items[id].ToString().ToLower();
-						while (( wholeword || !label.Contains(text))
-							&& (!wholeword ||  label != text))
+						while (( wholeword &&  label != text)
+							|| (!wholeword && !label.Contains(text)))
 						{
 							if (id == effects.SelectedIndex) // not found.
 							{
