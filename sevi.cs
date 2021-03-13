@@ -1256,11 +1256,12 @@ namespace specialeffectsviewer
 				lb_Effects.SelectedIndex = id;
 				_bypassPlay = false;
 			}
-
-			PrintEffectData();
-
-			if (SceneData != null)
-				SceneData.ResetDatatext();
+			else
+			{
+				PrintEffectData();
+				if (SceneData != null)
+					SceneData.ResetDatatext();
+			}
 		}
 		#endregion eventhandlers (resrepo)
 
