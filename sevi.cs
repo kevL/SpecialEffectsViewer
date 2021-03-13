@@ -1980,7 +1980,7 @@ namespace specialeffectsviewer
 					}
 
 					if (co_Search.Items.Count == 9)
-						co_Search.Items.RemoveAt(9);
+						co_Search.Items.RemoveAt(8);
 				}
 				co_Search.SelectedIndex = 0; // else text gets cleared
 			}
