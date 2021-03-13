@@ -9,11 +9,12 @@ namespace specialeffectsviewer
 		#region Designer
 		SplitContainer sc1_Effects;
 
+		CheckBox cb_Filter;
+
 		Panel pa_Search;
 		ComboBox co_Search;
 		Button bu_SearchUp;
 		Button bu_SearchDn;
-		CheckBox cb_Filter;
 
 		ListBox lb_Effects;
 
@@ -101,15 +102,15 @@ namespace specialeffectsviewer
 			this.gb_Ground = new System.Windows.Forms.GroupBox();
 			this.cb_Ground = new System.Windows.Forms.CheckBox();
 			this.gb_Appearance = new System.Windows.Forms.GroupBox();
-			this.bu_SetDist = new System.Windows.Forms.Button();
-			this.tb_Dist = new System.Windows.Forms.TextBox();
-			this.la_Dist = new System.Windows.Forms.Label();
-			this.co_Source = new System.Windows.Forms.ComboBox();
-			this.co_Target = new System.Windows.Forms.ComboBox();
 			this.la_Source = new System.Windows.Forms.Label();
-			this.la_Target = new System.Windows.Forms.Label();
+			this.co_Source = new System.Windows.Forms.ComboBox();
 			this.cb_SourceF = new System.Windows.Forms.CheckBox();
+			this.la_Target = new System.Windows.Forms.Label();
+			this.co_Target = new System.Windows.Forms.ComboBox();
 			this.cb_TargetF = new System.Windows.Forms.CheckBox();
+			this.la_Dist = new System.Windows.Forms.Label();
+			this.tb_Dist = new System.Windows.Forms.TextBox();
+			this.bu_SetDist = new System.Windows.Forms.Button();
 			this.gb_Scene = new System.Windows.Forms.GroupBox();
 			this.rb_DoubleCharacter = new System.Windows.Forms.RadioButton();
 			this.rb_SingleCharacter = new System.Windows.Forms.RadioButton();
@@ -119,11 +120,11 @@ namespace specialeffectsviewer
 			this.tb_SefData = new System.Windows.Forms.TextBox();
 			this.tb_EventData = new System.Windows.Forms.TextBox();
 			this.lb_Effects = new System.Windows.Forms.ListBox();
+			this.cb_Filter = new System.Windows.Forms.CheckBox();
 			this.pa_Search = new System.Windows.Forms.Panel();
 			this.co_Search = new System.Windows.Forms.ComboBox();
 			this.bu_SearchUp = new System.Windows.Forms.Button();
 			this.bu_SearchDn = new System.Windows.Forms.Button();
-			this.cb_Filter = new System.Windows.Forms.CheckBox();
 			this.pa_bot = new System.Windows.Forms.Panel();
 			this.bu_Play = new System.Windows.Forms.Button();
 			this.bu_Stop = new System.Windows.Forms.Button();
@@ -163,6 +164,7 @@ namespace specialeffectsviewer
 			// 
 			this.sc1_Effects.Panel2.Controls.Add(this.lb_Effects);
 			this.sc1_Effects.Panel2.Controls.Add(this.pa_Search);
+			this.sc1_Effects.Panel2.Controls.Add(this.cb_Filter);
 			this.sc1_Effects.Panel2.Controls.Add(this.pa_bot);
 			this.sc1_Effects.Panel2MinSize = 0;
 			this.sc1_Effects.Size = new System.Drawing.Size(792, 454);
@@ -239,20 +241,21 @@ namespace specialeffectsviewer
 			this.cb_Ground.Size = new System.Drawing.Size(92, 20);
 			this.cb_Ground.TabIndex = 0;
 			this.cb_Ground.Text = "show Ground";
+			this.cb_Ground.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			this.cb_Ground.UseVisualStyleBackColor = false;
 			this.cb_Ground.Click += new System.EventHandler(this.cb_Ground_click);
 			// 
 			// gb_Appearance
 			// 
-			this.gb_Appearance.Controls.Add(this.bu_SetDist);
-			this.gb_Appearance.Controls.Add(this.tb_Dist);
-			this.gb_Appearance.Controls.Add(this.la_Dist);
-			this.gb_Appearance.Controls.Add(this.co_Source);
-			this.gb_Appearance.Controls.Add(this.co_Target);
 			this.gb_Appearance.Controls.Add(this.la_Source);
-			this.gb_Appearance.Controls.Add(this.la_Target);
+			this.gb_Appearance.Controls.Add(this.co_Source);
 			this.gb_Appearance.Controls.Add(this.cb_SourceF);
+			this.gb_Appearance.Controls.Add(this.la_Target);
+			this.gb_Appearance.Controls.Add(this.co_Target);
 			this.gb_Appearance.Controls.Add(this.cb_TargetF);
+			this.gb_Appearance.Controls.Add(this.la_Dist);
+			this.gb_Appearance.Controls.Add(this.tb_Dist);
+			this.gb_Appearance.Controls.Add(this.bu_SetDist);
 			this.gb_Appearance.Dock = System.Windows.Forms.DockStyle.Top;
 			this.gb_Appearance.Location = new System.Drawing.Point(3, 66);
 			this.gb_Appearance.Margin = new System.Windows.Forms.Padding(0);
@@ -262,36 +265,14 @@ namespace specialeffectsviewer
 			this.gb_Appearance.TabIndex = 1;
 			this.gb_Appearance.TabStop = false;
 			// 
-			// bu_SetDist
+			// la_Source
 			// 
-			this.bu_SetDist.Enabled = false;
-			this.bu_SetDist.Location = new System.Drawing.Point(87, 61);
-			this.bu_SetDist.Margin = new System.Windows.Forms.Padding(0);
-			this.bu_SetDist.Name = "bu_SetDist";
-			this.bu_SetDist.Size = new System.Drawing.Size(118, 22);
-			this.bu_SetDist.TabIndex = 8;
-			this.bu_SetDist.Text = "set dist";
-			this.bu_SetDist.UseVisualStyleBackColor = true;
-			this.bu_SetDist.Click += new System.EventHandler(this.bu_SetDist_click);
-			// 
-			// tb_Dist
-			// 
-			this.tb_Dist.Location = new System.Drawing.Point(49, 62);
-			this.tb_Dist.Margin = new System.Windows.Forms.Padding(0);
-			this.tb_Dist.Name = "tb_Dist";
-			this.tb_Dist.Size = new System.Drawing.Size(35, 20);
-			this.tb_Dist.TabIndex = 7;
-			this.tb_Dist.WordWrap = false;
-			this.tb_Dist.TextChanged += new System.EventHandler(this.tb_Distance_textchanged);
-			// 
-			// la_Dist
-			// 
-			this.la_Dist.Location = new System.Drawing.Point(3, 65);
-			this.la_Dist.Margin = new System.Windows.Forms.Padding(0);
-			this.la_Dist.Name = "la_Dist";
-			this.la_Dist.Size = new System.Drawing.Size(40, 16);
-			this.la_Dist.TabIndex = 6;
-			this.la_Dist.Text = "dist";
+			this.la_Source.Location = new System.Drawing.Point(2, 16);
+			this.la_Source.Margin = new System.Windows.Forms.Padding(0);
+			this.la_Source.Name = "la_Source";
+			this.la_Source.Size = new System.Drawing.Size(47, 20);
+			this.la_Source.TabIndex = 0;
+			this.la_Source.Text = "Source";
 			// 
 			// co_Source
 			// 
@@ -305,37 +286,6 @@ namespace specialeffectsviewer
 			this.co_Source.Size = new System.Drawing.Size(155, 21);
 			this.co_Source.TabIndex = 1;
 			this.co_Source.SelectedIndexChanged += new System.EventHandler(this.co_Appearance_selectedindexchanged);
-			// 
-			// co_Target
-			// 
-			this.co_Target.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-			| System.Windows.Forms.AnchorStyles.Right)));
-			this.co_Target.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.co_Target.FormattingEnabled = true;
-			this.co_Target.Location = new System.Drawing.Point(49, 38);
-			this.co_Target.Margin = new System.Windows.Forms.Padding(0);
-			this.co_Target.Name = "co_Target";
-			this.co_Target.Size = new System.Drawing.Size(155, 21);
-			this.co_Target.TabIndex = 4;
-			this.co_Target.SelectedIndexChanged += new System.EventHandler(this.co_Appearance_selectedindexchanged);
-			// 
-			// la_Source
-			// 
-			this.la_Source.Location = new System.Drawing.Point(2, 16);
-			this.la_Source.Margin = new System.Windows.Forms.Padding(0);
-			this.la_Source.Name = "la_Source";
-			this.la_Source.Size = new System.Drawing.Size(48, 20);
-			this.la_Source.TabIndex = 0;
-			this.la_Source.Text = "Source";
-			// 
-			// la_Target
-			// 
-			this.la_Target.Location = new System.Drawing.Point(2, 41);
-			this.la_Target.Margin = new System.Windows.Forms.Padding(0);
-			this.la_Target.Name = "la_Target";
-			this.la_Target.Size = new System.Drawing.Size(48, 20);
-			this.la_Target.TabIndex = 3;
-			this.la_Target.Text = "Target";
 			// 
 			// cb_SourceF
 			// 
@@ -351,6 +301,28 @@ namespace specialeffectsviewer
 			this.cb_SourceF.UseVisualStyleBackColor = true;
 			this.cb_SourceF.CheckedChanged += new System.EventHandler(this.cb_Fela_checkedchanged);
 			// 
+			// la_Target
+			// 
+			this.la_Target.Location = new System.Drawing.Point(2, 41);
+			this.la_Target.Margin = new System.Windows.Forms.Padding(0);
+			this.la_Target.Name = "la_Target";
+			this.la_Target.Size = new System.Drawing.Size(47, 20);
+			this.la_Target.TabIndex = 3;
+			this.la_Target.Text = "Target";
+			// 
+			// co_Target
+			// 
+			this.co_Target.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
+			this.co_Target.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.co_Target.FormattingEnabled = true;
+			this.co_Target.Location = new System.Drawing.Point(49, 38);
+			this.co_Target.Margin = new System.Windows.Forms.Padding(0);
+			this.co_Target.Name = "co_Target";
+			this.co_Target.Size = new System.Drawing.Size(155, 21);
+			this.co_Target.TabIndex = 4;
+			this.co_Target.SelectedIndexChanged += new System.EventHandler(this.co_Appearance_selectedindexchanged);
+			// 
 			// cb_TargetF
 			// 
 			this.cb_TargetF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -364,6 +336,37 @@ namespace specialeffectsviewer
 			this.cb_TargetF.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			this.cb_TargetF.UseVisualStyleBackColor = true;
 			this.cb_TargetF.CheckedChanged += new System.EventHandler(this.cb_Fela_checkedchanged);
+			// 
+			// la_Dist
+			// 
+			this.la_Dist.Location = new System.Drawing.Point(3, 65);
+			this.la_Dist.Margin = new System.Windows.Forms.Padding(0);
+			this.la_Dist.Name = "la_Dist";
+			this.la_Dist.Size = new System.Drawing.Size(40, 16);
+			this.la_Dist.TabIndex = 6;
+			this.la_Dist.Text = "dist";
+			// 
+			// tb_Dist
+			// 
+			this.tb_Dist.Location = new System.Drawing.Point(49, 62);
+			this.tb_Dist.Margin = new System.Windows.Forms.Padding(0);
+			this.tb_Dist.Name = "tb_Dist";
+			this.tb_Dist.Size = new System.Drawing.Size(35, 20);
+			this.tb_Dist.TabIndex = 7;
+			this.tb_Dist.WordWrap = false;
+			this.tb_Dist.TextChanged += new System.EventHandler(this.tb_Distance_textchanged);
+			// 
+			// bu_SetDist
+			// 
+			this.bu_SetDist.Enabled = false;
+			this.bu_SetDist.Location = new System.Drawing.Point(87, 61);
+			this.bu_SetDist.Margin = new System.Windows.Forms.Padding(0);
+			this.bu_SetDist.Name = "bu_SetDist";
+			this.bu_SetDist.Size = new System.Drawing.Size(118, 22);
+			this.bu_SetDist.TabIndex = 8;
+			this.bu_SetDist.Text = "set dist";
+			this.bu_SetDist.UseVisualStyleBackColor = true;
+			this.bu_SetDist.Click += new System.EventHandler(this.bu_SetDist_click);
 			// 
 			// gb_Scene
 			// 
@@ -477,44 +480,57 @@ namespace specialeffectsviewer
 			// 
 			// lb_Effects
 			// 
-			this.lb_Effects.BackColor = System.Drawing.Color.Beige;
+			this.lb_Effects.BackColor = System.Drawing.Color.PaleGoldenrod;
 			this.lb_Effects.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.lb_Effects.FormattingEnabled = true;
-			this.lb_Effects.Location = new System.Drawing.Point(0, 20);
+			this.lb_Effects.Location = new System.Drawing.Point(0, 40);
 			this.lb_Effects.Margin = new System.Windows.Forms.Padding(0);
 			this.lb_Effects.Name = "lb_Effects";
-			this.lb_Effects.Size = new System.Drawing.Size(213, 411);
+			this.lb_Effects.Size = new System.Drawing.Size(213, 391);
 			this.lb_Effects.Sorted = true;
-			this.lb_Effects.TabIndex = 1;
+			this.lb_Effects.TabIndex = 2;
 			this.lb_Effects.SelectedIndexChanged += new System.EventHandler(this.lb_Effects_selectedindexchanged);
+			// 
+			// cb_Filter
+			// 
+			this.cb_Filter.Appearance = System.Windows.Forms.Appearance.Button;
+			this.cb_Filter.Dock = System.Windows.Forms.DockStyle.Top;
+			this.cb_Filter.Location = new System.Drawing.Point(0, 20);
+			this.cb_Filter.Margin = new System.Windows.Forms.Padding(0);
+			this.cb_Filter.Name = "cb_Filter";
+			this.cb_Filter.Size = new System.Drawing.Size(213, 20);
+			this.cb_Filter.TabIndex = 0;
+			this.cb_Filter.Text = "filtr";
+			this.cb_Filter.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.cb_Filter.UseVisualStyleBackColor = false;
+			this.cb_Filter.CheckedChanged += new System.EventHandler(this.cb_Filter_checkedchanged);
 			// 
 			// pa_Search
 			// 
 			this.pa_Search.Controls.Add(this.co_Search);
 			this.pa_Search.Controls.Add(this.bu_SearchUp);
 			this.pa_Search.Controls.Add(this.bu_SearchDn);
-			this.pa_Search.Controls.Add(this.cb_Filter);
 			this.pa_Search.Dock = System.Windows.Forms.DockStyle.Top;
 			this.pa_Search.Location = new System.Drawing.Point(0, 0);
 			this.pa_Search.Margin = new System.Windows.Forms.Padding(0);
 			this.pa_Search.Name = "pa_Search";
 			this.pa_Search.Size = new System.Drawing.Size(213, 20);
-			this.pa_Search.TabIndex = 0;
+			this.pa_Search.TabIndex = 1;
 			// 
 			// co_Search
 			// 
-			this.co_Search.BackColor = System.Drawing.Color.PaleGoldenrod;
+			this.co_Search.BackColor = System.Drawing.Color.Beige;
 			this.co_Search.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.co_Search.Location = new System.Drawing.Point(0, 0);
 			this.co_Search.Margin = new System.Windows.Forms.Padding(0);
 			this.co_Search.Name = "co_Search";
-			this.co_Search.Size = new System.Drawing.Size(122, 21);
+			this.co_Search.Size = new System.Drawing.Size(167, 21);
 			this.co_Search.TabIndex = 0;
 			// 
 			// bu_SearchUp
 			// 
 			this.bu_SearchUp.Dock = System.Windows.Forms.DockStyle.Right;
-			this.bu_SearchUp.Location = new System.Drawing.Point(122, 0);
+			this.bu_SearchUp.Location = new System.Drawing.Point(167, 0);
 			this.bu_SearchUp.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_SearchUp.Name = "bu_SearchUp";
 			this.bu_SearchUp.Size = new System.Drawing.Size(23, 20);
@@ -526,7 +542,7 @@ namespace specialeffectsviewer
 			// bu_SearchDn
 			// 
 			this.bu_SearchDn.Dock = System.Windows.Forms.DockStyle.Right;
-			this.bu_SearchDn.Location = new System.Drawing.Point(145, 0);
+			this.bu_SearchDn.Location = new System.Drawing.Point(190, 0);
 			this.bu_SearchDn.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_SearchDn.Name = "bu_SearchDn";
 			this.bu_SearchDn.Size = new System.Drawing.Size(23, 20);
@@ -534,20 +550,6 @@ namespace specialeffectsviewer
 			this.bu_SearchDn.Text = "d";
 			this.bu_SearchDn.UseVisualStyleBackColor = true;
 			this.bu_SearchDn.Click += new System.EventHandler(this.bu_Search_click);
-			// 
-			// cb_Filter
-			// 
-			this.cb_Filter.Appearance = System.Windows.Forms.Appearance.Button;
-			this.cb_Filter.Dock = System.Windows.Forms.DockStyle.Right;
-			this.cb_Filter.Location = new System.Drawing.Point(168, 0);
-			this.cb_Filter.Margin = new System.Windows.Forms.Padding(0);
-			this.cb_Filter.Name = "cb_Filter";
-			this.cb_Filter.Size = new System.Drawing.Size(45, 20);
-			this.cb_Filter.TabIndex = 3;
-			this.cb_Filter.Text = "filtr";
-			this.cb_Filter.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this.cb_Filter.UseVisualStyleBackColor = false;
-			this.cb_Filter.CheckedChanged += new System.EventHandler(this.cb_Filter_checkedchanged);
 			// 
 			// pa_bot
 			// 
@@ -559,7 +561,7 @@ namespace specialeffectsviewer
 			this.pa_bot.Margin = new System.Windows.Forms.Padding(0);
 			this.pa_bot.Name = "pa_bot";
 			this.pa_bot.Size = new System.Drawing.Size(213, 23);
-			this.pa_bot.TabIndex = 2;
+			this.pa_bot.TabIndex = 3;
 			// 
 			// bu_Play
 			// 
@@ -602,7 +604,7 @@ namespace specialeffectsviewer
 			this.Font = new System.Drawing.Font("Consolas", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.Name = "sevi";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = " Special Effects Viewer";
+			this.Text = " Special Effects";
 			this.sc1_Effects.Panel1.ResumeLayout(false);
 			this.sc1_Effects.Panel2.ResumeLayout(false);
 			this.sc1_Effects.ResumeLayout(false);
