@@ -289,15 +289,18 @@ namespace specialeffectsviewer
 		/// </summary>
 		internal sevi()
 		{
-			// Re. Logger - the logfile will preserve and append text if
-			// create() is NOT called. create() is required only to overwrite
-			// a previous logfile.
+			// Re. Logger - the logger will in fact create, preserve, and append
+			// text if create() is NOT called. create() is required only to
+			// overwrite a previous logfile.
 			//logger.create();
 
 			Owner = NWN2ToolsetMainForm.App;
 			that = this;
 
 			InitializeComponent();
+
+			// NOTE: no one is ever going to compile an Electron toolset plugin
+			// against Mono ...
 #if !__MonoCS__
 			Application.AddMessageFilter(this);
 #endif
